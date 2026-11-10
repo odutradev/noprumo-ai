@@ -1,11 +1,14 @@
-import { Alert, Flex } from "enchase"
+import { useMemo } from "react"
+import { Flex } from "enchase"
 
 import { architectureInfo, architectureOrder } from "@assets/data/generator/options"
 import { buildTree, getProjectFiles } from "@utils/functions/generator/architecture"
 import useCustomField from "@hooks/useCustomField"
 import ChoiceCards from "@components/choiceCards"
 import useGeneratorStore from "@stores/generator"
+import StepHeader from "@components/stepHeader"
 import FileTree from "@components/fileTree"
+import styles from "./styles"
 
 import type { Architecture, ChoiceOption, EnabledProjectType } from "@utils/types/generator"
 
@@ -14,6 +17,8 @@ const ArchitectureStep = () => {
   const config = useGeneratorStore((state) => state.config)
   const update = useGeneratorStore((state) => state.update)
   const selected = architectureInfo[config.architecture]
+  const customField = custom("architecture")
+  const isCustom = customField.customText !== undefined
 
   const options: ChoiceOption<Architecture>[] = architectureOrder[config.projectType as EnabledProjectType].map((value) => ({
     value,
@@ -22,32 +27,32 @@ const ArchitectureStep = () => {
     badge: architectureInfo[value].badge
   }))
 
-  const renderTree = (option: ChoiceOption<Architecture>) => {
-    const files = getProjectFiles({ ...config, architecture: option.value, conventions: { ...config.conventions, testing: "none" }, frontend: { ...config.frontend, e2e: "none" } })
-    const srcNode = buildTree(files).find((node) => node.name === "src")
-    return <FileTree nodes={srcNode?.children ?? []} label={`Estrutura de pastas da arquitetura ${option.label}`} maxHeight="15rem" />
-  }
+  const tree = useMemo(() => {
+    const files = getProjectFiles({ ...config, conventions: { ...config.conventions, testing: "none" }, frontend: { ...config.frontend, e2e: "none" } })
+    return buildTree(files).find((node) => node.name === "src")?.children ?? []
+  }, [config])
 
   return (
     <Flex direction="column" gap="var(--enchase-space-lg)">
-      <ChoiceCards
-        legend="Arquitetura"
-        description="Como o código é organizado em pastas e camadas. As árvores já usam a nomenclatura que você escolher."
-        options={options}
-        value={config.architecture}
-        onChange={(value) => update("architecture", value)}
-        {...custom("architecture")}
-        minWidth="21rem"
-        renderExtra={renderTree}
-      />
-      <Alert variant="info" title={`Quando usar ${selected.label}`}>
-        <p>{selected.whenToUse}</p>
-        <ul>
-          {selected.rules.map((rule) => (
-            <li key={rule}>{rule.replaceAll("`", "")}</li>
-          ))}
-        </ul>
-      </Alert>
+      <StepHeader title="Arquitetura" description="Como o código é organizado em pastas e camadas. A árvore já usa a nomenclatura que você escolher." />
+      <ChoiceCards legend="Organização" options={options} value={config.architecture} onChange={(value) => update("architecture", value)} minWidth="14rem" {...customField} />
+      {!isCustom && (
+        <div className={styles.details}>
+          <div className={styles.column}>
+            <h3 className={styles.heading}>Quando usar {selected.label}</h3>
+            <p className={styles.text}>{selected.whenToUse}</p>
+            <ul className={styles.rules}>
+              {selected.rules.map((rule) => (
+                <li key={rule}>{rule.replaceAll("`", "")}</li>
+              ))}
+            </ul>
+          </div>
+          <div className={styles.column}>
+            <h3 className={styles.heading}>Estrutura de pastas</h3>
+            <FileTree nodes={tree} label={`Estrutura de pastas da arquitetura ${selected.label}`} />
+          </div>
+        </div>
+      )}
     </Flex>
   )
 }

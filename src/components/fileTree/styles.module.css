@@ -1,11 +1,11 @@
 .tree {
-  padding: var(--enchase-space-md);
-  border: var(--enchase-border-width) solid var(--enchase-color-border-light);
+  padding: var(--enchase-space-sm) var(--enchase-space-md);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
   border-radius: var(--enchase-radius-md);
-  background: var(--enchase-color-code-background);
+  background: var(--enchase-color-surface-container-low);
   font-family: var(--enchase-font-mono);
-  font-size: var(--enchase-font-size-sm);
-  overflow: auto;
+  font-size: var(--enchase-font-size-xs);
+  line-height: 1.6;
 }
 
 .root,
@@ -16,9 +16,9 @@
 }
 
 .list {
-  margin-inline-start: var(--enchase-space-sm);
+  margin-inline-start: calc(var(--enchase-space-xs) * 1.5);
   padding-inline-start: calc(var(--enchase-space-md) * 0.75);
-  border-inline-start: var(--enchase-border-width) dashed var(--enchase-color-border);
+  border-inline-start: var(--enchase-border-width) solid var(--enchase-color-border);
 }
 
 .row {
@@ -28,8 +28,8 @@
   padding-block: calc(var(--enchase-space-xs) / 2);
   padding-inline: calc(var(--enchase-space-sm) * 0.75);
   border-radius: var(--enchase-radius-sm);
-  white-space: nowrap;
   color: var(--enchase-color-text-primary);
+  overflow-wrap: anywhere;
 }
 
 .row[data-folder] .name {
@@ -37,21 +37,16 @@
 }
 
 .row[data-highlight] {
-  background: var(--enchase-color-primary-container);
-  color: var(--enchase-color-on-primary-container);
+  background: color-mix(in srgb, var(--enchase-color-primary) 12%, transparent);
 }
 
 .icon {
+  flex-shrink: 0;
   inline-size: 0.75rem;
   color: var(--enchase-color-text-secondary);
 }
 
 .note {
   font-family: var(--enchase-font-primary);
-  font-size: var(--enchase-font-size-xs);
   color: var(--enchase-color-text-secondary);
-}
-
-.row[data-highlight] .note {
-  color: inherit;
 }

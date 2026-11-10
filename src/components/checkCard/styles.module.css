@@ -1,15 +1,13 @@
 .card {
-  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: var(--enchase-space-sm);
+  align-items: flex-start;
+  gap: var(--enchase-space-xs);
   min-inline-size: 0;
-  padding: var(--enchase-space-md);
-  border: var(--enchase-border-width-strong) solid var(--enchase-color-border-light);
-  border-radius: var(--enchase-radius-lg);
+  padding: calc(var(--enchase-space-sm) * 1.25) calc(var(--enchase-space-md) * 0.75);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-md);
   background: var(--enchase-color-surface);
-  cursor: pointer;
-  transition: border-color 150ms ease, background-color 150ms ease;
+  transition: border-color 120ms ease, background-color 120ms ease;
 }
 
 .card:hover {
@@ -18,12 +16,22 @@
 
 .card[data-checked] {
   border-color: var(--enchase-color-primary);
-  background: color-mix(in srgb, var(--enchase-color-primary-container) 35%, var(--enchase-color-surface));
+  background: color-mix(in srgb, var(--enchase-color-primary) 6%, var(--enchase-color-surface));
 }
 
 .card:has(.input:focus-visible) {
   outline: var(--enchase-focus-width) solid var(--enchase-focus-color, var(--enchase-color-primary));
   outline-offset: var(--enchase-focus-offset);
+}
+
+.main {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: calc(var(--enchase-space-xs) / 2);
+  min-inline-size: 0;
+  cursor: pointer;
 }
 
 .input {
@@ -38,15 +46,16 @@
   display: flex;
   align-items: center;
   gap: var(--enchase-space-sm);
+  min-inline-size: 0;
 }
 
 .box {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
-  border: var(--enchase-border-width-strong) solid var(--enchase-color-border);
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  border: var(--enchase-border-width) solid var(--enchase-color-border-strong);
   border-radius: var(--enchase-radius-xs);
   color: var(--enchase-color-on-primary);
 }
@@ -57,12 +66,20 @@
 }
 
 .label {
-  font-weight: var(--enchase-font-weight-semibold);
+  font-size: var(--enchase-font-size-sm);
+  font-weight: var(--enchase-font-weight-medium);
 }
 
 .text {
-  font-size: var(--enchase-font-size-sm);
+  padding-inline-start: calc(0.875rem + var(--enchase-space-sm));
+  font-size: var(--enchase-font-size-xs);
+  line-height: 1.45;
   color: var(--enchase-color-text-secondary);
+}
+
+.detailsButton {
+  flex-shrink: 0;
+  margin-block: calc(var(--enchase-space-xs) * -1);
 }
 
 @media (prefers-reduced-motion: reduce) {

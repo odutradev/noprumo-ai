@@ -1,41 +1,73 @@
+.switchRow {
+  padding: var(--enchase-space-md);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-md);
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+
+.legend {
+  margin-block-end: var(--enchase-space-sm);
+  padding: 0;
+  font-size: var(--enchase-font-size-sm);
+  font-weight: var(--enchase-font-weight-semibold);
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+  gap: var(--enchase-space-md);
+}
+
+.flag {
+  margin-inline-start: auto;
+  padding-inline: calc(var(--enchase-space-sm) * 0.75);
+  border-radius: var(--enchase-radius-xs);
+  background: var(--enchase-color-surface-container);
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-text-secondary);
+}
+
 .askPreview {
   display: flex;
   flex-direction: column;
   gap: var(--enchase-space-sm);
-  padding: var(--enchase-space-lg);
-  border: var(--enchase-border-width) solid var(--enchase-color-border-light);
-  border-radius: var(--enchase-radius-lg);
+  padding: var(--enchase-space-md);
+  border: var(--enchase-border-width) dashed var(--enchase-color-border-strong);
+  border-radius: var(--enchase-radius-md);
   background: var(--enchase-color-surface-container-low);
 }
 
 .askEyebrow {
   font-size: var(--enchase-font-size-xs);
-  font-weight: var(--enchase-font-weight-semibold);
-  color: var(--enchase-color-primary);
-}
-
-.askRecap {
-  margin: 0;
   color: var(--enchase-color-text-secondary);
 }
 
 .askQuestion {
   margin: 0;
+  font-size: var(--enchase-font-size-sm);
   font-weight: var(--enchase-font-weight-semibold);
 }
 
 .askButtons {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--enchase-space-sm);
+  gap: var(--enchase-space-xs);
 }
 
 .askButton {
   padding-block: var(--enchase-space-xs);
-  padding-inline: var(--enchase-space-md);
-  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  padding-inline: var(--enchase-space-sm);
+  border: var(--enchase-border-width) solid var(--enchase-color-border-strong);
   border-radius: var(--enchase-radius-button);
-  font-size: var(--enchase-font-size-sm);
+  background: var(--enchase-color-surface);
+  font-size: var(--enchase-font-size-xs);
   color: var(--enchase-color-text-primary);
 }
 
@@ -43,14 +75,4 @@
   border-color: var(--enchase-color-primary);
   background: var(--enchase-color-primary);
   color: var(--enchase-color-on-primary);
-}
-
-.flag {
-  margin-inline-start: auto;
-  padding-inline: calc(var(--enchase-space-sm) * 0.75);
-  border-radius: var(--enchase-radius-xs);
-  background: var(--enchase-color-code-background);
-  font-family: var(--enchase-font-mono);
-  font-size: var(--enchase-font-size-xs);
-  color: var(--enchase-color-text-secondary);
 }

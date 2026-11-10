@@ -21,8 +21,8 @@ const renderNodes = (nodes: TreeNode[], depth: number): ReactElement[] =>
     </li>
   ))
 
-const FileTree = ({ nodes, label, maxHeight }: FileTreeProps) => (
-  <div className={styles.tree} style={maxHeight ? { maxHeight } : undefined}>
+const FileTree = ({ nodes, label }: FileTreeProps) => (
+  <div className={styles.tree}>
     <ul className={styles.root} aria-label={label}>
       {renderNodes(nodes, 0)}
     </ul>

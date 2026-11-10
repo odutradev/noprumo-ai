@@ -1,8 +1,9 @@
-import { Card, Flex } from "enchase"
+import { Flex } from "enchase"
 
 import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
 import { createNamer } from "@utils/functions/generator/namer"
+import StepSections from "@components/stepSections"
 import useCustomField from "@hooks/useCustomField"
 import OptionChips from "@components/optionChips"
 import useGeneratorStore from "@stores/generator"
@@ -99,37 +100,41 @@ const NamingStep = () => {
     <Flex direction="column" gap="var(--enchase-space-lg)">
       <StepHeader title="Nomenclatura" description="Cada opção mostra o nome real que vai aparecer no código." />
 
-      <Card variant="outlined">
+      <div className={styles.group}>
         <OptionChips
           legend="Idioma dos identificadores"
           description={isFrontend ? "Componentes, funções, tipos e pastas. Textos da interface continuam em português." : "Variáveis, funções, tipos, tabelas e pastas."}
-          options={identifierLanguageOptions.map((option) => ({
-            value: option.value,
-            label: option.label,
-            example: namerWith({ language: option.value }).fn(isFrontend ? "updateUser" : "getUserById")
-          }))}
+          options={identifierLanguageOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ language: option.value }).fn(isFrontend ? "updateUser" : "getUserById") }))}
           value={naming.language}
           onChange={(value) => updateNaming("language", value)}
           {...custom("naming.language")}
         />
-      </Card>
+      </div>
 
-      {groups.map((group) => (
-        <Card key={group.title} variant="outlined" header={group.title} headerExtra={<span className={styles.hint}>{group.description}</span>}>
-          {group.categories.map((category) => (
-            <OptionChips
-              key={category.key}
-              legend={category.label}
-              description={category.description}
-              options={category.options.map((style) => ({ value: style, label: caseStyleLabels[style], example: category.example(namerWith({ [category.key]: style })) }))}
-              value={naming[category.key]}
-              onChange={(value) => updateNaming(category.key, value)}
-              {...custom(`naming.${category.key}`)}
-            />
-          ))}
-          {extraRows[group.title]}
-        </Card>
-      ))}
+      <StepSections
+        label="Grupos de nomenclatura"
+        sections={groups.map((group) => ({
+          value: group.title,
+          label: group.title,
+          content: (
+            <div className={styles.group}>
+              <p className={styles.hint}>{group.description}</p>
+              {group.categories.map((category) => (
+                <OptionChips
+                  key={category.key}
+                  legend={category.label}
+                  description={category.description}
+                  options={category.options.map((style) => ({ value: style, label: caseStyleLabels[style], example: category.example(namerWith({ [category.key]: style })) }))}
+                  value={naming[category.key]}
+                  onChange={(value) => updateNaming(category.key, value)}
+                  {...custom(`naming.${category.key}`)}
+                />
+              ))}
+              {extraRows[group.title]}
+            </div>
+          )
+        }))}
+      />
     </Flex>
   )
 }

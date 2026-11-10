@@ -6,5 +6,5 @@ export interface CheckCardProps {
   isChecked: boolean
   onToggle: () => void
   extra?: ReactNode
-  children?: ReactNode
+  details?: ReactNode
 }

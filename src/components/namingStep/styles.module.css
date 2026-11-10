@@ -1,4 +1,11 @@
+.group {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
 .hint {
+  margin: 0 0 var(--enchase-space-xs);
   font-size: var(--enchase-font-size-xs);
   color: var(--enchase-color-text-secondary);
 }

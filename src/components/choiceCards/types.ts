@@ -1,5 +1,4 @@
 import type { ChoiceOption } from "@utils/types/generator"
-import type { ReactNode } from "react"
 
 export interface ChoiceCardsProps<T extends string> {
   legend: string
@@ -8,7 +7,7 @@ export interface ChoiceCardsProps<T extends string> {
   value: T
   onChange: (value: T) => void
   minWidth?: string
-  renderExtra?: (option: ChoiceOption<T>) => ReactNode
+  hasExample?: boolean
   customText?: string
   onCustomChange?: (text: string | undefined) => void
 }

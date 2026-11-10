@@ -1,0 +1,10 @@
+.tabs {
+  min-inline-size: 0;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-xl);
+  padding-block-start: var(--enchase-space-lg);
+}

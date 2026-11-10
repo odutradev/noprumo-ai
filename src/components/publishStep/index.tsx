@@ -1,4 +1,4 @@
-import { Alert, Card, Flex, Grid, Input, Switch } from "enchase"
+import { Alert, Flex, Grid, Input, Switch } from "enchase"
 
 import { publishActionOptions, publishPromptOptions, publisherInvocationOptions } from "@assets/data/generator/publishOptions"
 import { buildPublishChoices, buildPublishCommand } from "@utils/functions/generator/publishing"
@@ -19,41 +19,18 @@ const PublishStep = () => {
   const hasActions = publishing.actions.length > 0
 
   return (
-    <Flex direction="column" gap="var(--enchase-space-lg)">
+    <Flex direction="column" gap="var(--enchase-space-xl)">
       <StepHeader title="Publicação" description="Use o project-publisher para subir a versão, buildar, empacotar e publicar no git ou no npm." />
 
-      <Card variant="outlined">
-        <Switch
-          label="Usar o project-publisher neste projeto"
-          checked={publishing.isEnabled}
-          onChange={(event) => set("isEnabled", event.target.checked)}
-          helperText="Desligado, a skill proíbe subir versão ou publicar sem pedido."
-        />
-      </Card>
+      <div className={styles.switchRow}>
+        <Switch label="Usar o project-publisher neste projeto" checked={publishing.isEnabled} onChange={(event) => set("isEnabled", event.target.checked)} helperText="Desligado, a skill proíbe subir versão ou publicar sem pedido." />
+      </div>
 
       {publishing.isEnabled && (
         <>
-          {publishing.prompt === "everyTask" && hasActions && (
-            <div className={styles.askPreview} aria-label="Prévia da pergunta que o Claude vai fazer">
-              <span className={styles.askEyebrow}>O Claude vai terminar cada tarefa assim</span>
-              <p className={styles.askRecap}>Tarefa concluída e commitada. Typecheck e build passando.</p>
-              <p className={styles.askQuestion}>Quer subir a versão e publicar?</p>
-              <div className={styles.askButtons}>
-                {choices.map((choice, index) => (
-                  <span key={choice.label} className={styles.askButton} data-primary={index === 0 || undefined} title={choice.command}>
-                    {choice.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <Card variant="outlined" header="Quando perguntar">
-            <ChoiceCards legend="Momento" options={publishPromptOptions} value={publishing.prompt} onChange={(value) => set("prompt", value)} {...custom("publishing.prompt")} minWidth="18rem" />
-          </Card>
-
-          <Card variant="outlined" header="Etapas da publicação">
-            <Grid minColumnWidth="18rem">
+          <fieldset className={styles.fieldset}>
+            <legend className={styles.legend}>Etapas da publicação</legend>
+            <Grid minColumnWidth="15rem" gap="var(--enchase-space-sm)">
               {publishActionOptions.map((action) => (
                 <CheckCard
                   key={action.value}
@@ -65,18 +42,7 @@ const PublishStep = () => {
                 />
               ))}
             </Grid>
-          </Card>
-
-          <Card variant="outlined" header="Execução">
-            <Flex direction="column" gap="var(--enchase-space-lg)">
-              <ChoiceCards legend="Como rodar" options={publisherInvocationOptions} value={publishing.invocation} onChange={(value) => set("invocation", value)} {...custom("publishing.invocation")} />
-              <Flex gap="var(--enchase-space-md)" wrap>
-                <Input label="Branch do push" value={publishing.branch} onChange={(event) => set("branch", event.target.value)} helperText="Padrão do project-publisher: master" />
-                <Input label="Script de build" value={publishing.buildScript} onChange={(event) => set("buildScript", event.target.value)} helperText="Script do package.json usado pelo --build" />
-                <Input label="Outras flags" value={publishing.extraFlags} onChange={(event) => set("extraFlags", event.target.value)} helperText="Adicionadas ao fim do comando, como --bump-manifest" />
-              </Flex>
-            </Flex>
-          </Card>
+          </fieldset>
 
           {hasActions ? (
             <CodeBlock code={buildPublishCommand(publishing)} title="Comando gerado" isCopyable />
@@ -85,6 +51,30 @@ const PublishStep = () => {
               Marque ao menos uma etapa para gerar o comando de publicação.
             </Alert>
           )}
+
+          <ChoiceCards legend="Quando perguntar" options={publishPromptOptions} value={publishing.prompt} onChange={(value) => set("prompt", value)} {...custom("publishing.prompt")} />
+
+          {publishing.prompt === "everyTask" && hasActions && (
+            <div className={styles.askPreview} aria-label="Prévia da pergunta que o Claude vai fazer">
+              <span className={styles.askEyebrow}>O Claude vai terminar cada tarefa assim</span>
+              <p className={styles.askQuestion}>Quer subir a versão e publicar?</p>
+              <div className={styles.askButtons}>
+                {choices.map((choice, index) => (
+                  <span key={choice.label} className={styles.askButton} data-primary={index === 0 || undefined} title={choice.command}>
+                    {choice.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <ChoiceCards legend="Como rodar" options={publisherInvocationOptions} value={publishing.invocation} onChange={(value) => set("invocation", value)} {...custom("publishing.invocation")} />
+
+          <div className={styles.inputs}>
+            <Input label="Branch do push" value={publishing.branch} onChange={(event) => set("branch", event.target.value)} helperText="Padrão: master" fullWidth />
+            <Input label="Script de build" value={publishing.buildScript} onChange={(event) => set("buildScript", event.target.value)} helperText="Usado pelo --build" fullWidth />
+            <Input label="Outras flags" value={publishing.extraFlags} onChange={(event) => set("extraFlags", event.target.value)} helperText="Como --bump-manifest" fullWidth />
+          </div>
 
           {publishing.actions.includes("push") && (
             <Alert variant="info" title="O --push commita tudo o que estiver pendente">

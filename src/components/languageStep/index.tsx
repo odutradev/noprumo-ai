@@ -5,6 +5,7 @@ import { databaseOptions, frameworkOptions, languageOptions } from "@assets/data
 import useCustomField from "@hooks/useCustomField"
 import ChoiceCards from "@components/choiceCards"
 import useGeneratorStore from "@stores/generator"
+import StepHeader from "@components/stepHeader"
 
 const LanguageStep = () => {
   const custom = useCustomField()
@@ -14,7 +15,8 @@ const LanguageStep = () => {
   const { frontend } = config
 
   return (
-    <Flex direction="column" gap="calc(var(--enchase-space-xl) * 1.25)">
+    <Flex direction="column" gap="var(--enchase-space-xl)">
+      <StepHeader title="Stack" description="As tecnologias que a skill vai assumir em todo o código." />
       <ChoiceCards
         legend="Linguagem"
         description="A linguagem principal do código."
@@ -40,7 +42,7 @@ const LanguageStep = () => {
             value={frontend.uiLibrary}
             onChange={(value) => updateFrontend("uiLibrary", value)}
             {...custom("frontend.uiLibrary")}
-            minWidth="17rem"
+           
           />
           <ChoiceCards
             legend="Estilização"
@@ -57,7 +59,7 @@ const LanguageStep = () => {
             value={frontend.state}
             onChange={(value) => updateFrontend("state", value)}
             {...custom("frontend.state")}
-            minWidth="17rem"
+           
           />
           <ChoiceCards
             legend="Requisições"
@@ -66,7 +68,7 @@ const LanguageStep = () => {
             value={frontend.dataFetching}
             onChange={(value) => updateFrontend("dataFetching", value)}
             {...custom("frontend.dataFetching")}
-            minWidth="18rem"
+           
           />
           <ChoiceCards
             legend="Validação de formulários"
@@ -74,7 +76,7 @@ const LanguageStep = () => {
             value={frontend.formValidation}
             onChange={(value) => updateFrontend("formValidation", value)}
             {...custom("frontend.formValidation")}
-            minWidth="18rem"
+           
           />
         </>
       ) : (

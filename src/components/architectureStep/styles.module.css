@@ -1,0 +1,35 @@
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  gap: var(--enchase-space-lg);
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-sm);
+  min-inline-size: 0;
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--enchase-font-size-sm);
+  font-weight: var(--enchase-font-weight-semibold);
+}
+
+.text {
+  margin: 0;
+  font-size: var(--enchase-font-size-sm);
+  color: var(--enchase-color-text-secondary);
+}
+
+.rules {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-xs);
+  margin: 0;
+  padding-inline-start: var(--enchase-space-lg);
+  font-size: var(--enchase-font-size-sm);
+  line-height: 1.5;
+}

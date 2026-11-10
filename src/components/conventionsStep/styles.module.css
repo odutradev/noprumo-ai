@@ -1,24 +1,25 @@
+.tabLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--enchase-space-xs);
+}
+
 .examples {
   display: flex;
   flex-direction: column;
   gap: var(--enchase-space-xs);
+  inline-size: min(28rem, 80vw);
 }
 
 .exampleTag {
   font-size: var(--enchase-font-size-xs);
   font-weight: var(--enchase-font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
-.exampleTag[data-kind='good'] {
+.exampleTag[data-kind="good"] {
   color: var(--enchase-color-success);
 }
 
-.exampleTag[data-kind='bad'] {
+.exampleTag[data-kind="bad"] {
   color: var(--enchase-color-error);
-}
-
-.extraField {
-  margin-block-start: var(--enchase-space-lg);
 }

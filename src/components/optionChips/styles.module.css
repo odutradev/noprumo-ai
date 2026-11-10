@@ -1,13 +1,13 @@
 .row {
   display: grid;
-  grid-template-columns: minmax(10rem, 14rem) 1fr;
+  grid-template-columns: minmax(9rem, 13rem) 1fr;
   gap: var(--enchase-space-md);
   align-items: center;
   margin: 0;
-  padding-block: var(--enchase-space-md);
+  padding-block: calc(var(--enchase-space-md) * 0.75);
   padding-inline: 0;
   border: 0;
-  border-block-end: var(--enchase-border-width) solid var(--enchase-color-border-light);
+  border-block-end: var(--enchase-border-width) solid var(--enchase-color-border);
   min-inline-size: 0;
 }
 
@@ -22,7 +22,8 @@
 .legend {
   float: left;
   padding: 0;
-  font-weight: var(--enchase-font-weight-semibold);
+  font-size: var(--enchase-font-size-sm);
+  font-weight: var(--enchase-font-weight-medium);
   color: var(--enchase-color-text-primary);
 }
 
@@ -36,7 +37,7 @@
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--enchase-space-sm);
+  gap: var(--enchase-space-xs);
   min-inline-size: 0;
 }
 
@@ -44,16 +45,15 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: calc(var(--enchase-space-xs) / 2);
   min-inline-size: 0;
   max-inline-size: 100%;
   padding-block: var(--enchase-space-xs);
   padding-inline: var(--enchase-space-sm);
-  border: var(--enchase-border-width-strong) solid var(--enchase-color-border-light);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
   border-radius: var(--enchase-radius-md);
   background: var(--enchase-color-surface);
   cursor: pointer;
-  transition: border-color 150ms ease, background-color 150ms ease;
+  transition: border-color 120ms ease, background-color 120ms ease;
 }
 
 .chip:hover {
@@ -62,7 +62,8 @@
 
 .chip[data-checked] {
   border-color: var(--enchase-color-primary);
-  background: color-mix(in srgb, var(--enchase-color-primary-container) 45%, var(--enchase-color-surface));
+  background: color-mix(in srgb, var(--enchase-color-primary) 6%, var(--enchase-color-surface));
+  box-shadow: 0 0 0 1px var(--enchase-color-primary);
 }
 
 .chip:has(.input:focus-visible) {
@@ -80,13 +81,9 @@
 
 .example {
   font-family: var(--enchase-font-mono);
-  font-size: var(--enchase-font-size-sm);
+  font-size: var(--enchase-font-size-xs);
   color: var(--enchase-color-text-primary);
   overflow-wrap: anywhere;
-}
-
-.chip[data-checked] .example {
-  color: var(--enchase-color-on-primary-container);
 }
 
 .customInput {
@@ -102,5 +99,11 @@
   .row {
     grid-template-columns: 1fr;
     gap: var(--enchase-space-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
   }
 }
