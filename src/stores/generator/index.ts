@@ -1,12 +1,12 @@
-import { persist } from 'zustand/middleware'
-import { create } from 'zustand'
+import { persist } from "zustand/middleware"
+import { create } from "zustand"
 
-import { bonfirePreset, codeGuidePreset } from '@assets/data/generator/presets'
+import { bonfirePreset, codeGuidePreset } from "@assets/data/generator/presets"
 
-import type { ConventionsConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle, PublishAction, PublishingConfig } from '@utils/types/generator'
-import type { GeneratorState } from './types'
+import type { ConventionsConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle, PublishAction, PublishingConfig } from "@utils/types/generator"
+import type { GeneratorState } from "./types"
 
-export const generatorSteps = ['project', 'language', 'architecture', 'naming', 'conventions', 'commits', 'publish', 'result'] as const
+export const generatorSteps = ["project", "language", "architecture", "naming", "conventions", "commits", "publish", "result"] as const
 
 const withConfig = (state: GeneratorState, config: GeneratorConfig) => ({
   config,
@@ -47,7 +47,7 @@ const useGeneratorStore = create<GeneratorState>()(
         }),
       applyPreset: (preset) => set((state) => withConfig(state, preset))
     }),
-    { name: 'minhaskill-generator', version: 5, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0 }) as GeneratorState }
+    { name: "minhaskill-generator", version: 5, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0 }) as GeneratorState }
   )
 )
 

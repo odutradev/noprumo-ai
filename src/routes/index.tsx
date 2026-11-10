@@ -1,8 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router'
+import { BrowserRouter, Routes, Route } from "react-router"
 
-import Providers from '@providers'
-import NotFound from '@pages/notFound'
-import Generator from '@pages/generator'
+import Generator from "@pages/generator"
+import NotFound from "@pages/notFound"
+import Providers from "@providers"
 
 export const Router = () => {
   return (

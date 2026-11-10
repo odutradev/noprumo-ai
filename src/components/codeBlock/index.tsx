@@ -1,20 +1,20 @@
-import { Button, useToast } from 'enchase'
-import { CheckIcon } from 'enchase/icons'
+import { Button, useToast } from "enchase"
+import { CheckIcon } from "enchase/icons"
 
-import { tokenize } from '@utils/functions/highlight'
+import { tokenize } from "@utils/functions/highlight"
+import styles from "./styles"
 
-import type { CodeBlockProps } from './types'
-import styles from './styles'
+import type { CodeBlockProps } from "./types"
 
 const CodeBlock = ({ code, title, copyable = false, plain = false, compact = false, maxHeight }: CodeBlockProps) => {
   const { success, error } = useToast()
-  const tokens = plain ? [{ text: code, type: 'plain' as const }] : tokenize(code)
+  const tokens = plain ? [{ text: code, type: "plain" as const }] : tokenize(code)
 
   const copy = () =>
     navigator.clipboard
       .writeText(code)
-      .then(() => success('Copiado para a área de transferência'))
-      .catch(() => error('Não foi possível copiar'))
+      .then(() => success("Copiado para a área de transferência"))
+      .catch(() => error("Não foi possível copiar"))
 
   return (
     <figure className={styles.block} data-compact={compact || undefined}>

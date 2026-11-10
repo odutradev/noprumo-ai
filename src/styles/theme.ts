@@ -1,8 +1,8 @@
-import type { ThemeInput } from 'enchase/theme'
+import type { ThemeInput } from "enchase/theme"
 
 export const theme: ThemeInput = {
-  brand: '#D97706',
-  shape: 'soft'
+  brand: "#D97706",
+  shape: "soft"
 }
 
-export const colorModeStorageKey = 'enchase-color-mode'
+export const colorModeStorageKey = "enchase-color-mode"

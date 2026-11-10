@@ -1,13 +1,13 @@
-import { useId } from 'react'
-import { Badge, Input } from 'enchase'
-import { CheckIcon } from 'enchase/icons'
+import { CheckIcon } from "enchase/icons"
+import { Badge, Input } from "enchase"
+import { useId } from "react"
 
-import CodeBlock from '@components/codeBlock'
+import CodeBlock from "@components/codeBlock"
+import styles from "./styles"
 
-import type { ChoiceCardsProps } from './types'
-import styles from './styles'
+import type { ChoiceCardsProps } from "./types"
 
-const ChoiceCards = <T extends string>({ legend, description, options, value, onChange, minWidth = '15rem', renderExtra, customText, onCustomChange }: ChoiceCardsProps<T>) => {
+const ChoiceCards = <T extends string>({ legend, description, options, value, onChange, minWidth = "15rem", renderExtra, customText, onCustomChange }: ChoiceCardsProps<T>) => {
   const name = useId()
   const isCustom = customText !== undefined
   const allowCustom = onCustomChange !== undefined
@@ -30,7 +30,7 @@ const ChoiceCards = <T extends string>({ legend, description, options, value, on
               <span className={styles.head}>
                 <span className={styles.label}>{option.label}</span>
                 {option.badge && (
-                  <Badge size="sm" variant={option.disabled ? 'neutral' : 'primary'}>
+                  <Badge size="sm" variant={option.disabled ? "neutral" : "primary"}>
                     {option.badge}
                   </Badge>
                 )}
@@ -47,7 +47,7 @@ const ChoiceCards = <T extends string>({ legend, description, options, value, on
         {allowCustom && (
           <div className={styles.card} data-checked={isCustom || undefined}>
             <label className={styles.customLabel}>
-              <input className={styles.input} type="radio" name={name} value="__custom" checked={isCustom} onChange={() => onCustomChange?.('')} />
+              <input className={styles.input} type="radio" name={name} value="__custom" checked={isCustom} onChange={() => onCustomChange?.("")} />
               <span className={styles.head}>
                 <span className={styles.label}>Outro</span>
                 <span className={styles.check} aria-hidden="true">
@@ -61,7 +61,7 @@ const ChoiceCards = <T extends string>({ legend, description, options, value, on
                 label={`Seu padrão para ${legend.toLowerCase()}`}
                 value={customText}
                 onChange={(event) => onCustomChange?.(event.target.value)}
-                error={customText.trim() ? undefined : 'Escreva o padrão para ele entrar na skill'}
+                error={customText.trim() ? undefined : "Escreva o padrão para ele entrar na skill"}
                 fullWidth
                 autoFocus
               />

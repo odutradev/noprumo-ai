@@ -1,23 +1,20 @@
-import { useMemo } from 'react'
-import { Card, Flex } from 'enchase'
+import { Card, Flex } from "enchase"
+import { useMemo } from "react"
 
-import {
-  aiAttributionOptions,
+import {aiAttributionOptions,
   branchNamingOptions,
   commitBodyOptions,
   commitFormatOptions,
   commitGranularityOptions,
   commitLanguageOptions,
   commitScopeOptions,
-  commitTimingOptions
-} from '@assets/data/generator/commitOptions'
-import { buildCommitExamples, renderCommitLog } from '@utils/functions/generator/commits'
-import ChoiceCards from '@components/choiceCards'
-import useGeneratorStore from '@stores/generator'
-import useCustomField from '@hooks/useCustomField'
-import StepHeader from '@components/stepHeader'
-import CodeBlock from '@components/codeBlock'
-
+  commitTimingOptions} from "@assets/data/generator/commitOptions"
+import { buildCommitExamples, renderCommitLog } from "@utils/functions/generator/commits"
+import useCustomField from "@hooks/useCustomField"
+import ChoiceCards from "@components/choiceCards"
+import useGeneratorStore from "@stores/generator"
+import StepHeader from "@components/stepHeader"
+import CodeBlock from "@components/codeBlock"
 
 const CommitsStep = () => {
   const custom = useCustomField()
@@ -31,7 +28,7 @@ const CommitsStep = () => {
     <Flex direction="column" gap="1.5rem">
       <StepHeader title="Commits" description="Como o Claude vai registrar o trabalho no git. O histórico abaixo muda a cada escolha." />
 
-      <CodeBlock code={log} title={`git log · ${count} ${count === 1 ? 'commit' : 'commits'} para uma feature`} plain />
+      <CodeBlock code={log} title={`git log · ${count} ${count === 1 ? "commit" : "commits"} para uma feature`} plain />
 
       <Card variant="outlined" header="Quantos commits">
         <Flex direction="column" gap="2rem">
@@ -40,16 +37,16 @@ const CommitsStep = () => {
             description="Como o trabalho de uma tarefa é dividido em commits."
             options={commitGranularityOptions}
             value={conventions.commitGranularity}
-            onChange={(value) => set('commitGranularity', value)}
-            {...custom('conventions.commitGranularity')}
+            onChange={(value) => set("commitGranularity", value)}
+            {...custom("conventions.commitGranularity")}
             minWidth="16rem"
           />
           <ChoiceCards
             legend="Quando commitar"
             options={commitTimingOptions}
             value={conventions.commitTiming}
-            onChange={(value) => set('commitTiming', value)}
-            {...custom('conventions.commitTiming')}
+            onChange={(value) => set("commitTiming", value)}
+            {...custom("conventions.commitTiming")}
             minWidth="18rem"
           />
         </Flex>
@@ -61,25 +58,25 @@ const CommitsStep = () => {
             legend="Formato"
             options={commitFormatOptions}
             value={conventions.commitFormat}
-            onChange={(value) => set('commitFormat', value)}
-            {...custom('conventions.commitFormat')}
+            onChange={(value) => set("commitFormat", value)}
+            {...custom("conventions.commitFormat")}
             minWidth="18rem"
           />
           <ChoiceCards
             legend="Idioma"
             options={commitLanguageOptions}
             value={conventions.commitLanguage}
-            onChange={(value) => set('commitLanguage', value)}
-            {...custom('conventions.commitLanguage')}
+            onChange={(value) => set("commitLanguage", value)}
+            {...custom("conventions.commitLanguage")}
             minWidth="18rem"
           />
-          {conventions.commitFormat === 'conventional' && (
+          {conventions.commitFormat === "conventional" && (
             <ChoiceCards
               legend="Escopo"
               options={commitScopeOptions}
               value={conventions.commitScope}
-              onChange={(value) => set('commitScope', value)}
-              {...custom('conventions.commitScope')}
+              onChange={(value) => set("commitScope", value)}
+              {...custom("conventions.commitScope")}
               minWidth="18rem"
             />
           )}
@@ -87,16 +84,16 @@ const CommitsStep = () => {
             legend="Corpo"
             options={commitBodyOptions}
             value={conventions.commitBody}
-            onChange={(value) => set('commitBody', value)}
-            {...custom('conventions.commitBody')}
+            onChange={(value) => set("commitBody", value)}
+            {...custom("conventions.commitBody")}
             minWidth="18rem"
           />
           <ChoiceCards
             legend="Coautoria de IA"
             options={aiAttributionOptions}
             value={conventions.aiAttribution}
-            onChange={(value) => set('aiAttribution', value)}
-            {...custom('conventions.aiAttribution')}
+            onChange={(value) => set("aiAttribution", value)}
+            {...custom("conventions.aiAttribution")}
             minWidth="18rem"
           />
         </Flex>
@@ -107,8 +104,8 @@ const CommitsStep = () => {
           legend="Nome das branches"
           options={branchNamingOptions}
           value={conventions.branchNaming}
-          onChange={(value) => set('branchNaming', value)}
-          {...custom('conventions.branchNaming')}
+          onChange={(value) => set("branchNaming", value)}
+          {...custom("conventions.branchNaming")}
           minWidth="18rem"
         />
       </Card>

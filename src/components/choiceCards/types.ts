@@ -1,6 +1,5 @@
-import type { ReactNode } from 'react'
-
-import type { ChoiceOption } from '@utils/types/generator'
+import type { ChoiceOption } from "@utils/types/generator"
+import type { ReactNode } from "react"
 
 export interface ChoiceCardsProps<T extends string> {
   legend: string

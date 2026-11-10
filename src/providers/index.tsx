@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react'
-import { useLocation, useNavigate } from 'react-router'
-import { ColorModeProvider, GlobalStyles, ToastProvider, UIProvider } from 'enchase'
-import { ptBR } from 'enchase/locales'
+import { ColorModeProvider, GlobalStyles, ToastProvider, UIProvider } from "enchase"
+import { useLocation, useNavigate } from "react-router"
+import { ptBR } from "enchase/locales"
 
-import { colorModeStorageKey, theme } from '@styles/theme'
+import { colorModeStorageKey, theme } from "@styles/theme"
+
+import type { ReactNode } from "react"
 
 interface ProvidersProps {
   children: ReactNode

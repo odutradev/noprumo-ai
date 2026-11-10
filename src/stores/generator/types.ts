@@ -1,4 +1,4 @@
-import type { ConventionsConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle, PublishAction, PublishingConfig } from '@utils/types/generator'
+import type { ConventionsConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle, PublishAction, PublishingConfig } from "@utils/types/generator"
 
 export interface GeneratorState {
   config: GeneratorConfig

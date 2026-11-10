@@ -1,8 +1,9 @@
-import { useId } from 'react'
-import { Input } from 'enchase'
+import { Input } from "enchase"
+import { useId } from "react"
 
-import type { OptionChipsProps } from './types'
-import styles from './styles'
+import styles from "./styles"
+
+import type { OptionChipsProps } from "./types"
 
 const OptionChips = <T extends string>({ legend, description, options, value, onChange, customText, onCustomChange }: OptionChipsProps<T>) => {
   const name = useId()
@@ -32,7 +33,7 @@ const OptionChips = <T extends string>({ legend, description, options, value, on
         })}
         {onCustomChange && (
           <label className={styles.chip} data-checked={isCustom || undefined}>
-            <input className={styles.input} type="radio" name={name} value="__custom" checked={isCustom} onChange={() => onCustomChange('')} />
+            <input className={styles.input} type="radio" name={name} value="__custom" checked={isCustom} onChange={() => onCustomChange("")} />
             <code className={styles.example}>…</code>
             <span className={styles.label}>Outro</span>
           </label>
@@ -43,7 +44,7 @@ const OptionChips = <T extends string>({ legend, description, options, value, on
               label={`Seu padrão para ${legend.toLowerCase()}`}
               value={customText}
               onChange={(event) => onCustomChange?.(event.target.value)}
-              error={customText.trim() ? undefined : 'Escreva o padrão para ele entrar na skill'}
+              error={customText.trim() ? undefined : "Escreva o padrão para ele entrar na skill"}
               fullWidth
               autoFocus
             />

@@ -1,8 +1,8 @@
-import ChoiceCards from '@components/choiceCards'
-import { projectTypeOptions } from '@assets/data/generator/options'
-import useGeneratorStore from '@stores/generator'
+import { projectTypeOptions } from "@assets/data/generator/options"
+import ChoiceCards from "@components/choiceCards"
+import useGeneratorStore from "@stores/generator"
 
-import type { EnabledProjectType } from '@utils/types/generator'
+import type { EnabledProjectType } from "@utils/types/generator"
 
 const ProjectStep = () => {
   const projectType = useGeneratorStore((state) => state.config.projectType)

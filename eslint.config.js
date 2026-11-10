@@ -1,7 +1,7 @@
 import perfectionist from "eslint-plugin-perfectionist"
-import babelParser from "@babel/eslint-parser"
-import stylistic from "@stylistic/eslint-plugin"
 import reactHooks from "eslint-plugin-react-hooks"
+import stylistic from "@stylistic/eslint-plugin"
+import babelParser from "@babel/eslint-parser"
 import globals from "globals"
 import js from "@eslint/js"
 

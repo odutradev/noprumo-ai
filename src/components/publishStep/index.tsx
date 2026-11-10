@@ -1,15 +1,14 @@
-import { Alert, Card, Flex, Grid, Input, Switch } from 'enchase'
+import { Alert, Card, Flex, Grid, Input, Switch } from "enchase"
 
-import { publishActionOptions, publishPromptOptions, publisherInvocationOptions } from '@assets/data/generator/publishOptions'
-import { buildPublishChoices, buildPublishCommand } from '@utils/functions/generator/publishing'
-import ChoiceCards from '@components/choiceCards'
-import useGeneratorStore from '@stores/generator'
-import useCustomField from '@hooks/useCustomField'
-import StepHeader from '@components/stepHeader'
-import CheckCard from '@components/checkCard'
-import CodeBlock from '@components/codeBlock'
-
-import styles from './styles'
+import { publishActionOptions, publishPromptOptions, publisherInvocationOptions } from "@assets/data/generator/publishOptions"
+import { buildPublishChoices, buildPublishCommand } from "@utils/functions/generator/publishing"
+import useCustomField from "@hooks/useCustomField"
+import ChoiceCards from "@components/choiceCards"
+import useGeneratorStore from "@stores/generator"
+import StepHeader from "@components/stepHeader"
+import CheckCard from "@components/checkCard"
+import CodeBlock from "@components/codeBlock"
+import styles from "./styles"
 
 const PublishStep = () => {
   const custom = useCustomField()
@@ -27,14 +26,14 @@ const PublishStep = () => {
         <Switch
           label="Usar o project-publisher neste projeto"
           checked={publishing.enabled}
-          onChange={(event) => set('enabled', event.target.checked)}
+          onChange={(event) => set("enabled", event.target.checked)}
           helperText="Desligado, a skill proíbe subir versão ou publicar sem pedido."
         />
       </Card>
 
       {publishing.enabled && (
         <>
-          {publishing.prompt === 'everyTask' && hasActions && (
+          {publishing.prompt === "everyTask" && hasActions && (
             <div className={styles.askPreview} aria-label="Prévia da pergunta que o Claude vai fazer">
               <span className={styles.askEyebrow}>O Claude vai terminar cada tarefa assim</span>
               <p className={styles.askRecap}>Tarefa concluída e commitada. Typecheck e build passando.</p>
@@ -50,7 +49,7 @@ const PublishStep = () => {
           )}
 
           <Card variant="outlined" header="Quando perguntar">
-            <ChoiceCards legend="Momento" options={publishPromptOptions} value={publishing.prompt} onChange={(value) => set('prompt', value)} {...custom('publishing.prompt')} minWidth="18rem" />
+            <ChoiceCards legend="Momento" options={publishPromptOptions} value={publishing.prompt} onChange={(value) => set("prompt", value)} {...custom("publishing.prompt")} minWidth="18rem" />
           </Card>
 
           <Card variant="outlined" header="Etapas da publicação">
@@ -70,11 +69,11 @@ const PublishStep = () => {
 
           <Card variant="outlined" header="Execução">
             <Flex direction="column" gap="1.5rem">
-              <ChoiceCards legend="Como rodar" options={publisherInvocationOptions} value={publishing.invocation} onChange={(value) => set('invocation', value)} {...custom('publishing.invocation')} />
+              <ChoiceCards legend="Como rodar" options={publisherInvocationOptions} value={publishing.invocation} onChange={(value) => set("invocation", value)} {...custom("publishing.invocation")} />
               <Flex gap="1rem" wrap>
-                <Input label="Branch do push" value={publishing.branch} onChange={(event) => set('branch', event.target.value)} helperText="Padrão do project-publisher: master" />
-                <Input label="Script de build" value={publishing.buildScript} onChange={(event) => set('buildScript', event.target.value)} helperText="Script do package.json usado pelo --build" />
-                <Input label="Outras flags" value={publishing.extraFlags} onChange={(event) => set('extraFlags', event.target.value)} helperText="Adicionadas ao fim do comando, como --bump-manifest" />
+                <Input label="Branch do push" value={publishing.branch} onChange={(event) => set("branch", event.target.value)} helperText="Padrão do project-publisher: master" />
+                <Input label="Script de build" value={publishing.buildScript} onChange={(event) => set("buildScript", event.target.value)} helperText="Script do package.json usado pelo --build" />
+                <Input label="Outras flags" value={publishing.extraFlags} onChange={(event) => set("extraFlags", event.target.value)} helperText="Adicionadas ao fim do comando, como --bump-manifest" />
               </Flex>
             </Flex>
           </Card>
@@ -87,7 +86,7 @@ const PublishStep = () => {
             </Alert>
           )}
 
-          {publishing.actions.includes('push') && (
+          {publishing.actions.includes("push") && (
             <Alert variant="info" title="O --push commita tudo o que estiver pendente">
               O project-publisher roda git add . e cria o commit chore: bump version to X. A skill manda o Claude commitar o trabalho da tarefa antes, seguindo as regras de commit.
             </Alert>

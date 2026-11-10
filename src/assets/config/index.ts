@@ -1,6 +1,6 @@
 export const appConfig = {
-  name: 'minhaskill',
-  description: ''
+  name: "minhaskill",
+  description: ""
 }
 
 export default appConfig

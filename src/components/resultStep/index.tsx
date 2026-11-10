@@ -1,15 +1,14 @@
-import { useMemo } from 'react'
-import { Alert, Button, Card, Flex, Input, SegmentedControl, Textarea, useToast } from 'enchase'
+import { Alert, Button, Card, Flex, Input, SegmentedControl, Textarea, useToast } from "enchase"
+import { useMemo } from "react"
 
-import { buildSkillMarkdown, slugify } from '@utils/functions/generator/skillMarkdown'
-import useGeneratorStore from '@stores/generator'
-import StepHeader from '@components/stepHeader'
-import CodeBlock from '@components/codeBlock'
-import { downloadText } from '@utils/functions/download'
+import { buildSkillMarkdown, slugify } from "@utils/functions/generator/skillMarkdown"
+import { downloadText } from "@utils/functions/download"
+import useGeneratorStore from "@stores/generator"
+import StepHeader from "@components/stepHeader"
+import CodeBlock from "@components/codeBlock"
+import styles from "./styles"
 
-import type { IdentifierLanguage } from '@utils/types/generator'
-
-import styles from './styles'
+import type { IdentifierLanguage } from "@utils/types/generator"
 
 const ResultStep = () => {
   const config = useGeneratorStore((state) => state.config)
@@ -22,8 +21,8 @@ const ResultStep = () => {
   const copy = () =>
     navigator.clipboard
       .writeText(markdown)
-      .then(() => success('SKILL.md copiado'))
-      .catch(() => error('Não foi possível copiar'))
+      .then(() => success("SKILL.md copiado"))
+      .catch(() => error("Não foi possível copiar"))
 
   return (
     <div className={styles.resultGrid}>
@@ -35,17 +34,17 @@ const ResultStep = () => {
             <SegmentedControl
               label="Idioma do prompt"
               items={[
-                { value: 'pt', label: 'Português' },
-                { value: 'en', label: 'English' }
+                { value: "pt", label: "Português" },
+                { value: "en", label: "English" }
               ]}
               value={config.outputLanguage}
-              onValueChange={(value: string) => update('outputLanguage', value as IdentifierLanguage)}
+              onValueChange={(value: string) => update("outputLanguage", value as IdentifierLanguage)}
             />
-            <Input label="Nome da skill" value={config.skillName} onChange={(event) => update('skillName', event.target.value)} helperText={`Identificador: ${slug}`} fullWidth />
+            <Input label="Nome da skill" value={config.skillName} onChange={(event) => update("skillName", event.target.value)} helperText={`Identificador: ${slug}`} fullWidth />
             <Textarea
               label="Quando usar"
               value={config.skillDescription}
-              onChange={(event) => update('skillDescription', event.target.value)}
+              onChange={(event) => update("skillDescription", event.target.value)}
               helperText="O Claude lê esta descrição para decidir quando ativar a skill. Escreva no mesmo idioma do prompt."
               rows={3}
               fullWidth
@@ -54,7 +53,7 @@ const ResultStep = () => {
         </Card>
 
         <Flex gap="0.75rem" wrap>
-          <Button onClick={() => downloadText('SKILL.md', markdown)}>Baixar SKILL.md</Button>
+          <Button onClick={() => downloadText("SKILL.md", markdown)}>Baixar SKILL.md</Button>
           <Button variant="outline" onClick={copy}>
             Copiar conteúdo
           </Button>
@@ -62,7 +61,7 @@ const ResultStep = () => {
 
         <Alert variant="success" title="Como instalar">
           <p>
-            Salve o arquivo em <code className={styles.inlineCode}>{installPath}</code> na raiz do projeto. Para valer em todos os seus projetos, use{' '}
+            Salve o arquivo em <code className={styles.inlineCode}>{installPath}</code> na raiz do projeto. Para valer em todos os seus projetos, use{" "}
             <code className={styles.inlineCode}>~/{installPath}</code>. A skill aparece na próxima sessão do Claude Code.
           </p>
         </Alert>

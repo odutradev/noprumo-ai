@@ -1,4 +1,4 @@
-import useGeneratorStore from '@stores/generator'
+import useGeneratorStore from "@stores/generator"
 
 const useCustomField = () => {
   const custom = useGeneratorStore((state) => state.config.custom)

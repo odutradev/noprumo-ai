@@ -1,4 +1,4 @@
-import type { TreeNode } from '@utils/types/generator'
+import type { TreeNode } from "@utils/types/generator"
 
 export interface FileTreeProps {
   nodes: TreeNode[]

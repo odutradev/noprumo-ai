@@ -1,14 +1,13 @@
-import { useMemo, useState } from 'react'
-import { Badge, Tabs } from 'enchase'
+import { useMemo, useState } from "react"
+import { Badge, Tabs } from "enchase"
 
-import { buildTree, getProjectFiles } from '@utils/functions/generator/architecture'
-import { buildSkillMarkdown } from '@utils/functions/generator/skillMarkdown'
-import { buildSampleFiles } from '@utils/functions/generator/codeSample'
-import useGeneratorStore from '@stores/generator'
-import CodeBlock from '@components/codeBlock'
-import FileTree from '@components/fileTree'
-
-import styles from './styles'
+import { buildTree, getProjectFiles } from "@utils/functions/generator/architecture"
+import { buildSkillMarkdown } from "@utils/functions/generator/skillMarkdown"
+import { buildSampleFiles } from "@utils/functions/generator/codeSample"
+import useGeneratorStore from "@stores/generator"
+import CodeBlock from "@components/codeBlock"
+import FileTree from "@components/fileTree"
+import styles from "./styles"
 
 const PreviewPanel = () => {
   const config = useGeneratorStore((state) => state.config)
@@ -20,14 +19,14 @@ const PreviewPanel = () => {
 
   const items = [
     {
-      value: 'code',
-      label: 'Código',
+      value: "code",
+      label: "Código",
       content: (
         <div className={styles.tabBody}>
           <div className={styles.fileList} role="group" aria-label="Arquivos de exemplo">
             {files.map((file, index) => (
               <button key={file.path} type="button" className={styles.fileButton} aria-pressed={file === activeFile} onClick={() => setFileIndex(index)}>
-                {file.path.split('/').slice(-2).join('/')}
+                {file.path.split("/").slice(-2).join("/")}
               </button>
             ))}
           </div>
@@ -35,12 +34,12 @@ const PreviewPanel = () => {
         </div>
       )
     },
-    { value: 'tree', label: 'Estrutura', content: <div className={styles.tabBody}><FileTree nodes={tree} label="Estrutura de pastas gerada" /></div> },
+    { value: "tree", label: "Estrutura", content: <div className={styles.tabBody}><FileTree nodes={tree} label="Estrutura de pastas gerada" /></div> },
     {
-      value: 'skill',
+      value: "skill",
       label: (
         <span className={styles.tabLabel}>
-          SKILL.md <Badge size="sm">{markdown.split('\n').length} linhas</Badge>
+          SKILL.md <Badge size="sm">{markdown.split("\n").length} linhas</Badge>
         </span>
       ),
       content: (

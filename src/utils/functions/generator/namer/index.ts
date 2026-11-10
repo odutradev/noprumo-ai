@@ -1,7 +1,7 @@
-import { words, type VocabularyKey } from '@assets/data/generator/vocabulary'
-import type { NamingConfig } from '@utils/types/generator'
+import { words, type VocabularyKey } from "@assets/data/generator/vocabulary"
+import { toCase } from "@utils/functions/generator/naming"
 
-import { toCase } from '@utils/functions/generator/naming'
+import type { NamingConfig } from "@utils/types/generator"
 
 export type TermRef = VocabularyKey | VocabularyKey[]
 
@@ -25,7 +25,7 @@ export interface Namer {
   handler: (key: TermRef) => string
 }
 
-const typePrefixes = { none: '', i: 'I', t: 'T' } as const
+const typePrefixes = { none: "", i: "I", t: "T" } as const
 
 export const createNamer = (naming: NamingConfig): Namer => {
   const get = (key: TermRef) => (Array.isArray(key) ? key : [key]).flatMap((item) => words(item, naming.language))
@@ -41,21 +41,21 @@ export const createNamer = (naming: NamingConfig): Namer => {
     constant: (key) => toCase(get(key), naming.constants),
     boolean: (key) => {
       const parts = get(key)
-      return toCase(naming.booleanPrefix === 'verb' ? parts : parts.slice(1), naming.variables)
+      return toCase(naming.booleanPrefix === "verb" ? parts : parts.slice(1), naming.variables)
     },
     errorCode: (key) => toCase(get(key), naming.errorCodes),
     file: (base, role) => {
       const baseWords = get(base)
-      if (!role) return naming.fileOrganization === 'folderIndex' ? `${toCase(baseWords, fileCase)}/index.ts` : `${toCase(baseWords, fileCase)}.ts`
+      if (!role) return naming.fileOrganization === "folderIndex" ? `${toCase(baseWords, fileCase)}/index.ts` : `${toCase(baseWords, fileCase)}.ts`
       const roleWords = get(role)
-      if (naming.fileOrganization === 'folderIndex') return `${toCase([...baseWords, ...roleWords], fileCase)}/index.ts`
-      if (naming.fileOrganization === 'roleSuffix') return `${toCase(baseWords, fileCase)}.${toCase(roleWords, fileCase === 'pascal' ? 'camel' : fileCase)}.ts`
+      if (naming.fileOrganization === "folderIndex") return `${toCase([...baseWords, ...roleWords], fileCase)}/index.ts`
+      if (naming.fileOrganization === "roleSuffix") return `${toCase(baseWords, fileCase)}.${toCase(roleWords, fileCase === "pascal" ? "camel" : fileCase)}.ts`
       return `${toCase([...baseWords, ...roleWords], fileCase)}.ts`
     },
     folder: (key) => toCase(get(key), naming.folders),
-    table: () => toCase(get(naming.tableNumber === 'plural' ? 'users' : 'user'), naming.dbTables),
+    table: () => toCase(get(naming.tableNumber === "plural" ? "users" : "user"), naming.dbTables),
     column: (key) => toCase(get(key), naming.dbColumns),
-    route: () => `/${toCase(get('userProfiles'), naming.routes)}`,
+    route: () => `/${toCase(get("userProfiles"), naming.routes)}`,
     component: (key) => toCase(get(key), naming.components),
     componentFolder: (key) => toCase(get(key), naming.componentFolders),
     handler: (key) => toCase([naming.handlerPrefix, ...get(key)], naming.functions)
