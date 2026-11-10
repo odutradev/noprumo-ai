@@ -1,22 +1,20 @@
-import { useSystemStore } from '@stores/system'
-import Icon from '@components/Icon'
+import { Button, Container, Flex, ThemeToggle, useToast } from 'enchase'
+
 import appConfig from '@/config'
 
 const HomePage = () => {
-  const { isDarkMode, toggleTheme } = useSystemStore()
+  const { success } = useToast()
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-6 bg-background text-on-surface">
-      <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg">{appConfig.name}</h1>
-      <button
-        type="button"
-        onClick={toggleTheme}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg ghost-border hover-ghost-border"
-      >
-        <Icon name={isDarkMode ? 'light_mode' : 'dark_mode'} className="w-5 h-5" />
-        <span className="font-label-caps text-label-caps">Toggle theme</span>
-      </button>
-    </main>
+    <Container as="main">
+      <Flex direction="column" align="center" justify="center" gap="1.5rem" style={{ minHeight: '100vh' }}>
+        <h1>{appConfig.name}</h1>
+        <Flex gap="0.75rem" align="center">
+          <Button onClick={() => success('Tudo configurado')}>Testar toast</Button>
+          <ThemeToggle />
+        </Flex>
+      </Flex>
+    </Container>
   )
 }
 

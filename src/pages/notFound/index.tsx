@@ -1,14 +1,14 @@
-import { Link } from 'react-router-dom'
+import { ButtonLink, Container, Flex } from 'enchase'
 
 const NotFoundPage = () => {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background text-on-surface">
-      <h1 className="font-headline-md text-headline-md">404</h1>
-      <p className="font-body-md text-body-md text-on-surface-variant">Page not found</p>
-      <Link to="/" className="text-primary hover:underline">
-        Go home
-      </Link>
-    </main>
+    <Container as="main">
+      <Flex direction="column" align="center" justify="center" gap="1rem" style={{ minHeight: '100vh' }}>
+        <h1>404</h1>
+        <p>Página não encontrada</p>
+        <ButtonLink href="/">Voltar ao início</ButtonLink>
+      </Flex>
+    </Container>
   )
 }
 
