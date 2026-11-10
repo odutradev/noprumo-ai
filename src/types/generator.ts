@@ -25,6 +25,9 @@ export type CommitScope = 'none' | 'scoped'
 export type CommitBody = 'subjectOnly' | 'withBody'
 export type CommitTiming = 'afterTask' | 'onRequest'
 export type AiAttribution = 'never' | 'coAuthor'
+export type PublishAction = 'bumpPackage' | 'bumpManifest' | 'build' | 'buildZip' | 'clean' | 'push' | 'npmPublish'
+export type PublisherInvocation = 'npx' | 'global' | 'script'
+export type PublishPrompt = 'everyTask' | 'onRequest'
 
 export type CaseStyle = 'camel' | 'pascal' | 'snake' | 'screamingSnake' | 'kebab'
 export type IdentifierLanguage = 'en' | 'pt'
@@ -134,6 +137,15 @@ export interface FrontendConfig {
   asyncActions: AsyncActions
 }
 
+export interface PublishingConfig {
+  enabled: boolean
+  actions: PublishAction[]
+  branch: string
+  buildScript: string
+  invocation: PublisherInvocation
+  prompt: PublishPrompt
+}
+
 export interface GeneratorConfig {
   skillName: string
   skillDescription: string
@@ -145,6 +157,7 @@ export interface GeneratorConfig {
   naming: NamingConfig
   conventions: ConventionsConfig
   frontend: FrontendConfig
+  publishing: PublishingConfig
 }
 
 export type EnabledProjectType = Extract<ProjectType, 'backend' | 'frontend'>

@@ -1,4 +1,4 @@
-import type { EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig } from '@/types/generator'
+import type { EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, PublishingConfig } from '@/types/generator'
 
 const frontendDefaults: FrontendConfig = {
   framework: 'react',
@@ -12,6 +12,15 @@ const frontendDefaults: FrontendConfig = {
   componentStructure: 'folderTriad',
   apiLayer: 'actionsFolder',
   asyncActions: 'useAction'
+}
+
+const publishingDefaults: PublishingConfig = {
+  enabled: true,
+  actions: ['bumpPackage', 'build', 'push'],
+  branch: 'master',
+  buildScript: 'build',
+  invocation: 'npx',
+  prompt: 'everyTask'
 }
 
 const componentNaming: Pick<NamingConfig, 'components' | 'componentFolders' | 'handlerPrefix'> = {
@@ -76,7 +85,8 @@ export const codeGuidePreset: GeneratorConfig = {
     aiAttribution: 'never',
     principles: ['earlyReturn', 'immutability', 'noAny', 'noConsoleLog', 'parallelAsync', 'leanResponses', 'repositoryIsolation', 'auditMutations', 'standardPagination', 'noReinvent']
   },
-  frontend: frontendDefaults
+  frontend: frontendDefaults,
+  publishing: { ...publishingDefaults, actions: ['bumpPackage', 'push'] }
 }
 
 export const blankPreset: GeneratorConfig = {
@@ -107,7 +117,8 @@ export const blankPreset: GeneratorConfig = {
     comments: 'publicOnly',
     branchNaming: 'free',
     principles: ['earlyReturn', 'noAny', 'noConsoleLog']
-  }
+  },
+  publishing: { ...publishingDefaults, enabled: false }
 }
 
 export const bonfirePreset: GeneratorConfig = {
@@ -135,7 +146,8 @@ export const bonfirePreset: GeneratorConfig = {
     testing: 'none',
     principles: ['routeGuard', 'permissionCheck', 'lazyRoutes', 'mobileFirst', 'accessibility', 'themeTokens', 'persistedStores', 'noAny']
   },
-  frontend: frontendDefaults
+  frontend: frontendDefaults,
+  publishing: publishingDefaults
 }
 
 export const blankFrontendPreset: GeneratorConfig = {
@@ -169,7 +181,8 @@ export const blankFrontendPreset: GeneratorConfig = {
     componentStructure: 'singleFile',
     apiLayer: 'colocated',
     asyncActions: 'mutationHook'
-  }
+  },
+  publishing: { ...publishingDefaults, enabled: false }
 }
 
 export const presets: Record<EnabledProjectType, { mine: GeneratorConfig; neutral: GeneratorConfig }> = {
