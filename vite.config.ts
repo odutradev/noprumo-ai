@@ -19,7 +19,11 @@ export default defineConfig(({ mode }) => {
         '@routes': path.resolve(__dirname, './src/routes'),
         '@utils': path.resolve(__dirname, './src/utils'),
         '@': path.resolve(__dirname, './src')
-      }
+      },
+      dedupe: ['react', 'react-dom']
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react-dom/client', 'react-router', 'zustand', 'zustand/middleware', 'enchase', 'enchase/icons', 'enchase/locales']
     },
     server: {
       host: '0.0.0.0',
