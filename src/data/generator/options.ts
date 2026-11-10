@@ -4,6 +4,7 @@ import type {
   ChoiceOption,
   CommentsPolicy,
   Database,
+  EnabledProjectType,
   ErrorHandling,
   ExportStyle,
   Framework,
@@ -25,7 +26,7 @@ import type {
 
 export const projectTypeOptions: ChoiceOption<ProjectType>[] = [
   { value: 'backend', label: 'Backend', description: 'APIs, serviços, workers e integrações rodando no servidor.', example: 'POST /users/create\n→ 201 { id }' },
-  { value: 'frontend', label: 'Frontend', description: 'Aplicações web, componentes e design system.', badge: 'Em breve', disabled: true },
+  { value: 'frontend', label: 'Frontend', description: 'Aplicações web, dashboards, componentes e design system.', example: '<UserCard name="Ana" />' },
   { value: 'mobile', label: 'Mobile', description: 'Apps React Native, Expo ou nativos.', badge: 'Em breve', disabled: true },
   { value: 'fullstack', label: 'Fullstack', description: 'Monorepo com front e back compartilhando tipos.', badge: 'Em breve', disabled: true }
 ]
@@ -130,6 +131,53 @@ export const architectureInfo: Record<Architecture, ArchitectureInfo> = {
       'Contextos se comunicam por serviços de aplicação ou eventos, nunca pelos modelos internos.'
     ]
   },
+  typeFolders: {
+    label: 'Pastas por tipo',
+    badge: 'Meu padrão',
+    summary: 'A raiz de `src` separa o código pelo papel: actions de API, componentes, hooks, páginas, rotas, stores, estilos e utilitários.',
+    whenToUse: 'Dashboards e SPAs em que componentes e hooks são reaproveitados por várias páginas.',
+    rules: [
+      'Chamadas à API ficam em `src/actions/<dominio>`. Componentes e páginas nunca chamam o client HTTP direto.',
+      'Componentes reutilizáveis ficam em `src/components`, um por pasta.',
+      'Hooks customizados ficam em `src/hooks`, um por pasta, sempre com prefixo `use`.',
+      'Cada página fica em `src/pages/<pagina>` e declara seus metadados de layout (título, permissões).',
+      'Estado global fica em `src/stores/<store>`. Estado local fica no componente.',
+      'Funções auxiliares, tipos e validações ficam em `src/utils/functions`, `src/utils/types` e `src/utils/validations`.'
+    ]
+  },
+  featureFolders: {
+    label: 'Por feature',
+    summary: 'Cada feature agrupa seus componentes, hooks, API e estado. O que é compartilhado fica em `shared`.',
+    whenToUse: 'Produtos grandes, com times divididos por área e features que evoluem separadas.',
+    rules: [
+      'Tudo de uma feature fica em `src/features/<feature>`.',
+      'Uma feature só importa outra pelo `index.ts` público dela.',
+      'Componentes genéricos, hooks e utilitários ficam em `src/shared`.',
+      'Páginas só compõem features, sem regra própria.'
+    ]
+  },
+  atomic: {
+    label: 'Atomic Design',
+    summary: 'Componentes em níveis: atoms, molecules, organisms e templates, compostos pelas páginas.',
+    whenToUse: 'Projetos com design system próprio e muitos componentes visuais reutilizáveis.',
+    rules: [
+      'Atoms não importam outros componentes.',
+      'Molecules combinam atoms; organisms combinam molecules e atoms.',
+      'Templates definem o layout; páginas preenchem os templates com dados.',
+      'Regra de negócio e chamadas à API ficam fora dos componentes visuais.'
+    ]
+  },
+  featureSliced: {
+    label: 'Feature-Sliced Design',
+    summary: 'Camadas app, pages, widgets, features, entities e shared, cada uma dividida em slices e segmentos (ui, model, api).',
+    whenToUse: 'Aplicações grandes que precisam de regras rígidas de dependência entre partes.',
+    rules: [
+      'Uma camada só importa camadas abaixo dela: app → pages → widgets → features → entities → shared.',
+      'Slices da mesma camada não importam umas das outras.',
+      'Cada slice expõe só o que está no seu `index.ts`.',
+      'Segmentos padronizados: `ui` para componentes, `model` para estado e `api` para requisições.'
+    ]
+  },
   verticalSlice: {
     label: 'Vertical Slice',
     summary: 'Cada caso de uso é uma fatia completa (endpoint, validação e lógica) em uma pasta própria.',
@@ -143,7 +191,10 @@ export const architectureInfo: Record<Architecture, ArchitectureInfo> = {
   }
 }
 
-export const architectureOrder: Architecture[] = ['domainActions', 'layered', 'clean', 'hexagonal', 'modular', 'ddd', 'verticalSlice']
+export const architectureOrder: Record<EnabledProjectType, Architecture[]> = {
+  backend: ['domainActions', 'layered', 'clean', 'hexagonal', 'modular', 'ddd', 'verticalSlice'],
+  frontend: ['typeFolders', 'featureFolders', 'atomic', 'featureSliced']
+}
 
 export const paradigmOptions: ChoiceOption<Paradigm>[] = [
   { value: 'objects', label: 'Funções e objetos', description: 'Módulos exportam funções ou objetos literais com métodos.', example: 'const userRepository = {\n  findById: async (id: string) => UserModel.findById(id)\n}' },
@@ -231,6 +282,7 @@ export const commentsOptions: ChoiceOption<CommentsPolicy>[] = [
 
 export interface PrincipleInfo {
   value: Principle
+  scope: EnabledProjectType[]
   label: string
   description: string
   good: string
@@ -238,14 +290,21 @@ export interface PrincipleInfo {
 }
 
 export const principleOptions: PrincipleInfo[] = [
-  { value: 'earlyReturn', label: 'Retornos antecipados', description: 'Valide e saia cedo, sem `if/else` aninhado.', good: "if (!user) return manageError({ code: 'not_found' })\nreturn user", bad: 'if (user) {\n  return user\n} else {\n  return error\n}' },
-  { value: 'immutability', label: 'Imutabilidade', description: 'Sem `let`, `for` e `while`. Use `map`, `filter`, `reduce` e spread.', good: 'const names = users.map((user) => user.name)', bad: 'let names = []\nfor (const user of users) names.push(user.name)' },
-  { value: 'noAny', label: 'Tipagem estrita', description: '`any` é proibido. Tipos vêm dos schemas e de interfaces.', good: 'type User = z.infer<typeof userSchema>', bad: 'const user: any = req.body' },
-  { value: 'noConsoleLog', label: 'Logger em vez de console.log', description: 'Nada de `console.log` em produção. Use o logger do projeto.', good: "const logger = createLocalLogger('users')\nlogger.error(error)", bad: 'console.log(error)' },
-  { value: 'parallelAsync', label: 'Assincronismo paralelo', description: '`Promise.all` para chamadas sem dependência entre si.', good: 'const [user, plans] = await Promise.all([findUser(id), listPlans()])', bad: 'const user = await findUser(id)\nconst plans = await listPlans()' },
-  { value: 'leanResponses', label: 'Respostas enxutas', description: 'Sem mensagens redundantes nem eco do payload. O status HTTP já informa o resultado.', good: 'return { id: newUser.id }', bad: "return { message: 'Criado com sucesso', ...data }" },
-  { value: 'repositoryIsolation', label: 'Banco isolado em repositórios', description: 'Handlers nunca importam models. Outros domínios usam o repositório exposto.', good: "import userRepository from '@domains/users/repositories/user'", bad: "import UserModel from '@domains/users/repositories/user/model'" },
-  { value: 'auditMutations', label: 'Auditoria em mutações', description: 'Toda criação, edição ou exclusão registra um log de auditoria.', good: "await createAuditLog({ actorId, action: 'create_user', entity: 'User', entityId })" },
-  { value: 'standardPagination', label: 'Paginação padronizada', description: 'Listagens recebem `page` e `limit` e respondem `{ meta, data }`.', good: '{ "meta": { "total": 45, "totalPages": 5, "limit": 10, "page": 1 }, "data": [] }' },
-  { value: 'noReinvent', label: 'Não reinventar utilitários', description: 'Antes de criar um helper, procure um equivalente no core do projeto.', good: "import { formatDateBR } from '@utils/date'", bad: 'const format = (d: Date) => d.toLocaleDateString()' }
+  { value: 'earlyReturn', scope: ['backend', 'frontend'], label: 'Retornos antecipados', description: 'Valide e saia cedo, sem `if/else` aninhado.', good: "if (!user) return manageError({ code: 'not_found' })\nreturn user", bad: 'if (user) {\n  return user\n} else {\n  return error\n}' },
+  { value: 'immutability', scope: ['backend', 'frontend'], label: 'Imutabilidade', description: 'Sem `let`, `for` e `while`. Use `map`, `filter`, `reduce` e spread.', good: 'const names = users.map((user) => user.name)', bad: 'let names = []\nfor (const user of users) names.push(user.name)' },
+  { value: 'noAny', scope: ['backend', 'frontend'], label: 'Tipagem estrita', description: '`any` é proibido. Tipos vêm dos schemas e de interfaces.', good: 'type User = z.infer<typeof userSchema>', bad: 'const user: any = req.body' },
+  { value: 'noConsoleLog', scope: ['backend', 'frontend'], label: 'Logger em vez de console.log', description: 'Nada de `console.log` em produção. Use o logger do projeto.', good: "const logger = createLocalLogger('users')\nlogger.error(error)", bad: 'console.log(error)' },
+  { value: 'parallelAsync', scope: ['backend', 'frontend'], label: 'Assincronismo paralelo', description: '`Promise.all` para chamadas sem dependência entre si.', good: 'const [user, plans] = await Promise.all([findUser(id), listPlans()])', bad: 'const user = await findUser(id)\nconst plans = await listPlans()' },
+  { value: 'leanResponses', scope: ['backend'], label: 'Respostas enxutas', description: 'Sem mensagens redundantes nem eco do payload. O status HTTP já informa o resultado.', good: 'return { id: newUser.id }', bad: "return { message: 'Criado com sucesso', ...data }" },
+  { value: 'repositoryIsolation', scope: ['backend'], label: 'Banco isolado em repositórios', description: 'Handlers nunca importam models. Outros domínios usam o repositório exposto.', good: "import userRepository from '@domains/users/repositories/user'", bad: "import UserModel from '@domains/users/repositories/user/model'" },
+  { value: 'auditMutations', scope: ['backend'], label: 'Auditoria em mutações', description: 'Toda criação, edição ou exclusão registra um log de auditoria.', good: "await createAuditLog({ actorId, action: 'create_user', entity: 'User', entityId })" },
+  { value: 'standardPagination', scope: ['backend'], label: 'Paginação padronizada', description: 'Listagens recebem `page` e `limit` e respondem `{ meta, data }`.', good: '{ "meta": { "total": 45, "totalPages": 5, "limit": 10, "page": 1 }, "data": [] }' },
+  { value: 'noReinvent', scope: ['backend', 'frontend'], label: 'Não reinventar utilitários', description: 'Antes de criar um helper, procure um equivalente no core do projeto.', good: "import { formatDateBR } from '@utils/date'", bad: 'const format = (d: Date) => d.toLocaleDateString()' },
+  { value: 'routeGuard', scope: ['frontend'], label: 'Rotas privadas protegidas', description: 'Rotas privadas sem token redirecionam para o login.', good: "return privateRoute && !token ? <Navigate to=\"/signin\" /> : element" },
+  { value: 'permissionCheck', scope: ['frontend'], label: 'Permissões por página', description: 'Cada página declara as permissões exigidas, checadas pela store do sistema.', good: "const metadata: Partial<LayoutProps> = { requiredPermissions: ['manage_users'] }", bad: "if (user.role === 'admin') { ... }" },
+  { value: 'lazyRoutes', scope: ['frontend'], label: 'Lazy loading de rotas', description: 'Páginas carregadas sob demanda, com code splitting por rota.', good: "const UsersPage = lazy(() => import('@pages/users'))" },
+  { value: 'mobileFirst', scope: ['frontend'], label: 'Mobile-first', description: 'Estilos partem do celular e crescem com breakpoints.', good: 'padding: 1rem;\n@media (min-width: 768px) { padding: 2rem; }', bad: "@media (max-width: 768px) { padding: 1rem; }" },
+  { value: 'accessibility', scope: ['frontend'], label: 'Acessibilidade (WCAG)', description: 'Elementos semânticos, rótulos em botões de ícone e foco visível.', good: '<IconButton aria-label="Excluir usuário">', bad: '<div onClick={remove}>' },
+  { value: 'themeTokens', scope: ['frontend'], label: 'Cores e espaços do tema', description: 'Nada de cor ou espaçamento fixo: use o tema.', good: 'color: ${({ theme }) => theme.palette.primary.main};', bad: 'color: #1976d2;' },
+  { value: 'persistedStores', scope: ['frontend'], label: 'Stores persistidas', description: 'Estado que precisa sobreviver ao reload usa o middleware de persistência.', good: "create<UserStore>()(persist((set) => ({ ... }), { name: 'user' }))" }
 ]

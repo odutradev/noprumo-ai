@@ -1,4 +1,4 @@
-import type { BooleanPrefix, CaseStyle, FileOrganization, IdentifierLanguage, NamingConfig, TableNumber, TypePrefix } from '@/types/generator'
+import type { BooleanPrefix, CaseStyle, FileOrganization, HandlerPrefix, IdentifierLanguage, NamingConfig, TableNumber, TypePrefix } from '@/types/generator'
 import type { Namer } from '@/utils/generator/namer'
 
 type CaseKey = { [K in keyof NamingConfig]: NamingConfig[K] extends CaseStyle ? K : never }[keyof NamingConfig]
@@ -76,4 +76,32 @@ export const fileOrganizationOptions: { value: FileOrganization; label: string; 
 export const tableNumberOptions: { value: TableNumber; label: string }[] = [
   { value: 'plural', label: 'Plural' },
   { value: 'singular', label: 'Singular' }
+]
+
+export const frontendNamingGroups: NamingGroup[] = [
+  {
+    title: 'Código',
+    description: 'Identificadores que aparecem dentro dos arquivos.',
+    categories: [
+      { key: 'components', label: 'Componentes', description: 'Componentes React e styled components.', options: ['pascal', 'camel'], example: (n) => `<${n.component('userCard')} />` },
+      { key: 'functions', label: 'Funções e hooks', description: 'Funções, actions e hooks (sempre com prefixo use).', options: ['camel', 'snake'], example: (n) => `${n.fn('updateUser')}(), ${n.fn('useUserStore')}()` },
+      { key: 'variables', label: 'Variáveis e props', description: 'Valores locais, estados e props.', options: ['camel', 'snake'], example: (n) => `${n.variable('userId')}, ${n.variable('foundUser')}` },
+      { key: 'types', label: 'Tipos e interfaces', description: 'Props, tipos de domínio e stores.', options: ['pascal', 'camel'], example: (n) => `interface ${n.type('userCardProps')} {}` },
+      { key: 'constants', label: 'Constantes e dados estáticos', description: 'Configurações e listas fixas.', options: ['camel', 'screamingSnake', 'pascal'], example: (n) => `const ${n.constant('baseUrl')} = import.meta.env.VITE_BASEURL` }
+    ]
+  },
+  {
+    title: 'Arquivos e pastas',
+    description: 'Como o projeto aparece no explorador de arquivos.',
+    categories: [
+      { key: 'componentFolders', label: 'Pastas e arquivos de componentes', description: 'Nome da pasta ou do arquivo de cada componente.', options: ['camel', 'pascal', 'kebab'], example: (n) => `${n.componentFolder('userCard')}/` },
+      { key: 'files', label: 'Arquivos de utilitários', description: 'Actions, stores, utils e validações.', options: ['camel', 'kebab', 'pascal', 'snake'], example: (n) => n.file('user', 'service') },
+      { key: 'folders', label: 'Pastas', description: 'Diretórios de páginas, hooks e utilitários.', options: ['camel', 'kebab', 'snake'], example: (n) => `${n.folder('validations')}/` }
+    ]
+  }
+]
+
+export const handlerPrefixOptions: { value: HandlerPrefix; label: string }[] = [
+  { value: 'handle', label: 'Prefixo handle' },
+  { value: 'on', label: 'Prefixo on' }
 ]

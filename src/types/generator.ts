@@ -2,7 +2,29 @@ export type ProjectType = 'backend' | 'frontend' | 'mobile' | 'fullstack'
 export type Language = 'typescript' | 'javascript' | 'python' | 'go'
 export type Framework = 'express' | 'fastify' | 'nestjs' | 'hono'
 export type Database = 'mongoose' | 'prisma' | 'drizzle' | 'typeorm' | 'none'
-export type Architecture = 'domainActions' | 'layered' | 'clean' | 'hexagonal' | 'modular' | 'ddd' | 'verticalSlice'
+export type BackendArchitecture = 'domainActions' | 'layered' | 'clean' | 'hexagonal' | 'modular' | 'ddd' | 'verticalSlice'
+export type FrontendArchitecture = 'typeFolders' | 'featureFolders' | 'atomic' | 'featureSliced'
+export type Architecture = BackendArchitecture | FrontendArchitecture
+
+export type FrontendFramework = 'react' | 'next' | 'vue' | 'angular'
+export type UiLibrary = 'mui' | 'shadcn' | 'chakra' | 'antd' | 'none'
+export type Styling = 'styledComponents' | 'tailwind' | 'cssModules' | 'sass'
+export type StateManagement = 'zustand' | 'redux' | 'context' | 'jotai'
+export type DataFetching = 'axios' | 'fetch' | 'reactQuery'
+export type FormValidation = 'yup' | 'zod' | 'none'
+export type E2eTesting = 'cypress' | 'playwright' | 'none'
+export type ComponentDeclaration = 'arrowFC' | 'arrowProps' | 'function'
+export type ComponentStructure = 'folderTriad' | 'folderNamed' | 'singleFile'
+export type ApiLayer = 'actionsFolder' | 'servicesFolder' | 'colocated'
+export type AsyncActions = 'useAction' | 'tryCatch' | 'mutationHook'
+export type HandlerPrefix = 'handle' | 'on'
+export type CommitFormat = 'conventional' | 'free'
+export type BranchNaming = 'typeSlash' | 'free'
+export type CommitGranularity = 'logical' | 'perStep' | 'single'
+export type CommitScope = 'none' | 'scoped'
+export type CommitBody = 'subjectOnly' | 'withBody'
+export type CommitTiming = 'afterTask' | 'onRequest'
+export type AiAttribution = 'never' | 'coAuthor'
 
 export type CaseStyle = 'camel' | 'pascal' | 'snake' | 'screamingSnake' | 'kebab'
 export type IdentifierLanguage = 'en' | 'pt'
@@ -38,6 +60,13 @@ export type Principle =
   | 'auditMutations'
   | 'standardPagination'
   | 'noReinvent'
+  | 'routeGuard'
+  | 'permissionCheck'
+  | 'lazyRoutes'
+  | 'mobileFirst'
+  | 'accessibility'
+  | 'themeTokens'
+  | 'persistedStores'
 
 export interface NamingConfig {
   language: IdentifierLanguage
@@ -58,6 +87,9 @@ export interface NamingConfig {
   tableNumber: TableNumber
   dbColumns: CaseStyle
   routes: CaseStyle
+  components: CaseStyle
+  componentFolders: CaseStyle
+  handlerPrefix: HandlerPrefix
 }
 
 export interface ConventionsConfig {
@@ -77,7 +109,29 @@ export interface ConventionsConfig {
   quotes: Quotes
   comments: CommentsPolicy
   commentsLanguage: IdentifierLanguage
+  commitFormat: CommitFormat
+  commitLanguage: IdentifierLanguage
+  branchNaming: BranchNaming
+  commitGranularity: CommitGranularity
+  commitScope: CommitScope
+  commitBody: CommitBody
+  commitTiming: CommitTiming
+  aiAttribution: AiAttribution
   principles: Principle[]
+}
+
+export interface FrontendConfig {
+  framework: FrontendFramework
+  uiLibrary: UiLibrary
+  styling: Styling
+  state: StateManagement
+  dataFetching: DataFetching
+  formValidation: FormValidation
+  e2e: E2eTesting
+  componentDeclaration: ComponentDeclaration
+  componentStructure: ComponentStructure
+  apiLayer: ApiLayer
+  asyncActions: AsyncActions
 }
 
 export interface GeneratorConfig {
@@ -90,7 +144,10 @@ export interface GeneratorConfig {
   architecture: Architecture
   naming: NamingConfig
   conventions: ConventionsConfig
+  frontend: FrontendConfig
 }
+
+export type EnabledProjectType = Extract<ProjectType, 'backend' | 'frontend'>
 
 export interface ChoiceOption<T extends string> {
   value: T
