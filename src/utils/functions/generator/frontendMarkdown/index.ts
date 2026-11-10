@@ -1,14 +1,4 @@
-import {apiLayerOptions,
-  asyncActionsOptions,
-  componentDeclarationOptions,
-  componentStructureOptions,
-  dataFetchingOptions,
-  e2eOptions,
-  formValidationOptions,
-  frontendFrameworkOptions,
-  stateOptions,
-  stylingOptions,
-  uiLibraryOptions} from "@assets/data/generator/frontendOptions"
+import { apiLayerOptions, asyncActionsOptions, componentDeclarationOptions, componentStructureOptions, dataFetchingOptions, e2eOptions, formValidationOptions, frontendFrameworkOptions, stateOptions, stylingOptions, uiLibraryOptions } from "@assets/data/generator/frontendOptions"
 import { commentsOptions, exportOptions, importAliasOptions, importOrderOptions, languageOptions, quoteOptions, semicolonOptions, testSuffixOptions, testingOptions } from "@assets/data/generator/options"
 import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { code, extraPrinciples, gitSection, principlesSection, samplesSection, selectedPrinciples } from "@utils/functions/generator/markdownHelpers"

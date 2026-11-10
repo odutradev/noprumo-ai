@@ -1,14 +1,7 @@
 import { Card, Flex } from "enchase"
 import { useMemo } from "react"
 
-import {aiAttributionOptions,
-  branchNamingOptions,
-  commitBodyOptions,
-  commitFormatOptions,
-  commitGranularityOptions,
-  commitLanguageOptions,
-  commitScopeOptions,
-  commitTimingOptions} from "@assets/data/generator/commitOptions"
+import { aiAttributionOptions, branchNamingOptions, commitBodyOptions, commitFormatOptions, commitGranularityOptions, commitLanguageOptions, commitScopeOptions, commitTimingOptions } from "@assets/data/generator/commitOptions"
 import { buildCommitExamples, renderCommitLog } from "@utils/functions/generator/commits"
 import useCustomField from "@hooks/useCustomField"
 import ChoiceCards from "@components/choiceCards"

@@ -1,21 +1,6 @@
 import { Badge, Card, Flex, Grid, Textarea } from "enchase"
 
-import {apiDocsOptions,
-  commentsOptions,
-  errorHandlingOptions,
-  exportOptions,
-  functionStyleOptions,
-  importAliasOptions,
-  importOrderOptions,
-  paradigmOptions,
-  principleOptions,
-  quoteOptions,
-  routeStyleOptions,
-  semicolonOptions,
-  testLocationOptions,
-  testSuffixOptions,
-  testingOptions,
-  validationOptions} from "@assets/data/generator/options"
+import { apiDocsOptions, commentsOptions, errorHandlingOptions, exportOptions, functionStyleOptions, importAliasOptions, importOrderOptions, paradigmOptions, principleOptions, quoteOptions, routeStyleOptions, semicolonOptions, testLocationOptions, testSuffixOptions, testingOptions, validationOptions } from "@assets/data/generator/options"
 import { apiLayerOptions, asyncActionsOptions, componentDeclarationOptions, componentStructureOptions, e2eOptions } from "@assets/data/generator/frontendOptions"
 import useCustomField from "@hooks/useCustomField"
 import ChoiceCards from "@components/choiceCards"

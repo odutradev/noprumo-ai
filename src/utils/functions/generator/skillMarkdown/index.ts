@@ -1,23 +1,4 @@
-import {apiDocsOptions,
-  architectureInfo,
-  commentsOptions,
-  databaseOptions,
-  errorHandlingOptions,
-  exportOptions,
-  frameworkOptions,
-  functionStyleOptions,
-  importAliasOptions,
-  importOrderOptions,
-  languageOptions,
-  paradigmOptions,
-  projectTypeOptions,
-  quoteOptions,
-  routeStyleOptions,
-  semicolonOptions,
-  testLocationOptions,
-  testSuffixOptions,
-  testingOptions,
-  validationOptions} from "@assets/data/generator/options"
+import { apiDocsOptions, architectureInfo, commentsOptions, databaseOptions, errorHandlingOptions, exportOptions, frameworkOptions, functionStyleOptions, importAliasOptions, importOrderOptions, languageOptions, paradigmOptions, projectTypeOptions, quoteOptions, routeStyleOptions, semicolonOptions, testLocationOptions, testSuffixOptions, testingOptions, validationOptions } from "@assets/data/generator/options"
 import { booleanPrefixOptions, fileOrganizationOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { code, extraPrinciples, gitSection, principlesSection, samplesSection, selectedPrinciples, slugify } from "@utils/functions/generator/markdownHelpers"
 import { buildTree, getArchitectureLayout, renderTree } from "@utils/functions/generator/architecture"

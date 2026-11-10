@@ -1,26 +1,4 @@
-import type {ApiDocs,
-  Architecture,
-  ChoiceOption,
-  CommentsPolicy,
-  Database,
-  EnabledProjectType,
-  ErrorHandling,
-  ExportStyle,
-  Framework,
-  FunctionStyle,
-  ImportAlias,
-  ImportOrder,
-  Language,
-  Paradigm,
-  Principle,
-  ProjectType,
-  Quotes,
-  RouteStyle,
-  Semicolons,
-  TestLocation,
-  TestSuffix,
-  Testing,
-  Validation} from "@utils/types/generator"
+import type { ApiDocs, Architecture, ChoiceOption, CommentsPolicy, Database, EnabledProjectType, ErrorHandling, ExportStyle, Framework, FunctionStyle, ImportAlias, ImportOrder, Language, Paradigm, Principle, ProjectType, Quotes, RouteStyle, Semicolons, TestLocation, TestSuffix, Testing, Validation } from "@utils/types/generator"
 
 export const projectTypeOptions: ChoiceOption<ProjectType>[] = [
   { value: "backend", label: "Backend", description: "APIs, serviços, workers e integrações rodando no servidor.", example: "POST /users/create\n→ 201 { id }" },

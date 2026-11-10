@@ -1,13 +1,6 @@
 import { Card, Flex } from "enchase"
 
-import {booleanPrefixOptions,
-  fileOrganizationOptions,
-  frontendNamingGroups,
-  handlerPrefixOptions,
-  identifierLanguageOptions,
-  namingGroups,
-  tableNumberOptions,
-  typePrefixOptions} from "@assets/data/generator/naming"
+import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
 import { createNamer } from "@utils/functions/generator/namer"
 import useCustomField from "@hooks/useCustomField"

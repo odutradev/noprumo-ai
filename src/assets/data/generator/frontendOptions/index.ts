@@ -1,15 +1,4 @@
-import type {ApiLayer,
-  AsyncActions,
-  ChoiceOption,
-  ComponentDeclaration,
-  ComponentStructure,
-  DataFetching,
-  E2eTesting,
-  FormValidation,
-  FrontendFramework,
-  StateManagement,
-  Styling,
-  UiLibrary} from "@utils/types/generator"
+import type { ApiLayer, AsyncActions, ChoiceOption, ComponentDeclaration, ComponentStructure, DataFetching, E2eTesting, FormValidation, FrontendFramework, StateManagement, Styling, UiLibrary } from "@utils/types/generator"
 
 export const frontendFrameworkOptions: ChoiceOption<FrontendFramework>[] = [
   { value: "react", label: "React + Vite", description: "SPA com React Router, build rápido e code splitting por rota.", example: "createRoot(root).render(<App />)" },
