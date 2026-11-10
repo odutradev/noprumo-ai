@@ -1,6 +1,6 @@
-export const appConfig = {
+const appConfig = {
   name: "minhaskill",
-  description: ""
+  description: "Gerador de skills para o Claude Code"
 }
 
 export default appConfig

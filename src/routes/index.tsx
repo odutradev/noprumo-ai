@@ -1,20 +1,27 @@
 import { BrowserRouter, Routes, Route } from "react-router"
 
-import Generator from "@pages/generator"
-import NotFound from "@pages/notFound"
+import Generator, { metadata as generatorMetadata } from "@pages/generator"
+import NotFound, { metadata as notFoundMetadata } from "@pages/notFound"
+import PageLayout from "@components/pageLayout"
 import Providers from "@providers"
 
-export const Router = () => {
-  return (
-    <BrowserRouter>
-      <Providers>
-        <Routes>
-          <Route path="/" element={<Generator />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Providers>
-    </BrowserRouter>
-  )
-}
+import type { PageRoute } from "@utils/types/page"
+
+const routes: PageRoute[] = [
+  { path: "/", page: Generator, metadata: generatorMetadata },
+  { path: "*", page: NotFound, metadata: notFoundMetadata }
+]
+
+const Router = () => (
+  <BrowserRouter>
+    <Providers>
+      <Routes>
+        {routes.map(({ path, page: Page, metadata }) => (
+          <Route key={path} path={path} element={<PageLayout metadata={metadata}><Page /></PageLayout>} />
+        ))}
+      </Routes>
+    </Providers>
+  </BrowserRouter>
+)
 
 export default Router

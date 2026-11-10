@@ -21,6 +21,9 @@ import Stepper from "@components/stepper"
 import styles from "./styles"
 
 import type { EnabledProjectType, GeneratorConfig } from "@utils/types/generator"
+import type { PageMetadata } from "@utils/types/page"
+
+export const metadata: PageMetadata = { title: "Gerador de skills" }
 
 const stepComponents = [ProjectStep, LanguageStep, ArchitectureStep, NamingStep, ConventionsStep, CommitsStep, PublishStep, ResultStep]
 

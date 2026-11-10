@@ -1,5 +1,9 @@
 import { ButtonLink, Container, Flex } from "enchase"
 
+import type { PageMetadata } from "@utils/types/page"
+
+export const metadata: PageMetadata = { title: "Página não encontrada" }
+
 const NotFoundPage = () => {
   return (
     <Container as="main">
