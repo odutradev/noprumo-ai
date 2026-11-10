@@ -1,17 +1,5 @@
+import type { ImportKind, ImportLine } from "@utils/types/codeSample"
 import type { GeneratorConfig } from "@utils/types/generator"
-
-export interface SampleFile {
-  path: string
-  code: string
-}
-
-export type ImportKind = "external" | "internal" | "type"
-
-export interface ImportLine {
-  kind: ImportKind
-  from: string
-  line: string
-}
 
 export const statementEnd = "§"
 

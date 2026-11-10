@@ -1,9 +1,4 @@
-export type TokenType = "plain" | "comment" | "string" | "keyword" | "decorator" | "number" | "type"
-
-export interface Token {
-  text: string
-  type: TokenType
-}
+import type { Token, TokenType } from "@utils/types/highlight"
 
 const keywords = ["import", "from", "export", "default", "const", "let", "async", "await", "return", "if", "else", "throw", "new", "class", "interface", "type", "enum", "extends", "private", "readonly", "constructor", "function", "typeof", "this", "for", "of"]
 

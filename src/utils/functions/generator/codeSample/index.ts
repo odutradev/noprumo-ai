@@ -3,12 +3,11 @@ import { getArchitectureLayout } from "@utils/functions/generator/architecture"
 import { buildFrontendSampleFiles } from "@utils/functions/generator/frontend"
 import { createNamer } from "@utils/functions/generator/namer"
 
-import type { ImportLine, SampleFile } from "@utils/functions/generator/codeFormat"
-import type { ArchitectureLayout } from "@utils/functions/generator/architecture"
-import type { Namer } from "@utils/functions/generator/namer"
+import type { ImportLine, SampleFile } from "@utils/types/codeSample"
+import type { ArchitectureLayout } from "@utils/types/architecture"
 import type { GeneratorConfig } from "@utils/types/generator"
+import type { Namer } from "@utils/types/namer"
 
-export type { SampleFile } from "@utils/functions/generator/codeFormat"
 const errorStatement = (config: GeneratorConfig, n: Namer, kind: ArchitectureLayout["kind"], idVar: string) => {
   const code = n.errorCode("userNotFound")
   switch (config.conventions.errorHandling) {

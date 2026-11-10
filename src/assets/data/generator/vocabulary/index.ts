@@ -1,4 +1,5 @@
 import type { IdentifierLanguage } from "@utils/types/generator"
+import type { VocabularyKey } from "@utils/types/namer"
 
 type Term = Record<IdentifierLanguage, string[]>
 
@@ -148,7 +149,5 @@ export const vocabulary = {
   server: { en: ["server"], pt: ["servidor"] },
   result: { en: ["result"], pt: ["result"] }
 } satisfies Record<string, Term>
-
-export type VocabularyKey = keyof typeof vocabulary
 
 export const words = (key: VocabularyKey, language: IdentifierLanguage): string[] => vocabulary[key][language]

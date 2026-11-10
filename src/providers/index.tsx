@@ -4,11 +4,7 @@ import { ptBR } from "enchase/locales"
 
 import { colorModeStorageKey, theme } from "@styles/theme"
 
-import type { ReactNode } from "react"
-
-interface ProvidersProps {
-  children: ReactNode
-}
+import type { ProvidersProps } from "./types"
 
 const Providers = ({ children }: ProvidersProps) => {
   const navigate = useNavigate()

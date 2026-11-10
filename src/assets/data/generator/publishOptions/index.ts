@@ -1,11 +1,5 @@
-import type { ChoiceOption, PublishAction, PublisherInvocation, PublishPrompt } from "@utils/types/generator"
-
-export interface PublishActionInfo {
-  value: PublishAction
-  flag: string
-  label: string
-  description: string
-}
+import type { ChoiceOption, PublisherInvocation, PublishPrompt } from "@utils/types/generator"
+import type { PublishActionInfo } from "@utils/types/publishing"
 
 export const publishActionOptions: PublishActionInfo[] = [
   { value: "bumpPackage", flag: "--bump-package", label: "Subir versão", description: "Incrementa o patch do package.json (1.0.9 vira 1.1.0)." },

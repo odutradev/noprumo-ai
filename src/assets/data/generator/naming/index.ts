@@ -1,21 +1,5 @@
-import type { BooleanPrefix, CaseStyle, FileOrganization, HandlerPrefix, IdentifierLanguage, NamingConfig, TableNumber, TypePrefix } from "@utils/types/generator"
-import type { Namer } from "@utils/functions/generator/namer"
-
-type CaseKey = { [K in keyof NamingConfig]: NamingConfig[K] extends CaseStyle ? K : never }[keyof NamingConfig]
-
-export interface CaseCategory {
-  key: CaseKey
-  label: string
-  description: string
-  options: CaseStyle[]
-  example: (namer: Namer) => string
-}
-
-export interface NamingGroup {
-  title: string
-  description: string
-  categories: CaseCategory[]
-}
+import type { BooleanPrefix, FileOrganization, HandlerPrefix, IdentifierLanguage, TableNumber, TypePrefix } from "@utils/types/generator"
+import type { NamingGroup } from "@utils/types/naming"
 
 export const namingGroups: NamingGroup[] = [
   {

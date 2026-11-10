@@ -1,4 +1,5 @@
-import type { ApiDocs, Architecture, ChoiceOption, CommentsPolicy, Database, EnabledProjectType, ErrorHandling, ExportStyle, Framework, FunctionStyle, ImportAlias, ImportOrder, Language, Paradigm, Principle, ProjectType, Quotes, RouteStyle, Semicolons, TestLocation, TestSuffix, Testing, Validation } from "@utils/types/generator"
+import type { ApiDocs, Architecture, ChoiceOption, CommentsPolicy, Database, EnabledProjectType, ErrorHandling, ExportStyle, Framework, FunctionStyle, ImportAlias, ImportOrder, Language, Paradigm, ProjectType, Quotes, RouteStyle, Semicolons, TestLocation, TestSuffix, Testing, Validation } from "@utils/types/generator"
+import type { ArchitectureInfo, PrincipleInfo } from "@utils/types/options"
 
 export const projectTypeOptions: ChoiceOption<ProjectType>[] = [
   { value: "backend", label: "Backend", description: "APIs, serviços, workers e integrações rodando no servidor.", example: "POST /users/create\n→ 201 { id }" },
@@ -28,14 +29,6 @@ export const databaseOptions: ChoiceOption<Database>[] = [
   { value: "typeorm", label: "TypeORM", description: "Entidades com decorators e repositórios.", example: "@Entity() class User {}" },
   { value: "none", label: "Sem banco", description: "Serviço sem persistência própria." }
 ]
-
-export interface ArchitectureInfo {
-  label: string
-  summary: string
-  whenToUse: string
-  rules: string[]
-  badge?: string
-}
 
 export const architectureInfo: Record<Architecture, ArchitectureInfo> = {
   domainActions: {
@@ -255,15 +248,6 @@ export const commentsOptions: ChoiceOption<CommentsPolicy>[] = [
   { value: "publicOnly", label: "Só JSDoc em APIs públicas", description: "Comenta contratos exportados, nunca a implementação.", example: "/** Retorna o usuário ou null. */\nexport const findUser = ..." },
   { value: "allowed", label: "Livre", description: "Comentários quando ajudam a explicar o porquê.", example: "// O provedor limita a 10 req/s" }
 ]
-
-export interface PrincipleInfo {
-  value: Principle
-  scope: EnabledProjectType[]
-  label: string
-  description: string
-  good: string
-  bad?: string
-}
 
 export const principleOptions: PrincipleInfo[] = [
   { value: "earlyReturn", scope: ["backend", "frontend"], label: "Retornos antecipados", description: "Valide e saia cedo, sem `if/else` aninhado.", good: "if (!user) return manageError({ code: 'not_found' })\nreturn user", bad: "if (user) {\n  return user\n} else {\n  return error\n}" },

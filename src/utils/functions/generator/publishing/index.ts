@@ -3,13 +3,8 @@ import { code } from "@utils/functions/generator/markdownHelpers"
 import { sentence } from "@utils/functions/generator/mdContext"
 
 import type { PublishAction, PublishingConfig } from "@utils/types/generator"
-import type { MdContext } from "@utils/functions/generator/mdContext"
-
-export interface PublishChoice {
-  label: string
-  description: string
-  command?: string
-}
+import type { PublishChoice } from "@utils/types/publishing"
+import type { MdContext } from "@utils/types/markdown"
 
 const ordered = (actions: PublishAction[]) => publishActionOptions.filter((option) => actions.includes(option.value))
 

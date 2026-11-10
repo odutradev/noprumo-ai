@@ -8,8 +8,8 @@ import { publishingSection } from "@utils/functions/generator/publishing"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
 import { createNamer } from "@utils/functions/generator/namer"
 
-import type { MdContext } from "@utils/functions/generator/mdContext"
 import type { GeneratorConfig } from "@utils/types/generator"
+import type { MdContext } from "@utils/types/markdown"
 
 export { slugify } from "@utils/functions/generator/markdownHelpers"
 

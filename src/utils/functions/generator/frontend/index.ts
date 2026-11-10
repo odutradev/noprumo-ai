@@ -1,27 +1,10 @@
 import { createImporter, statementEnd, finalize } from "@utils/functions/generator/codeFormat"
 import { createNamer } from "@utils/functions/generator/namer"
 
-import type { ImportLine, SampleFile } from "@utils/functions/generator/codeFormat"
+import type { ComponentFiles, FrontendLayout, ImportLine, SampleFile } from "@utils/types/codeSample"
 import type { FrontendArchitecture, GeneratorConfig } from "@utils/types/generator"
-import type { ProjectFile } from "@utils/functions/generator/architecture"
-import type { Namer } from "@utils/functions/generator/namer"
-
-interface ComponentFiles {
-  main: string
-  styles?: string
-  types?: string
-  index?: string
-}
-
-export interface FrontendLayout {
-  files: ProjectFile[]
-  component: ComponentFiles
-  api: string
-  store: string
-  userType: string
-  hook: string
-  page: string
-}
+import type { ProjectFile } from "@utils/types/architecture"
+import type { Namer } from "@utils/types/namer"
 
 const join = (...parts: string[]) => parts.filter(Boolean).join("/")
 

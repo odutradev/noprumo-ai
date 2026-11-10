@@ -2,25 +2,8 @@ import { getFrontendLayout } from "@utils/functions/generator/frontend"
 import { createNamer } from "@utils/functions/generator/namer"
 
 import type { BackendArchitecture, GeneratorConfig, TreeNode } from "@utils/types/generator"
-import type { Namer } from "@utils/functions/generator/namer"
-
-export type UnitKind = "action" | "service" | "useCase" | "handler"
-
-export interface ProjectFile {
-  path: string
-  note?: string
-  isHighlighted?: boolean
-}
-
-export interface ArchitectureLayout {
-  kind: UnitKind
-  files: ProjectFile[]
-  mainPath: string
-  schemaPath: string
-  typesPath?: string
-  repositoryPath: string
-  errorsPath: string
-}
+import type { ArchitectureLayout, ProjectFile } from "@utils/types/architecture"
+import type { Namer } from "@utils/types/namer"
 
 const join = (...parts: string[]) => parts.join("/")
 

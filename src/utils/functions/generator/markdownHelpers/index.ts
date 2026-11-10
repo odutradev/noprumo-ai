@@ -5,7 +5,7 @@ import { principleOptions } from "@assets/data/generator/options"
 import { sentence } from "@utils/functions/generator/mdContext"
 
 import type { ChoiceOption, EnabledProjectType, GeneratorConfig } from "@utils/types/generator"
-import type { MdContext } from "@utils/functions/generator/mdContext"
+import type { MdContext } from "@utils/types/markdown"
 
 export const pick = <T extends string>(options: ChoiceOption<T>[], value: T) => options.find((option) => option.value === value) ?? options[0]
 
