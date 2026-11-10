@@ -1,8 +1,10 @@
+import { shadcn } from "enchase/styles/shadcn"
+
 import type { ThemeInput } from "enchase/theme"
 
 export const theme: ThemeInput = {
-  brand: "#D97706",
-  shape: "soft"
+  style: shadcn,
+  brand: "#D97706"
 }
 
 export const colorModeStorageKey = "enchase-color-mode"
