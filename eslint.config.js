@@ -12,6 +12,27 @@ const noComments = {
   })
 }
 
+const oneLineDestructuring = {
+  meta: { type: "layout", fixable: "whitespace", messages: { multiline: "Desestruturação sempre em uma linha." }, schema: [] },
+  create: (context) => {
+    const source = context.sourceCode
+    const check = (items) => {
+      if (items.length === 0) return
+      const open = source.getTokenBefore(items[0], { filter: (token) => token.value === "{" })
+      const close = source.getTokenAfter(items.at(-1), { filter: (token) => token.value === "}" })
+      if (open.loc.start.line === close.loc.end.line) return
+      const isFixable = items.every((item) => item.loc.start.line === item.loc.end.line)
+      const text = `{ ${items.map((item) => source.getText(item)).join(", ")} }`
+      context.report({ loc: { start: open.loc.start, end: close.loc.end }, messageId: "multiline", fix: isFixable ? (fixer) => fixer.replaceTextRange([open.range[0], close.range[1]], text) : null })
+    }
+    return {
+      ImportDeclaration: (node) => check(node.specifiers.filter((specifier) => specifier.type === "ImportSpecifier")),
+      ExportNamedDeclaration: (node) => check(node.specifiers),
+      ObjectPattern: (node) => check(node.properties)
+    }
+  }
+}
+
 const internalFolders = "assets|components|hooks|pages|providers|routes|stores|styles|utils"
 
 export default [
@@ -33,7 +54,7 @@ export default [
     },
     plugins: {
       "@stylistic": stylistic,
-      local: { rules: { "no-comments": noComments } },
+      local: { rules: { "no-comments": noComments, "one-line-destructuring": oneLineDestructuring } },
       perfectionist,
       "react-hooks": reactHooks
     },
@@ -53,6 +74,7 @@ export default [
         { selector: "TSAnyKeyword", message: "any é proibido." }
       ],
       "local/no-comments": "error",
+      "local/one-line-destructuring": "error",
       "@stylistic/semi": ["error", "never"],
       "@stylistic/quotes": ["error", "double", { allowTemplateLiterals: "avoidEscape" }],
       "@stylistic/jsx-quotes": ["error", "prefer-double"],
