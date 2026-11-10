@@ -1,9 +1,9 @@
 .block {
   margin: 0;
   min-inline-size: 0;
-  border: var(--enchase-border-width) solid var(--enchase-color-border-light);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
   border-radius: var(--enchase-radius-md);
-  background: var(--enchase-color-code-background);
+  background: var(--enchase-color-surface-container-low);
   overflow: hidden;
 }
 
@@ -14,11 +14,17 @@
   gap: var(--enchase-space-sm);
   padding-block: var(--enchase-space-xs);
   padding-inline: var(--enchase-space-md) var(--enchase-space-xs);
-  border-block-end: var(--enchase-border-width) solid var(--enchase-color-border-light);
-  min-block-size: 2.5rem;
+  border-block-end: var(--enchase-border-width) solid var(--enchase-color-border);
+  background: var(--enchase-color-surface);
+}
+
+.header button {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .title {
+  min-inline-size: 0;
   font-family: var(--enchase-font-mono);
   font-size: var(--enchase-font-size-xs);
   color: var(--enchase-color-text-secondary);
@@ -31,18 +37,20 @@
   margin: 0;
   padding: var(--enchase-space-md);
   font-family: var(--enchase-font-mono);
-  font-size: var(--enchase-font-size-sm);
-  line-height: 1.6;
+  font-size: var(--enchase-font-size-xs);
+  line-height: 1.7;
   color: var(--enchase-color-text-primary);
-  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   tab-size: 2;
 }
 
+.block[data-scroll] .pre {
+  overflow: auto;
+}
+
 .block[data-compact] .pre {
-  padding: var(--enchase-space-sm) var(--enchase-space-md);
-  font-size: var(--enchase-font-size-xs);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  padding-block: var(--enchase-space-sm);
 }
 
 .pre:focus-visible {

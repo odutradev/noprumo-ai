@@ -1,4 +1,3 @@
-import { CheckIcon } from "enchase/icons"
 import { Button } from "enchase"
 
 import { tokenize } from "@utils/functions/highlight"
@@ -16,19 +15,18 @@ const CodeBlock = ({ code, title, isCopyable = false, isPlain = false, isCompact
   })
 
   return (
-    <figure className={styles.block} data-compact={isCompact || undefined}>
+    <figure className={styles.block} data-compact={isCompact || undefined} data-scroll={maxHeight ? true : undefined}>
       {(title || isCopyable) && (
         <figcaption className={styles.header}>
           <span className={styles.title}>{title}</span>
           {isCopyable && (
             <Button size="sm" variant="ghost" onClick={handleCopy}>
-              <CheckIcon size={16} />
               Copiar
             </Button>
           )}
         </figcaption>
       )}
-      <pre className={styles.pre} style={maxHeight ? { maxHeight } : undefined} tabIndex={0}>
+      <pre className={styles.pre} style={maxHeight ? { maxHeight } : undefined} tabIndex={maxHeight ? 0 : undefined}>
         <code>
           {tokens.map((token, index) => (
             <span key={index} className={styles[token.type]}>
