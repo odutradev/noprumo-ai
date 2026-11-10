@@ -1,0 +1,57 @@
+.tree {
+  padding: var(--enchase-space-md);
+  border: var(--enchase-border-width) solid var(--enchase-color-border-light);
+  border-radius: var(--enchase-radius-md);
+  background: var(--enchase-color-code-background);
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-sm);
+  overflow: auto;
+}
+
+.root,
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list {
+  margin-inline-start: 0.5rem;
+  padding-inline-start: 0.75rem;
+  border-inline-start: 1px dashed var(--enchase-color-border);
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-block: 0.125rem;
+  padding-inline: 0.375rem;
+  border-radius: var(--enchase-radius-sm);
+  white-space: nowrap;
+  color: var(--enchase-color-text-primary);
+}
+
+.row[data-folder] .name {
+  font-weight: var(--enchase-font-weight-semibold);
+}
+
+.row[data-highlight] {
+  background: var(--enchase-color-primary-container);
+  color: var(--enchase-color-on-primary-container);
+}
+
+.icon {
+  inline-size: 0.75rem;
+  color: var(--enchase-color-text-secondary);
+}
+
+.note {
+  font-family: var(--enchase-font-primary);
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-text-secondary);
+}
+
+.row[data-highlight] .note {
+  color: inherit;
+}

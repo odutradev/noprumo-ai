@@ -1,0 +1,102 @@
+.row {
+  display: grid;
+  grid-template-columns: minmax(10rem, 14rem) 1fr;
+  gap: var(--enchase-space-md);
+  align-items: center;
+  margin: 0;
+  padding-block: var(--enchase-space-md);
+  padding-inline: 0;
+  border: 0;
+  border-block-end: var(--enchase-border-width) solid var(--enchase-color-border-light);
+  min-inline-size: 0;
+}
+
+.row:last-child {
+  border-block-end: 0;
+}
+
+.info {
+  min-inline-size: 0;
+}
+
+.legend {
+  float: left;
+  padding: 0;
+  font-weight: var(--enchase-font-weight-semibold);
+  color: var(--enchase-color-text-primary);
+}
+
+.description {
+  clear: both;
+  margin: 0;
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-text-secondary);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--enchase-space-sm);
+  min-inline-size: 0;
+}
+
+.chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  padding-block: var(--enchase-space-xs);
+  padding-inline: var(--enchase-space-sm);
+  border: var(--enchase-border-width-strong) solid var(--enchase-color-border-light);
+  border-radius: var(--enchase-radius-md);
+  background: var(--enchase-color-surface);
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.chip:hover {
+  border-color: var(--enchase-color-border-strong);
+}
+
+.chip[data-checked] {
+  border-color: var(--enchase-color-primary);
+  background: color-mix(in srgb, var(--enchase-color-primary-container) 45%, var(--enchase-color-surface));
+}
+
+.chip:has(.input:focus-visible) {
+  outline: 2px solid var(--enchase-color-primary);
+  outline-offset: 2px;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 1px;
+  block-size: 1px;
+  pointer-events: none;
+}
+
+.example {
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-sm);
+  color: var(--enchase-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.chip[data-checked] .example {
+  color: var(--enchase-color-on-primary-container);
+}
+
+.label {
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-text-secondary);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: var(--enchase-space-sm);
+  }
+}
