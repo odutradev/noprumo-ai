@@ -10,4 +10,6 @@ export interface ChoiceCardsProps<T extends string> {
   onChange: (value: T) => void
   minWidth?: string
   renderExtra?: (option: ChoiceOption<T>) => ReactNode
+  customText?: string
+  onCustomChange?: (text: string | undefined) => void
 }

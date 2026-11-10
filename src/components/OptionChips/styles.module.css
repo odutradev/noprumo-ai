@@ -89,6 +89,10 @@
   color: var(--enchase-color-on-primary-container);
 }
 
+.customInput {
+  flex-basis: 100%;
+}
+
 .label {
   font-size: var(--enchase-font-size-xs);
   color: var(--enchase-color-text-secondary);

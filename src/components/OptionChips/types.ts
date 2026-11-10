@@ -10,4 +10,6 @@ export interface OptionChipsProps<T extends string> {
   options: ChipOption<T>[]
   value: T
   onChange: (value: T) => void
+  customText?: string
+  onCustomChange?: (text: string | undefined) => void
 }
