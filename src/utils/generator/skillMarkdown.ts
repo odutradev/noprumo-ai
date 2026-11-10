@@ -16,178 +16,208 @@ import {
   routeStyleOptions,
   semicolonOptions,
   testLocationOptions,
+  testSuffixOptions,
   testingOptions,
   validationOptions
 } from '@/data/generator/options'
-import { booleanPrefixOptions, fileOrganizationOptions, identifierLanguageOptions, namingGroups, typePrefixOptions } from '@/data/generator/naming'
+import { booleanPrefixOptions, fileOrganizationOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from '@/data/generator/naming'
+
 import type { GeneratorConfig } from '@/types/generator'
 
-import { code, gitSection, pick, principlesSection, samplesSection, selectedPrinciples, slugify } from './markdownHelpers'
+import { code, extraPrinciples, gitSection, principlesSection, samplesSection, selectedPrinciples, slugify } from './markdownHelpers'
+import { createMdContext, sentence, type MdContext } from './mdContext'
 import { buildTree, getArchitectureLayout, renderTree } from './architecture'
 import { buildFrontendMarkdown } from './frontendMarkdown'
+import { publishingSection } from './publishing'
 import { caseStyleLabels } from './naming'
 import { createNamer } from './namer'
-import { publishingSection } from './publishing'
 
 export { slugify } from './markdownHelpers'
 
+export const namingRow = (ctx: MdContext, key: string, label: string, value: string, example: string) => {
+  const custom = ctx.customText(`naming.${key}`)
+  return `| ${ctx.tr(label)} | ${custom ?? value} | ${custom ? '—' : `\`${example}\``} |`
+}
+
+export const architectureBlock = (ctx: MdContext, tree: string) => {
+  const { config, T, tr } = ctx
+  const custom = ctx.customText('architecture')
+  if (custom) return `## 2. ${T('Arquitetura', 'Architecture')}\n\n${custom}\n\n${T('Siga essa organização ao criar pastas e arquivos.', 'Follow this organization when creating folders and files.')}`
+  const architecture = architectureInfo[config.architecture]
+  return `## 2. ${T('Arquitetura', 'Architecture')}: ${tr(architecture.label)}
+
+${tr(architecture.summary)}
+
+**${T('Regras', 'Rules')}:**
+
+${architecture.rules.map((rule) => `- ${tr(rule)}`).join('\n')}
+
+**${T('Estrutura de pastas', 'Folder structure')}:**
+
+${code(tree, 'text')}`
+}
+
+export const frontmatter = (config: GeneratorConfig) => `---
+name: ${slugify(config.skillName)}
+description: ${createMdContext(config).tr(config.skillDescription.trim()).replace(/\n/g, ' ')}
+---`
+
 export const buildSkillMarkdown = (config: GeneratorConfig): string => {
   if (config.projectType === 'frontend') return buildFrontendMarkdown(config)
+
+  const ctx = createMdContext(config)
+  const { T, tr, field } = ctx
   const { naming, conventions } = config
   const n = createNamer(naming)
-  const architecture = architectureInfo[config.architecture]
-  const layout = getArchitectureLayout(config)
-  const tree = ['.', ...renderTree(buildTree(layout.files))].join('\n')
-  const language = identifierLanguageOptions.find((option) => option.value === naming.language)
-  const isPt = naming.language === 'pt'
+  const tree = ['.', ...renderTree(buildTree(getArchitectureLayout(config).files))].join('\n')
+  const language = field('naming.language', identifierLanguageOptions, naming.language)
+  const isPt = !language.custom && naming.language === 'pt'
 
-  const namingRows = namingGroups.flatMap((group) => group.categories.map((category) => `| ${category.label} | ${caseStyleLabels[naming[category.key]]} | \`${category.example(n)}\` |`))
+  const namingRows = namingGroups.flatMap((group) => group.categories.map((category) => namingRow(ctx, category.key, category.label, caseStyleLabels[naming[category.key]], category.example(n))))
   const extraRows = [
-    `| Prefixo de tipos | ${typePrefixOptions.find((option) => option.value === naming.typePrefix)?.label} | \`${n.type('userResponse')}\` |`,
-    `| Booleanos | ${booleanPrefixOptions.find((option) => option.value === naming.booleanPrefix)?.label} | \`${n.boolean('isActive')}\` |`,
-    `| Organização de arquivos | ${fileOrganizationOptions.find((option) => option.value === naming.fileOrganization)?.label} | \`${n.file('user', 'repository')}\` |`,
-    `| Tabelas | ${naming.tableNumber === 'plural' ? 'Plural' : 'Singular'} | \`${n.table()}\` |`,
-    '| Variáveis de ambiente | SCREAMING_SNAKE | `DATABASE_URL` |'
+    namingRow(ctx, 'typePrefix', 'Prefixo de tipos', tr(typePrefixOptions.find((option) => option.value === naming.typePrefix)?.label ?? ''), n.type('userResponse')),
+    namingRow(ctx, 'booleanPrefix', 'Booleanos', tr(booleanPrefixOptions.find((option) => option.value === naming.booleanPrefix)?.label ?? ''), n.boolean('isActive')),
+    namingRow(ctx, 'fileOrganization', 'Organização', tr(fileOrganizationOptions.find((option) => option.value === naming.fileOrganization)?.label ?? ''), n.file('user', 'repository')),
+    namingRow(ctx, 'tableNumber', 'Número das tabelas', tr(tableNumberOptions.find((option) => option.value === naming.tableNumber)?.label ?? ''), n.table()),
+    `| ${T('Variáveis de ambiente', 'Environment variables')} | SCREAMING_SNAKE | \`DATABASE_URL\` |`
   ]
 
+  const paradigm = field('conventions.paradigm', paradigmOptions, conventions.paradigm)
+  const functionStyle = field('conventions.functionStyle', functionStyleOptions, conventions.functionStyle)
+  const exportsStyle = field('conventions.exports', exportOptions, conventions.exports)
+  const semicolons = field('conventions.semicolons', semicolonOptions, conventions.semicolons)
+  const quotes = field('conventions.quotes', quoteOptions, conventions.quotes)
+  const comments = field('conventions.comments', commentsOptions, conventions.comments)
+  const imports = field('conventions.importAlias', importAliasOptions, conventions.importAlias)
+  const importOrder = field('conventions.importOrder', importOrderOptions, conventions.importOrder)
+  const errors = field('conventions.errorHandling', errorHandlingOptions, conventions.errorHandling)
+  const validation = field('conventions.validation', validationOptions, conventions.validation)
+  const routes = field('conventions.routeStyle', routeStyleOptions, conventions.routeStyle)
+  const docs = field('conventions.apiDocs', apiDocsOptions, conventions.apiDocs)
+  const testing = field('conventions.testing', testingOptions, conventions.testing)
+  const testLocation = field('conventions.testLocation', testLocationOptions, conventions.testLocation)
+  const testSuffix = field('conventions.testSuffix', testSuffixOptions, conventions.testSuffix)
   const principles = selectedPrinciples(config)
+  const noTests = !testing.custom && conventions.testing === 'none'
+  const commentsLanguage = conventions.commentsLanguage === 'pt' ? T('português', 'Portuguese') : T('inglês', 'English')
 
-  const imports = pick(importAliasOptions, conventions.importAlias)
-  const importOrder = pick(importOrderOptions, conventions.importOrder)
-  const errors = pick(errorHandlingOptions, conventions.errorHandling)
-  const validation = pick(validationOptions, conventions.validation)
-  const routes = pick(routeStyleOptions, conventions.routeStyle)
-  const docs = pick(apiDocsOptions, conventions.apiDocs)
-  const testing = pick(testingOptions, conventions.testing)
-  const testLocation = pick(testLocationOptions, conventions.testLocation)
-  const comments = pick(commentsOptions, conventions.comments)
-
-  const testSection =
-    conventions.testing === 'none'
-      ? 'Este projeto não exige testes automatizados.'
-      : [
-          `- Framework: **${testing.label}**.`,
-          `- Localização: **${testLocation.label}**. ${testLocation.description}`,
-          `- Sufixo dos arquivos: \`.${conventions.testSuffix}.ts\`${conventions.testLocation === 'hybrid' ? ` (E2E: \`.e2e-${conventions.testSuffix}.ts\`)` : ''}.`,
-          '- Os testes seguem as mesmas regras de nomenclatura, imports e comentários do código de produção.',
-          `- Unitários não acessam banco nem rede. Integração usa banco em memória ou isolado, criado no setup e limpo após cada caso.`
-        ].join('\n')
+  const testSection = noTests
+    ? T('Este projeto não exige testes automatizados.', 'This project does not require automated tests.')
+    : [
+        `- Framework: **${testing.label}**.`,
+        `- ${T('Localização', 'Location')}: ${sentence(`**${testLocation.label}**`, testLocation.description)}`,
+        `- ${T('Sufixo dos arquivos', 'File suffix')}: ${testSuffix.custom ? testSuffix.label : `\`.${conventions.testSuffix}.ts\`${conventions.testLocation === 'hybrid' ? ` (E2E: \`.e2e-${conventions.testSuffix}.ts\`)` : ''}`}.`,
+        `- ${T('Os testes seguem as mesmas regras de nomenclatura, imports e comentários do código de produção.', 'Tests follow the same naming, import and comment rules as production code.')}`,
+        `- ${T('Unitários não acessam banco nem rede. Integração usa banco em memória ou isolado, criado no setup e limpo após cada caso.', 'Unit tests never touch the database or network. Integration tests use an in-memory or isolated database, created in setup and cleaned after each case.')}`
+      ].join('\n')
 
   const checklist = [
-    `Nomes seguem a tabela de nomenclatura e estão em ${language?.label.toLowerCase()}.`,
-    `Arquivos estão na pasta certa da arquitetura ${architecture.label}.`,
-    `Imports usam ${imports.label.toLowerCase()} e seguem a regra "${importOrder.label}".`,
-    `Erros seguem o padrão "${errors.label}".`,
-    conventions.validation !== 'none' ? `Toda entrada externa é validada com ${validation.label}.` : '',
-    conventions.comments === 'none' ? 'Nenhum comentário no código.' : '',
-    conventions.testing !== 'none' ? 'Código novo tem testes no local e com o sufixo definidos.' : '',
-    ...principles.map((principle) => `Princípio "${principle.label}" aplicado.`),
-    config.publishing.enabled && config.publishing.prompt === 'everyTask' ? 'Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.' : ''
+    T(`Nomes seguem a tabela de nomenclatura e estão em ${language.label.toLowerCase()}.`, `Names follow the naming table and are in ${language.label}.`),
+    T('Arquivos estão na pasta certa da arquitetura.', 'Files are in the right folder for the architecture.'),
+    T(`Imports seguem "${imports.label}" e "${importOrder.label}".`, `Imports follow "${imports.label}" and "${importOrder.label}".`),
+    T(`Erros seguem o padrão "${errors.label}".`, `Errors follow "${errors.label}".`),
+    validation.custom || conventions.validation !== 'none' ? T(`Toda entrada externa é validada (${validation.label}).`, `All external input is validated (${validation.label}).`) : '',
+    !comments.custom && conventions.comments === 'none' ? T('Nenhum comentário no código.', 'No comments in the code.') : '',
+    noTests ? '' : T('Código novo tem testes no local e com o sufixo definidos.', 'New code has tests in the defined location and with the defined suffix.'),
+    ...principles.map((principle) => T(`Princípio "${principle.label}" aplicado.`, `Principle "${tr(principle.label)}" applied.`)),
+    ...extraPrinciples(config),
+    config.publishing.enabled && config.publishing.prompt === 'everyTask' ? T('Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.', 'Publish question asked as the last action, if the task changed files.') : ''
   ].filter(Boolean)
 
-  return `---
-name: ${slugify(config.skillName)}
-description: ${config.skillDescription.replace(/\n/g, ' ')}
----
+  return `${frontmatter(config)}
 
-# Guia de padrões do projeto
+# ${T('Guia de padrões do projeto', 'Project standards guide')}
 
-Este guia define as regras de arquitetura, estrutura e código deste projeto. Seguir este guia é **obrigatório**.
+${T('Este guia define as regras de arquitetura, estrutura e código deste projeto. Seguir este guia é **obrigatório**.', "This guide defines this project's architecture, structure and code rules. Following it is **mandatory**.")}
 
-**Diretriz:** antes de criar ou refatorar qualquer código, leia este guia e reproduza exatamente a estrutura e os padrões descritos aqui. Quando um padrão não estiver coberto, siga o exemplo de referência mais próximo no final do documento.
+**${T('Diretriz', 'Directive')}:** ${T(
+    'antes de criar ou refatorar qualquer código, leia este guia e reproduza exatamente a estrutura e os padrões descritos aqui. Quando um padrão não estiver coberto, siga o exemplo de referência mais próximo no final do documento.',
+    'before creating or refactoring any code, read this guide and follow exactly the structure and standards described here. When a standard is not covered, follow the closest reference example at the end of this document.'
+  )}
 
 ## 1. Stack
 
-| Item | Escolha |
+| Item | ${T('Escolha', 'Choice')} |
 | :--- | :--- |
-| Tipo de projeto | ${pick(projectTypeOptions, config.projectType).label} |
-| Linguagem | ${pick(languageOptions, config.language).label} (strict) |
-| Framework HTTP | ${pick(frameworkOptions, config.framework).label} |
-| Banco de dados | ${pick(databaseOptions, config.database).label} |
-| Validação | ${validation.label} |
-| Testes | ${testing.label} |
+| ${T('Tipo de projeto', 'Project type')} | ${field('projectType', projectTypeOptions, config.projectType).label} |
+| ${T('Linguagem', 'Language')} | ${field('language', languageOptions, config.language).label} (strict) |
+| ${T('Framework HTTP', 'HTTP framework')} | ${field('framework', frameworkOptions, config.framework).label} |
+| ${T('Banco de dados', 'Database')} | ${field('database', databaseOptions, config.database).label} |
+| ${T('Validação', 'Validation')} | ${validation.label} |
+| ${T('Testes', 'Tests')} | ${testing.label} |
 
-## 2. Arquitetura: ${architecture.label}
+${architectureBlock(ctx, tree)}
 
-${architecture.summary}
+## 3. ${T('Nomenclatura', 'Naming')}
 
-**Regras:**
+- **${T('Idioma dos identificadores', 'Identifier language')}:** ${language.label}. ${T(
+    `Variáveis, funções, tipos, chaves de objetos, tabelas e campos são escritos em ${language.label.toLowerCase()}${isPt ? ', sem acentos nem cedilha' : ''}.`,
+    `Variables, functions, types, object keys, tables and fields are written in ${language.label}${isPt ? ', without accents' : ''}.`
+  )}
+- ${T('Nomes precisam ser descritivos. Não use abreviações (`usr`, `tmp`, `data2`).', 'Names must be descriptive. No abbreviations (`usr`, `tmp`, `data2`).')}
 
-${architecture.rules.map((rule) => `- ${rule}`).join('\n')}
-
-**Estrutura de pastas:**
-
-${code(tree, 'text')}
-
-## 3. Nomenclatura
-
-- **Idioma dos identificadores:** ${language?.label}. Variáveis, funções, tipos, chaves de objetos, tabelas e campos são escritos em ${language?.label.toLowerCase()}${isPt ? ', sem acentos nem cedilha' : ''}.
-- Nomes precisam ser descritivos. Não use abreviações (\`usr\`, \`tmp\`, \`data2\`).
-
-| Elemento | Padrão | Exemplo |
+| ${T('Elemento', 'Element')} | ${T('Padrão', 'Standard')} | ${T('Exemplo', 'Example')} |
 | :--- | :--- | :--- |
 ${[...namingRows, ...extraRows].join('\n')}
 
-## 4. Estilo de código
+## 4. ${T('Estilo de código', 'Code style')}
 
-- **Paradigma:** ${pick(paradigmOptions, conventions.paradigm).label}. ${pick(paradigmOptions, conventions.paradigm).description}
-- **Funções:** ${pick(functionStyleOptions, conventions.functionStyle).label}. ${pick(functionStyleOptions, conventions.functionStyle).description}
-- **Exports:** ${pick(exportOptions, conventions.exports).label}. ${pick(exportOptions, conventions.exports).description}
-- **Ponto e vírgula:** ${pick(semicolonOptions, conventions.semicolons).label}.
-- **Aspas:** ${pick(quoteOptions, conventions.quotes).label}.
-- **Comentários:** ${comments.label}. ${comments.description}${conventions.comments === 'none' ? '' : ` Escritos em ${conventions.commentsLanguage === 'pt' ? 'português' : 'inglês'}.`}
+- **${T('Paradigma', 'Paradigm')}:** ${sentence(paradigm.label, paradigm.description)}
+- **${T('Funções', 'Functions')}:** ${sentence(functionStyle.label, functionStyle.description)}
+- **Exports:** ${sentence(exportsStyle.label, exportsStyle.description)}
+- **${T('Ponto e vírgula', 'Semicolons')}:** ${semicolons.label}.
+- **${T('Aspas', 'Quotes')}:** ${quotes.label}.
+- **${T('Comentários', 'Comments')}:** ${sentence(comments.label, comments.description)}${!comments.custom && conventions.comments !== 'none' ? ` ${T(`Escritos em ${commentsLanguage}.`, `Written in ${commentsLanguage}.`)}` : ''}
 
 ### Imports
 
-- **Caminhos:** ${imports.label}. ${imports.description}
-- **Organização:** ${importOrder.label}. ${importOrder.description}
+- **${T('Caminhos', 'Paths')}:** ${sentence(imports.label, imports.description)}
+- **${T('Organização', 'Organization')}:** ${sentence(importOrder.label, importOrder.description)}
 
 ${importOrder.example ? code(importOrder.example) : ''}
 
-### Tratamento de erros
+### ${T('Tratamento de erros', 'Error handling')}
 
-${errors.label}: ${errors.description}
+${sentence(errors.label, errors.description)}
 
-${code(errors.example ?? '')}
+${errors.example ? code(errors.example) : ''}
 
-### Validação
+### ${T('Validação', 'Validation')}
 
-${validation.label}: ${validation.description}
+${sentence(validation.label, validation.description)}
 
 ${validation.example ? code(validation.example) : ''}
 
-### Rotas e documentação da API
+### ${T('Rotas e documentação da API', 'Routes and API docs')}
 
-- **Rotas:** ${routes.label}. ${routes.description}
+- **${T('Rotas', 'Routes')}:** ${sentence(routes.label, routes.description)}
 
-${code(routes.example ?? '', 'text')}
+${routes.example ? code(routes.example, 'text') : ''}
 
-- **Documentação:** ${docs.label}. ${docs.description}
+- **${T('Documentação', 'Docs')}:** ${sentence(docs.label, docs.description)}
 
-## 5. Princípios obrigatórios
+## 5. ${T('Princípios obrigatórios', 'Required principles')}
 
-${principlesSection(config)}
+${principlesSection(ctx)}
 
-## 6. Testes
+## 6. ${T('Testes', 'Tests')}
 
 ${testSection}
 
-## 7. Commits e Git
+## 7. ${T('Commits e Git', 'Commits and Git')}
 
-${gitSection(config)}
+${gitSection(ctx)}
 
-## 8. Publicação
+## 8. ${T('Publicação', 'Publishing')}
 
-${publishingSection(config)}
+${publishingSection(ctx)}
 
-## 9. Exemplo de referência
+## 9. ${T('Exemplo de referência', 'Reference example')}
 
-Use estes arquivos como modelo. Eles seguem todas as regras acima.
+${samplesSection(ctx)}
 
-${samplesSection(config)}
-
-## 10. Checklist antes de entregar
+## 10. ${T('Checklist antes de entregar', 'Checklist before delivering')}
 
 ${checklist.map((item) => `- [ ] ${item}`).join('\n')}
-`
+`.replace(/\n{3,}/g, '\n\n')
 }

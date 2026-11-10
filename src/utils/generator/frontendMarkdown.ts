@@ -11,180 +11,191 @@ import {
   stylingOptions,
   uiLibraryOptions
 } from '@/data/generator/frontendOptions'
-import { architectureInfo, commentsOptions, exportOptions, importAliasOptions, importOrderOptions, languageOptions, quoteOptions, semicolonOptions, testingOptions } from '@/data/generator/options'
+import { commentsOptions, exportOptions, importAliasOptions, importOrderOptions, languageOptions, quoteOptions, semicolonOptions, testSuffixOptions, testingOptions } from '@/data/generator/options'
 import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, typePrefixOptions } from '@/data/generator/naming'
 
 import type { GeneratorConfig } from '@/types/generator'
 
-import { code, gitSection, pick, principlesSection, samplesSection, selectedPrinciples, slugify } from './markdownHelpers'
+import { code, extraPrinciples, gitSection, principlesSection, samplesSection, selectedPrinciples } from './markdownHelpers'
+import { architectureBlock, frontmatter, namingRow } from './skillMarkdown'
+import { createMdContext, sentence } from './mdContext'
 import { buildTree, renderTree } from './architecture'
+import { publishingSection } from './publishing'
 import { getFrontendLayout } from './frontend'
 import { caseStyleLabels } from './naming'
 import { createNamer } from './namer'
-import { publishingSection } from './publishing'
 
 export const buildFrontendMarkdown = (config: GeneratorConfig): string => {
+  const ctx = createMdContext(config)
+  const { T, tr, field } = ctx
   const { naming, conventions, frontend } = config
   const n = createNamer(naming)
-  const architecture = architectureInfo[config.architecture]
-  const layout = getFrontendLayout(config)
-  const tree = ['.', ...renderTree(buildTree(layout.files))].join('\n')
-  const language = identifierLanguageOptions.find((option) => option.value === naming.language)
+  const tree = ['.', ...renderTree(buildTree(getFrontendLayout(config).files))].join('\n')
+  const language = field('naming.language', identifierLanguageOptions, naming.language)
+  const onSaved = createNamer({ ...naming, handlerPrefix: 'on' }).handler('saved')
 
-  const namingRows = frontendNamingGroups.flatMap((group) => group.categories.map((category) => `| ${category.label} | ${caseStyleLabels[naming[category.key]]} | \`${category.example(n)}\` |`))
+  const namingRows = frontendNamingGroups.flatMap((group) => group.categories.map((category) => namingRow(ctx, category.key, category.label, caseStyleLabels[naming[category.key]], category.example(n))))
   const extraRows = [
-    `| Hooks | prefixo \`use\` + ${caseStyleLabels[naming.functions]} | \`${n.fn('useUserStore')}\` |`,
-    `| Handlers internos | ${handlerPrefixOptions.find((option) => option.value === naming.handlerPrefix)?.label} | \`${n.handler('save')}\` |`,
-    `| Props de callback | prefixo \`on\` | \`${createNamer({ ...naming, handlerPrefix: 'on' }).handler('saved')}\` |`,
-    `| Prefixo de tipos | ${typePrefixOptions.find((option) => option.value === naming.typePrefix)?.label} | \`${n.type('userCardProps')}\` |`,
-    `| Booleanos | ${booleanPrefixOptions.find((option) => option.value === naming.booleanPrefix)?.label} | \`${n.boolean('isActive')}\` |`,
-    `| Organização de utilitários | ${fileOrganizationOptions.find((option) => option.value === naming.fileOrganization)?.label} | \`${n.file('user', 'service')}\` |`,
-    '| Variáveis de ambiente | SCREAMING_SNAKE com prefixo do bundler | `VITE_BASEURL` |'
+    `| Hooks | ${T('prefixo', 'prefix')} \`use\` + ${caseStyleLabels[naming.functions]} | \`${n.fn('useUserStore')}\` |`,
+    namingRow(ctx, 'handlerPrefix', 'Handlers de evento', tr(handlerPrefixOptions.find((option) => option.value === naming.handlerPrefix)?.label ?? ''), n.handler('save')),
+    `| ${T('Props de callback', 'Callback props')} | ${T('prefixo', 'prefix')} \`on\` | \`${onSaved}\` |`,
+    namingRow(ctx, 'typePrefix', 'Prefixo de tipos', tr(typePrefixOptions.find((option) => option.value === naming.typePrefix)?.label ?? ''), n.type('userCardProps')),
+    namingRow(ctx, 'booleanPrefix', 'Booleanos', tr(booleanPrefixOptions.find((option) => option.value === naming.booleanPrefix)?.label ?? ''), n.boolean('isActive')),
+    namingRow(ctx, 'fileOrganization', 'Organização de utilitários', tr(fileOrganizationOptions.find((option) => option.value === naming.fileOrganization)?.label ?? ''), n.file('user', 'service')),
+    `| ${T('Variáveis de ambiente', 'Environment variables')} | ${T('SCREAMING_SNAKE com prefixo do bundler', 'SCREAMING_SNAKE with the bundler prefix')} | \`VITE_BASEURL\` |`
   ]
 
-  const declaration = pick(componentDeclarationOptions, frontend.componentDeclaration)
-  const structure = pick(componentStructureOptions, frontend.componentStructure)
-  const styling = pick(stylingOptions, frontend.styling)
-  const ui = pick(uiLibraryOptions, frontend.uiLibrary)
-  const state = pick(stateOptions, frontend.state)
-  const fetching = pick(dataFetchingOptions, frontend.dataFetching)
-  const apiLayer = pick(apiLayerOptions, frontend.apiLayer)
-  const asyncActions = pick(asyncActionsOptions, frontend.asyncActions)
-  const forms = pick(formValidationOptions, frontend.formValidation)
-  const e2e = pick(e2eOptions, frontend.e2e)
-  const testing = pick(testingOptions, conventions.testing)
-  const imports = pick(importAliasOptions, conventions.importAlias)
-  const importOrder = pick(importOrderOptions, conventions.importOrder)
-  const comments = pick(commentsOptions, conventions.comments)
-  const exportsStyle = pick(exportOptions, conventions.exports)
+  const declaration = field('frontend.componentDeclaration', componentDeclarationOptions, frontend.componentDeclaration)
+  const structure = field('frontend.componentStructure', componentStructureOptions, frontend.componentStructure)
+  const styling = field('frontend.styling', stylingOptions, frontend.styling)
+  const ui = field('frontend.uiLibrary', uiLibraryOptions, frontend.uiLibrary)
+  const state = field('frontend.state', stateOptions, frontend.state)
+  const fetching = field('frontend.dataFetching', dataFetchingOptions, frontend.dataFetching)
+  const apiLayer = field('frontend.apiLayer', apiLayerOptions, frontend.apiLayer)
+  const asyncActions = field('frontend.asyncActions', asyncActionsOptions, frontend.asyncActions)
+  const forms = field('frontend.formValidation', formValidationOptions, frontend.formValidation)
+  const e2e = field('frontend.e2e', e2eOptions, frontend.e2e)
+  const testing = field('conventions.testing', testingOptions, conventions.testing)
+  const testSuffix = field('conventions.testSuffix', testSuffixOptions, conventions.testSuffix)
+  const imports = field('conventions.importAlias', importAliasOptions, conventions.importAlias)
+  const importOrder = field('conventions.importOrder', importOrderOptions, conventions.importOrder)
+  const comments = field('conventions.comments', commentsOptions, conventions.comments)
+  const exportsStyle = field('conventions.exports', exportOptions, conventions.exports)
   const principles = selectedPrinciples(config)
+  const exportsDescription =
+    !exportsStyle.custom && conventions.exports === 'mixed'
+      ? T('Default para o componente, hook ou store principal do arquivo e named para tipos e funções de API.', "Default for the file's main component, hook or store and named for types and API functions.")
+      : exportsStyle.description
+  const noUnit = !testing.custom && conventions.testing === 'none'
+  const noE2e = !e2e.custom && frontend.e2e === 'none'
+  const unitSuffix = testSuffix.custom ? testSuffix.label : `\`.${conventions.testSuffix}.tsx\``
 
   const testLines = [
-    conventions.testing === 'none' ? '- Testes unitários não são obrigatórios.' : `- Unitários com **${testing.label}**, ao lado do componente (\`.${conventions.testSuffix}.tsx\`).`,
-    frontend.e2e === 'none' ? '- Testes E2E não são obrigatórios.' : `- E2E com **${e2e.label}**. ${e2e.description}`,
-    frontend.e2e === 'cypress' ? '- Cenários numerados pela ordem de execução (`01.auth.cy.ts`, `02.users.cy.ts`). Dados de teste em `cypress/fixtures` e comandos reutilizáveis (login, factories) em `cypress/support`.' : '',
-    '- Antes de abrir um PR, rode o lint e a suíte E2E em modo headless.'
+    noUnit ? T('- Testes unitários não são obrigatórios.', '- Unit tests are not required.') : T(`- Unitários com **${testing.label}**, ao lado do componente (${unitSuffix}).`, `- Unit tests with **${testing.label}**, next to the component (${unitSuffix}).`),
+    noE2e ? T('- Testes E2E não são obrigatórios.', '- E2E tests are not required.') : `- E2E: ${sentence(`**${e2e.label}**`, e2e.description)}`,
+    !e2e.custom && frontend.e2e === 'cypress'
+      ? T(
+          '- Cenários numerados pela ordem de execução (`01.auth.cy.ts`, `02.users.cy.ts`). Dados de teste em `cypress/fixtures` e comandos reutilizáveis (login, factories) em `cypress/support`.',
+          '- Scenarios numbered by run order (`01.auth.cy.ts`, `02.users.cy.ts`). Test data in `cypress/fixtures` and reusable commands (login, factories) in `cypress/support`.'
+        )
+      : '',
+    T('- Antes de abrir um PR, rode o lint e a suíte E2E em modo headless.', '- Before opening a PR, run the linter and the E2E suite in headless mode.')
   ].filter(Boolean)
 
   const checklist = [
-    `Nomes seguem a tabela de nomenclatura e estão em ${language?.label.toLowerCase()}.`,
-    `Arquivos estão na pasta certa da arquitetura ${architecture.label}.`,
-    `Componentes seguem a estrutura "${structure.label}" e a declaração "${declaration.label}".`,
-    'Props e estado estão tipados, sem `any`.',
-    `Chamadas à API passam pela camada "${apiLayer.label}" e usam "${asyncActions.label}".`,
-    `Estilos usam ${styling.label} com os tokens do tema.`,
-    `Imports usam ${imports.label.toLowerCase()}.`,
-    conventions.commitFormat === 'conventional' ? 'Commits seguem Conventional Commits.' : '',
-    ...principles.map((principle) => `Princípio "${principle.label}" aplicado.`),
-    config.publishing.enabled && config.publishing.prompt === 'everyTask' ? 'Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.' : ''
+    T(`Nomes seguem a tabela de nomenclatura e estão em ${language.label.toLowerCase()}.`, `Names follow the naming table and are in ${language.label}.`),
+    T('Arquivos estão na pasta certa da arquitetura.', 'Files are in the right folder for the architecture.'),
+    T(`Componentes seguem "${structure.label}" e "${declaration.label}".`, `Components follow "${structure.label}" and "${declaration.label}".`),
+    T('Props e estado estão tipados, sem `any`.', 'Props and state are typed, with no `any`.'),
+    T(`Chamadas à API passam por "${apiLayer.label}" e usam "${asyncActions.label}".`, `API calls go through "${apiLayer.label}" and use "${asyncActions.label}".`),
+    T(`Estilos usam ${styling.label} com os tokens do tema.`, `Styles use ${styling.label} with theme tokens.`),
+    T(`Imports seguem "${imports.label}".`, `Imports follow "${imports.label}".`),
+    ...principles.map((principle) => T(`Princípio "${principle.label}" aplicado.`, `Principle "${tr(principle.label)}" applied.`)),
+    ...extraPrinciples(config),
+    config.publishing.enabled && config.publishing.prompt === 'everyTask' ? T('Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.', 'Publish question asked as the last action, if the task changed files.') : ''
   ].filter(Boolean)
 
-  return `---
-name: ${slugify(config.skillName)}
-description: ${config.skillDescription.replace(/\n/g, ' ')}
----
+  const formsBlock =
+    !forms.custom && frontend.formValidation === 'none'
+      ? T('Validação manual, feita no handler de submit antes de chamar a API.', 'Manual validation in the submit handler before calling the API.')
+      : `${sentence(`**${forms.label}**`, forms.description)} ${T('A submissão usa o padrão de ações assíncronas acima.', 'Submission uses the async action pattern above.')}${forms.example ? `\n\n${code(forms.example)}` : ''}`
 
-# Guia de padrões do frontend
+  const propsWhere = !structure.custom && frontend.componentStructure === 'singleFile' ? T(' no próprio arquivo', ' in the same file') : T(' no arquivo de tipos do componente', " in the component's types file")
 
-Este guia define as regras de arquitetura, componentes, estado e código deste frontend. Seguir este guia é **obrigatório**.
+  return `${frontmatter(config)}
 
-**Diretriz:** antes de criar ou refatorar páginas, componentes, hooks ou stores, leia este guia e reproduza exatamente a estrutura e os padrões descritos aqui. Antes de criar um componente ou hook, procure um equivalente que já exista no projeto.
+# ${T('Guia de padrões do frontend', 'Frontend standards guide')}
+
+${T('Este guia define as regras de arquitetura, componentes, estado e código deste frontend. Seguir este guia é **obrigatório**.', "This guide defines this frontend's architecture, component, state and code rules. Following it is **mandatory**.")}
+
+**${T('Diretriz', 'Directive')}:** ${T(
+    'antes de criar ou refatorar páginas, componentes, hooks ou stores, leia este guia e reproduza exatamente a estrutura e os padrões descritos aqui. Antes de criar um componente ou hook, procure um equivalente que já exista no projeto.',
+    'before creating or refactoring pages, components, hooks or stores, read this guide and follow exactly the structure and standards described here. Before creating a component or hook, look for an existing equivalent in the project.'
+  )}
 
 ## 1. Stack
 
-| Item | Escolha |
+| Item | ${T('Escolha', 'Choice')} |
 | :--- | :--- |
-| Framework | ${pick(frontendFrameworkOptions, frontend.framework).label} |
-| Linguagem | ${pick(languageOptions, config.language).label} (100% tipado) |
-| Componentes base | ${ui.label} |
-| Estilização | ${styling.label} |
-| Estado global | ${state.label} |
-| Requisições | ${fetching.label} |
-| Formulários | ${forms.label} |
-| Testes E2E | ${e2e.label} |
+| Framework | ${field('frontend.framework', frontendFrameworkOptions, frontend.framework).label} |
+| ${T('Linguagem', 'Language')} | ${field('language', languageOptions, config.language).label} (${T('100% tipado', '100% typed')}) |
+| ${T('Componentes base', 'Base components')} | ${ui.label} |
+| ${T('Estilização', 'Styling')} | ${styling.label} |
+| ${T('Estado global', 'Global state')} | ${state.label} |
+| ${T('Requisições', 'Requests')} | ${fetching.label} |
+| ${T('Formulários', 'Forms')} | ${forms.label} |
+| ${T('Testes E2E', 'E2E tests')} | ${e2e.label} |
 
-## 2. Arquitetura: ${architecture.label}
+${architectureBlock(ctx, tree)}
 
-${architecture.summary}
+## 3. ${T('Nomenclatura', 'Naming')}
 
-**Regras:**
+- **${T('Idioma dos identificadores', 'Identifier language')}:** ${language.label}. ${T('Textos exibidos para o usuário ficam em português.', 'User-facing copy stays in Portuguese.')}
 
-${architecture.rules.map((rule) => `- ${rule}`).join('\n')}
-
-**Estrutura de pastas:**
-
-${code(tree, 'text')}
-
-## 3. Nomenclatura
-
-- **Idioma dos identificadores:** ${language?.label}. Textos exibidos para o usuário ficam em português.
-
-| Elemento | Padrão | Exemplo |
+| ${T('Elemento', 'Element')} | ${T('Padrão', 'Standard')} | ${T('Exemplo', 'Example')} |
 | :--- | :--- | :--- |
 ${[...namingRows, ...extraRows].join('\n')}
 
-## 4. Componentes
+## 4. ${T('Componentes', 'Components')}
 
-- **Declaração:** ${declaration.label}. ${declaration.description}
-- **Estrutura:** ${structure.label}. ${structure.description}
-- **Exports:** ${exportsStyle.label}. ${conventions.exports === 'mixed' ? 'Default para o componente, hook ou store principal do arquivo e named para tipos e funções de API.' : exportsStyle.description} Um componente por arquivo.
-- **Props:** sempre tipadas${frontend.componentStructure === 'singleFile' ? ' no próprio arquivo' : ' no arquivo de tipos do componente'}.
-- **Componentes base:** ${ui.label}. ${ui.description}
-- **Estilos:** ${styling.label}. ${styling.description}
+- **${T('Declaração', 'Declaration')}:** ${sentence(declaration.label, declaration.description)}
+- **${T('Estrutura', 'Structure')}:** ${sentence(structure.label, structure.description)}
+- **Exports:** ${sentence(exportsStyle.label, exportsDescription)} ${T('Um componente por arquivo.', 'One component per file.')}
+- **Props:** ${T('sempre tipadas', 'always typed')}${propsWhere}.
+- **${T('Componentes base', 'Base components')}:** ${sentence(ui.label, ui.description)}
+- **${T('Estilos', 'Styles')}:** ${sentence(styling.label, styling.description)}
 
-${code(structure.example ?? '', 'text')}
+${structure.example ? code(structure.example, 'text') : ''}
 
-## 5. Estado
+## 5. ${T('Estado', 'State')}
 
-- **Local:** \`useState\` para estado que só o componente usa.
-- **Global:** ${state.label}. ${state.description}
+- **Local:** ${T('`useState` para estado que só o componente usa.', '`useState` for state only the component uses.')}
+- **Global:** ${sentence(state.label, state.description)}
 
-${code(state.example ?? '')}
+${state.example ? code(state.example) : ''}
 
-## 6. Dados e API
+## 6. ${T('Dados e API', 'Data and API')}
 
-- **Camada de API:** ${apiLayer.label}. ${apiLayer.description} Componentes e páginas nunca chamam o client HTTP direto.
-- **Requisições:** ${fetching.label}. ${fetching.description}
-- **Ações assíncronas:** ${asyncActions.label}. ${asyncActions.description}
+- **${T('Camada de API', 'API layer')}:** ${sentence(apiLayer.label, apiLayer.description)} ${T('Componentes e páginas nunca chamam o client HTTP direto.', 'Components and pages never call the HTTP client directly.')}
+- **${T('Requisições', 'Requests')}:** ${sentence(fetching.label, fetching.description)}
+- **${T('Ações assíncronas', 'Async actions')}:** ${sentence(asyncActions.label, asyncActions.description)}
 
-${code(asyncActions.example ?? '')}
+${asyncActions.example ? code(asyncActions.example) : ''}
 
-## 7. Formulários
+## 7. ${T('Formulários', 'Forms')}
 
-${frontend.formValidation === 'none' ? 'Validação manual, feita no handler de submit antes de chamar a API.' : `Validação com **${forms.label}**. ${forms.description} A submissão usa o padrão de ações assíncronas acima.\n\n${code(forms.example ?? '')}`}
+${formsBlock}
 
-## 8. Estilo de código
+## 8. ${T('Estilo de código', 'Code style')}
 
-- **Imports:** ${imports.label}. ${imports.description}
-- **Organização dos imports:** ${importOrder.label}. ${importOrder.description}
-- **Ponto e vírgula:** ${pick(semicolonOptions, conventions.semicolons).label}.
-- **Aspas:** ${pick(quoteOptions, conventions.quotes).label}. Atributos JSX sempre com aspas duplas.
-- **Comentários:** ${comments.label}. ${comments.description}
+- **Imports:** ${sentence(imports.label, imports.description)}
+- **${T('Organização dos imports', 'Import organization')}:** ${sentence(importOrder.label, importOrder.description)}
+- **${T('Ponto e vírgula', 'Semicolons')}:** ${field('conventions.semicolons', semicolonOptions, conventions.semicolons).label}.
+- **${T('Aspas', 'Quotes')}:** ${field('conventions.quotes', quoteOptions, conventions.quotes).label}. ${T('Atributos JSX sempre com aspas duplas.', 'JSX attributes always use double quotes.')}
+- **${T('Comentários', 'Comments')}:** ${sentence(comments.label, comments.description)}
 
-## 9. Princípios obrigatórios
+## 9. ${T('Princípios obrigatórios', 'Required principles')}
 
-${principlesSection(config)}
+${principlesSection(ctx)}
 
-## 10. Testes
+## 10. ${T('Testes', 'Tests')}
 
 ${testLines.join('\n')}
 
-## 11. Commits e Git
+## 11. ${T('Commits e Git', 'Commits and Git')}
 
-${gitSection(config)}
+${gitSection(ctx)}
 
-## 12. Publicação
+## 12. ${T('Publicação', 'Publishing')}
 
-${publishingSection(config)}
+${publishingSection(ctx)}
 
-## 13. Exemplo de referência
+## 13. ${T('Exemplo de referência', 'Reference example')}
 
-Use estes arquivos como modelo. Eles seguem todas as regras acima.
+${samplesSection(ctx)}
 
-${samplesSection(config)}
-
-## 14. Checklist antes de entregar
+## 14. ${T('Checklist antes de entregar', 'Checklist before delivering')}
 
 ${checklist.map((item) => `- [ ] ${item}`).join('\n')}
-`
+`.replace(/\n{3,}/g, '\n\n')
 }

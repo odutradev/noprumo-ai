@@ -1,10 +1,12 @@
 import { useMemo } from 'react'
-import { Alert, Button, Card, Flex, Input, Textarea, useToast } from 'enchase'
+import { Alert, Button, Card, Flex, Input, SegmentedControl, Textarea, useToast } from 'enchase'
 
 import { buildSkillMarkdown, slugify } from '@/utils/generator/skillMarkdown'
 import useGeneratorStore from '@stores/generator'
 import CodeBlock from '@components/CodeBlock'
 import { downloadText } from '@/utils/download'
+
+import type { IdentifierLanguage } from '@/types/generator'
 
 import styles from './styles.module.css'
 
@@ -32,12 +34,21 @@ const ResultStep = () => {
 
         <Card variant="outlined">
           <Flex direction="column" gap="1rem">
+            <SegmentedControl
+              label="Idioma do prompt"
+              items={[
+                { value: 'pt', label: 'Português' },
+                { value: 'en', label: 'English' }
+              ]}
+              value={config.outputLanguage}
+              onValueChange={(value: string) => update('outputLanguage', value as IdentifierLanguage)}
+            />
             <Input label="Nome da skill" value={config.skillName} onChange={(event) => update('skillName', event.target.value)} helperText={`Identificador: ${slug}`} fullWidth />
             <Textarea
               label="Quando usar"
               value={config.skillDescription}
               onChange={(event) => update('skillDescription', event.target.value)}
-              helperText="O Claude lê esta descrição para decidir quando ativar a skill."
+              helperText="O Claude lê esta descrição para decidir quando ativar a skill. Escreva no mesmo idioma do prompt."
               rows={3}
               fullWidth
             />
