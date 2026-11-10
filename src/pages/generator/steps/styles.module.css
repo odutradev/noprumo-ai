@@ -184,3 +184,7 @@
   background: var(--enchase-color-primary);
   color: var(--enchase-color-on-primary);
 }
+
+.extraField {
+  margin-block-start: var(--enchase-space-lg);
+}

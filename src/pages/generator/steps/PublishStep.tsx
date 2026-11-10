@@ -5,11 +5,13 @@ import { publishActionOptions, publishPromptOptions, publisherInvocationOptions 
 import { buildPublishChoices, buildPublishCommand } from '@/utils/generator/publishing'
 import ChoiceCards from '@components/ChoiceCards'
 import useGeneratorStore from '@stores/generator'
+import useCustomField from '@/hooks/useCustomField'
 import CodeBlock from '@components/CodeBlock'
 
 import styles from './styles.module.css'
 
 const PublishStep = () => {
+  const custom = useCustomField()
   const publishing = useGeneratorStore((state) => state.config.publishing)
   const set = useGeneratorStore((state) => state.updatePublishing)
   const toggleAction = useGeneratorStore((state) => state.togglePublishAction)
@@ -24,7 +26,12 @@ const PublishStep = () => {
       </div>
 
       <Card variant="outlined">
-        <Switch label="Usar o project-publisher neste projeto" checked={publishing.enabled} onChange={(event) => set('enabled', event.target.checked)} helperText="Desligado, a skill proíbe subir versão ou publicar sem pedido." />
+        <Switch
+          label="Usar o project-publisher neste projeto"
+          checked={publishing.enabled}
+          onChange={(event) => set('enabled', event.target.checked)}
+          helperText="Desligado, a skill proíbe subir versão ou publicar sem pedido."
+        />
       </Card>
 
       {publishing.enabled && (
@@ -45,7 +52,7 @@ const PublishStep = () => {
           )}
 
           <Card variant="outlined" header="Quando perguntar">
-            <ChoiceCards legend="Momento" options={publishPromptOptions} value={publishing.prompt} onChange={(value) => set('prompt', value)} minWidth="18rem" />
+            <ChoiceCards legend="Momento" options={publishPromptOptions} value={publishing.prompt} onChange={(value) => set('prompt', value)} {...custom('publishing.prompt')} minWidth="18rem" />
           </Card>
 
           <Card variant="outlined" header="Etapas da publicação">
@@ -71,10 +78,11 @@ const PublishStep = () => {
 
           <Card variant="outlined" header="Execução">
             <Flex direction="column" gap="1.5rem">
-              <ChoiceCards legend="Como rodar" options={publisherInvocationOptions} value={publishing.invocation} onChange={(value) => set('invocation', value)} />
+              <ChoiceCards legend="Como rodar" options={publisherInvocationOptions} value={publishing.invocation} onChange={(value) => set('invocation', value)} {...custom('publishing.invocation')} />
               <Flex gap="1rem" wrap>
                 <Input label="Branch do push" value={publishing.branch} onChange={(event) => set('branch', event.target.value)} helperText="Padrão do project-publisher: master" />
                 <Input label="Script de build" value={publishing.buildScript} onChange={(event) => set('buildScript', event.target.value)} helperText="Script do package.json usado pelo --build" />
+                <Input label="Outras flags" value={publishing.extraFlags} onChange={(event) => set('extraFlags', event.target.value)} helperText="Adicionadas ao fim do comando, como --bump-manifest" />
               </Flex>
             </Flex>
           </Card>

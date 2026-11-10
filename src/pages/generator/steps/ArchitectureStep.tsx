@@ -4,11 +4,13 @@ import { architectureInfo, architectureOrder } from '@/data/generator/options'
 import { buildTree, getProjectFiles } from '@/utils/generator/architecture'
 import ChoiceCards from '@components/ChoiceCards'
 import useGeneratorStore from '@stores/generator'
+import useCustomField from '@/hooks/useCustomField'
 import FileTree from '@components/FileTree'
 
 import type { Architecture, ChoiceOption, EnabledProjectType } from '@/types/generator'
 
 const ArchitectureStep = () => {
+  const custom = useCustomField()
   const config = useGeneratorStore((state) => state.config)
   const update = useGeneratorStore((state) => state.update)
   const selected = architectureInfo[config.architecture]
@@ -34,6 +36,7 @@ const ArchitectureStep = () => {
         options={options}
         value={config.architecture}
         onChange={(value) => update('architecture', value)}
+        {...custom('architecture')}
         minWidth="21rem"
         renderExtra={renderTree}
       />
