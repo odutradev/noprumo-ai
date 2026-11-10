@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Flex, Input, SegmentedControl, Textarea, useToast } from "enchase"
+import { Alert, Button, Card, Flex, Input, SegmentedControl, Textarea } from "enchase"
 import { useMemo } from "react"
 
 import { buildSkillMarkdown, slugify } from "@utils/functions/generator/skillMarkdown"
@@ -6,6 +6,7 @@ import { downloadText } from "@utils/functions/download"
 import useGeneratorStore from "@stores/generator"
 import StepHeader from "@components/stepHeader"
 import CodeBlock from "@components/codeBlock"
+import useAction from "@hooks/useAction"
 import styles from "./styles"
 
 import type { IdentifierLanguage } from "@utils/types/generator"
@@ -13,16 +14,14 @@ import type { IdentifierLanguage } from "@utils/types/generator"
 const ResultStep = () => {
   const config = useGeneratorStore((state) => state.config)
   const update = useGeneratorStore((state) => state.update)
-  const { success, error } = useToast()
   const markdown = useMemo(() => buildSkillMarkdown(config), [config])
   const slug = slugify(config.skillName)
   const installPath = `.claude/skills/${slug}/SKILL.md`
 
-  const handleCopy = () =>
-    navigator.clipboard
-      .writeText(markdown)
-      .then(() => success("SKILL.md copiado"))
-      .catch(() => error("Não foi possível copiar"))
+  const handleCopy = useAction({
+    action: () => navigator.clipboard.writeText(markdown),
+    toastMessages: { pending: "Copiando...", success: "SKILL.md copiado", error: "Não foi possível copiar" }
+  })
 
   return (
     <div className={styles.resultGrid}>
