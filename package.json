@@ -1,0 +1,31 @@
+{
+  "name": "minhaskill",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "minhaskill frontend",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.7.0",
+    "react-router-dom": "^6.30.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^2.2.0",
+    "typescript": "^7.0.2",
+    "vite": "^3.2.7"
+  }
+}
