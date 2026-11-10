@@ -3,10 +3,14 @@ import { useEffect, useRef, useState } from 'react'
 
 import { architectureInfo, frameworkOptions, languageOptions, projectTypeOptions } from '@/data/generator/options'
 import useGeneratorStore, { generatorSteps } from '@stores/generator'
-import { blankPreset, codeGuidePreset } from '@/data/generator/presets'
+import { frontendFrameworkOptions } from '@/data/generator/frontendOptions'
+import { commitGranularityOptions } from '@/data/generator/commitOptions'
+import { presets } from '@/data/generator/presets'
 import { caseStyleLabels } from '@/utils/generator/naming'
+import { selectedPrinciples } from '@/utils/generator/markdownHelpers'
 
 import ConventionsStep from './steps/ConventionsStep'
+import CommitsStep from './steps/CommitsStep'
 import ArchitectureStep from './steps/ArchitectureStep'
 import PreviewPanel from './components/PreviewPanel'
 import LanguageStep from './steps/LanguageStep'
@@ -15,11 +19,11 @@ import NamingStep from './steps/NamingStep'
 import ResultStep from './steps/ResultStep'
 import Stepper from './components/Stepper'
 
-import type { GeneratorConfig } from '@/types/generator'
+import type { EnabledProjectType, GeneratorConfig } from '@/types/generator'
 
 import styles from './styles.module.css'
 
-const stepComponents = [ProjectStep, LanguageStep, ArchitectureStep, NamingStep, ConventionsStep, ResultStep]
+const stepComponents = [ProjectStep, LanguageStep, ArchitectureStep, NamingStep, ConventionsStep, CommitsStep, ResultStep]
 
 const labelOf = <T extends string>(options: { value: T; label: string }[], value: T) => options.find((option) => option.value === value)?.label ?? value
 
@@ -40,12 +44,16 @@ const GeneratorPage = () => {
     topRef.current?.scrollIntoView({ block: 'start' })
   }, [step])
 
+  const isFrontend = config.projectType === 'frontend'
+  const typePresets = presets[config.projectType as EnabledProjectType]
+
   const steps = [
     { label: 'Projeto', hint: labelOf(projectTypeOptions, config.projectType) },
-    { label: 'Stack', hint: `${labelOf(languageOptions, config.language)} · ${labelOf(frameworkOptions, config.framework)}` },
+    { label: 'Stack', hint: `${labelOf(languageOptions, config.language)} · ${isFrontend ? labelOf(frontendFrameworkOptions, config.frontend.framework) : labelOf(frameworkOptions, config.framework)}` },
     { label: 'Arquitetura', hint: architectureInfo[config.architecture].label },
     { label: 'Nomenclatura', hint: `${config.naming.language === 'en' ? 'Inglês' : 'Português'} · ${caseStyleLabels[config.naming.functions]}` },
-    { label: 'Convenções', hint: `${config.conventions.principles.length} princípios` },
+    { label: 'Convenções', hint: `${selectedPrinciples(config).length} princípios` },
+    { label: 'Commits', hint: `${labelOf(commitGranularityOptions, config.conventions.commitGranularity)} · ${config.conventions.commitLanguage === 'en' ? 'Inglês' : 'Português'}` },
     { label: 'Resultado', hint: 'SKILL.md' }
   ]
 
@@ -64,10 +72,10 @@ const GeneratorPage = () => {
             <p className={styles.lead}>Escolha arquitetura, nomenclatura e convenções. O resultado é um SKILL.md pronto para o Claude Code seguir no seu projeto.</p>
           </div>
           <Flex gap="0.5rem" wrap className={styles.presets}>
-            <Button variant="outline" size="sm" onClick={() => setPendingPreset(codeGuidePreset)}>
-              Usar meu padrão
+            <Button variant="outline" size="sm" onClick={() => setPendingPreset(typePresets.mine)}>
+              {isFrontend ? 'Usar meu padrão de frontend' : 'Usar meu padrão de backend'}
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setPendingPreset(blankPreset)}>
+            <Button variant="ghost" size="sm" onClick={() => setPendingPreset(typePresets.neutral)}>
               Começar do padrão neutro
             </Button>
           </Flex>
@@ -95,7 +103,7 @@ const GeneratorPage = () => {
       <ConfirmModal
         isOpen={pendingPreset !== null}
         title="Substituir as escolhas atuais?"
-        message="Todas as opções vão voltar para o preset selecionado."
+        message={`As escolhas de ${isFrontend ? 'frontend' : 'backend'} vão voltar para o preset selecionado.`}
         confirmText="Substituir"
         onConfirm={() => {
           if (pendingPreset) applyPreset(pendingPreset)

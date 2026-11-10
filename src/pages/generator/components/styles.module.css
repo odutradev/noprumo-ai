@@ -1,6 +1,6 @@
 .stepper {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: var(--enchase-space-xs);
   margin: 0;
   padding: 0;
@@ -156,7 +156,7 @@
 
 @media (max-width: 1100px) {
   .stepper {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .preview {

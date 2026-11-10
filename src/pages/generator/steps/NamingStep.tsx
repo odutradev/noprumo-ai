@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { Card, Flex } from 'enchase'
 
-import { booleanPrefixOptions, fileOrganizationOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from '@/data/generator/naming'
+import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from '@/data/generator/naming'
 import { caseStyleLabels } from '@/utils/generator/naming'
 import { createNamer } from '@/utils/generator/namer'
 import OptionChips from '@components/OptionChips'
@@ -13,47 +13,76 @@ import styles from './styles.module.css'
 
 const NamingStep = () => {
   const naming = useGeneratorStore((state) => state.config.naming)
+  const isFrontend = useGeneratorStore((state) => state.config.projectType === 'frontend')
   const updateNaming = useGeneratorStore((state) => state.updateNaming)
   const namerWith = (patch: Partial<NamingConfig>) => createNamer({ ...naming, ...patch })
+  const groups = isFrontend ? frontendNamingGroups : namingGroups
 
-  const extraRows: Record<string, ReactElement> = {
-    Código: (
-      <>
-        <OptionChips
-          legend="Prefixo de tipos"
-          description="Como interfaces e types se diferenciam."
-          options={typePrefixOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ typePrefix: option.value }).type('userResponse') }))}
-          value={naming.typePrefix}
-          onChange={(value) => updateNaming('typePrefix', value)}
-        />
-        <OptionChips
-          legend="Booleanos"
-          description="Prefixo de variáveis verdadeiro/falso."
-          options={booleanPrefixOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ booleanPrefix: option.value }).boolean('isActive') }))}
-          value={naming.booleanPrefix}
-          onChange={(value) => updateNaming('booleanPrefix', value)}
-        />
-      </>
-    ),
-    'Arquivos e pastas': (
-      <OptionChips
-        legend="Organização"
-        description="Como nome e papel do arquivo se combinam."
-        options={fileOrganizationOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ fileOrganization: option.value }).file('user', 'repository') }))}
-        value={naming.fileOrganization}
-        onChange={(value) => updateNaming('fileOrganization', value)}
-      />
-    ),
-    'Banco e API': (
-      <OptionChips
-        legend="Número das tabelas"
-        description="Plural ou singular."
-        options={tableNumberOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ tableNumber: option.value }).table() }))}
-        value={naming.tableNumber}
-        onChange={(value) => updateNaming('tableNumber', value)}
-      />
-    )
-  }
+  const typePrefixRow = (
+    <OptionChips
+      legend="Prefixo de tipos"
+      description="Como interfaces e types se diferenciam."
+      options={typePrefixOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ typePrefix: option.value }).type(isFrontend ? 'userCardProps' : 'userResponse') }))}
+      value={naming.typePrefix}
+      onChange={(value) => updateNaming('typePrefix', value)}
+    />
+  )
+
+  const booleanRow = (
+    <OptionChips
+      legend="Booleanos"
+      description="Prefixo de variáveis verdadeiro/falso."
+      options={booleanPrefixOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ booleanPrefix: option.value }).boolean('isActive') }))}
+      value={naming.booleanPrefix}
+      onChange={(value) => updateNaming('booleanPrefix', value)}
+    />
+  )
+
+  const fileOrganizationRow = (
+    <OptionChips
+      legend={isFrontend ? 'Organização de utilitários' : 'Organização'}
+      description={isFrontend ? 'Como actions, stores e utils são nomeados.' : 'Como nome e papel do arquivo se combinam.'}
+      options={fileOrganizationOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ fileOrganization: option.value }).file('user', isFrontend ? 'service' : 'repository') }))}
+      value={naming.fileOrganization}
+      onChange={(value) => updateNaming('fileOrganization', value)}
+    />
+  )
+
+  const extraRows: Record<string, ReactElement> = isFrontend
+    ? {
+        Código: (
+          <>
+            <OptionChips
+              legend="Handlers de evento"
+              description="Funções internas que respondem a eventos."
+              options={handlerPrefixOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ handlerPrefix: option.value }).handler('save') }))}
+              value={naming.handlerPrefix}
+              onChange={(value) => updateNaming('handlerPrefix', value)}
+            />
+            {typePrefixRow}
+            {booleanRow}
+          </>
+        ),
+        'Arquivos e pastas': fileOrganizationRow
+      }
+    : {
+        Código: (
+          <>
+            {typePrefixRow}
+            {booleanRow}
+          </>
+        ),
+        'Arquivos e pastas': fileOrganizationRow,
+        'Banco e API': (
+          <OptionChips
+            legend="Número das tabelas"
+            description="Plural ou singular."
+            options={tableNumberOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ tableNumber: option.value }).table() }))}
+            value={naming.tableNumber}
+            onChange={(value) => updateNaming('tableNumber', value)}
+          />
+        )
+      }
 
   return (
     <Flex direction="column" gap="1.5rem">
@@ -65,14 +94,14 @@ const NamingStep = () => {
       <Card variant="outlined">
         <OptionChips
           legend="Idioma dos identificadores"
-          description="Variáveis, funções, tipos, tabelas e pastas."
-          options={identifierLanguageOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ language: option.value }).fn('getUserById') }))}
+          description={isFrontend ? 'Componentes, funções, tipos e pastas. Textos da interface continuam em português.' : 'Variáveis, funções, tipos, tabelas e pastas.'}
+          options={identifierLanguageOptions.map((option) => ({ value: option.value, label: option.label, example: namerWith({ language: option.value }).fn(isFrontend ? 'updateUser' : 'getUserById') }))}
           value={naming.language}
           onChange={(value) => updateNaming('language', value)}
         />
       </Card>
 
-      {namingGroups.map((group) => (
+      {groups.map((group) => (
         <Card key={group.title} variant="outlined" header={group.title} headerExtra={<span className={styles.hint}>{group.description}</span>}>
           {group.categories.map((category) => (
             <OptionChips

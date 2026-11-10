@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Badge, Tabs } from 'enchase'
 
-import { buildTree, getArchitectureLayout } from '@/utils/generator/architecture'
+import { buildTree, getProjectFiles } from '@/utils/generator/architecture'
 import { buildSkillMarkdown } from '@/utils/generator/skillMarkdown'
 import { buildSampleFiles } from '@/utils/generator/codeSample'
 import useGeneratorStore from '@stores/generator'
@@ -14,7 +14,7 @@ const PreviewPanel = () => {
   const config = useGeneratorStore((state) => state.config)
   const [fileIndex, setFileIndex] = useState(0)
   const files = useMemo(() => buildSampleFiles(config), [config])
-  const tree = useMemo(() => buildTree(getArchitectureLayout(config).files), [config])
+  const tree = useMemo(() => buildTree(getProjectFiles(config)), [config])
   const markdown = useMemo(() => buildSkillMarkdown(config), [config])
   const activeFile = files[Math.min(fileIndex, files.length - 1)]
 
