@@ -23,5 +23,6 @@ dist
 .DS_Store
 Thumbs.db
 
-# claude
-.claude
+# agent skills
+.agents
+skills-lock.json
