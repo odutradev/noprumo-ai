@@ -1,10 +1,15 @@
+import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
+import '@fontsource-variable/figtree'
+import 'enchase/styles.css'
 
 import Router from '@routes/index'
 
-const App = () => <Router />
-
 const rootElement = document.getElementById('root')
 if (rootElement) {
-  ReactDOM.createRoot(rootElement).render(<App />)
+  ReactDOM.createRoot(rootElement).render(
+    <StrictMode>
+      <Router />
+    </StrictMode>
+  )
 }
