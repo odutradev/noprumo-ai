@@ -35,6 +35,8 @@ const oneLineDestructuring = {
 
 const internalFolders = "assets|components|hooks|pages|providers|routes|stores|styles|utils"
 
+const babelOptions = (plugins) => ({ requireConfigFile: false, babelOptions: { babelrc: false, configFile: false, parserOpts: { plugins } } })
+
 export default [
   { ignores: ["build", "dist", "node_modules"] },
   js.configs.recommended,
@@ -42,14 +44,7 @@ export default [
     files: ["**/*.{js,ts,tsx}"],
     languageOptions: {
       parser: babelParser,
-      parserOptions: {
-        requireConfigFile: false,
-        babelOptions: {
-          babelrc: false,
-          configFile: false,
-          parserOpts: { plugins: ["typescript", "jsx"] }
-        }
-      },
+      parserOptions: babelOptions(["typescript", "jsx"]),
       globals: { ...globals.browser, ...globals.node }
     },
     plugins: {
@@ -98,6 +93,10 @@ export default [
       ],
       ...reactHooks.configs.recommended.rules
     }
+  },
+  {
+    files: ["**/*.ts"],
+    languageOptions: { parserOptions: babelOptions(["typescript"]) }
   },
   {
     files: ["src/utils/functions/logger/**"],
