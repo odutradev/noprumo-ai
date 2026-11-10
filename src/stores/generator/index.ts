@@ -47,7 +47,7 @@ const useGeneratorStore = create<GeneratorState>()(
         }),
       applyPreset: (preset) => set((state) => withConfig(state, preset))
     }),
-    { name: "minhaskill-generator", version: 5, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0 }) as GeneratorState }
+    { name: "minhaskill-generator", version: 6, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0 }) as GeneratorState }
   )
 )
 

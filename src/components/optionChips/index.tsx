@@ -9,7 +9,7 @@ const OptionChips = <T extends string>({ legend, description, options, value, on
   const name = useId()
   const isCustom = customText !== undefined
 
-  const select = (next: T) => {
+  const handleSelect = (next: T) => {
     if (isCustom) onCustomChange?.(undefined)
     onChange(next)
   }
@@ -22,10 +22,10 @@ const OptionChips = <T extends string>({ legend, description, options, value, on
       </div>
       <div className={styles.chips}>
         {options.map((option) => {
-          const checked = !isCustom && option.value === value
+          const isChecked = !isCustom && option.value === value
           return (
-            <label key={option.value} className={styles.chip} data-checked={checked || undefined}>
-              <input className={styles.input} type="radio" name={name} value={option.value} checked={checked} onChange={() => select(option.value)} />
+            <label key={option.value} className={styles.chip} data-checked={isChecked || undefined}>
+              <input className={styles.input} type="radio" name={name} value={option.value} checked={isChecked} onChange={() => handleSelect(option.value)} />
               {option.example && <code className={styles.example}>{option.example}</code>}
               <span className={styles.label}>{option.label}</span>
             </label>

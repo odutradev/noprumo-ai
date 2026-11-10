@@ -1,6 +1,7 @@
-import { words, type VocabularyKey } from "@assets/data/generator/vocabulary"
 import { toCase } from "@utils/functions/generator/naming"
+import { words } from "@assets/data/generator/vocabulary"
 
+import type { VocabularyKey } from "@assets/data/generator/vocabulary"
 import type { NamingConfig } from "@utils/types/generator"
 
 export type TermRef = VocabularyKey | VocabularyKey[]

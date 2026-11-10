@@ -3,8 +3,8 @@ import type { ApiLayer, AsyncActions, ChoiceOption, ComponentDeclaration, Compon
 export const frontendFrameworkOptions: ChoiceOption<FrontendFramework>[] = [
   { value: "react", label: "React + Vite", description: "SPA com React Router, build rápido e code splitting por rota.", example: "createRoot(root).render(<App />)" },
   { value: "next", label: "Next.js", description: "App Router, Server Components e rotas por pasta.", example: "app/users/page.tsx" },
-  { value: "vue", label: "Vue", description: "Single File Components e Composition API.", badge: "Em breve", disabled: true },
-  { value: "angular", label: "Angular", description: "Framework completo com módulos e DI.", badge: "Em breve", disabled: true }
+  { value: "vue", label: "Vue", description: "Single File Components e Composition API.", badge: "Em breve", isDisabled: true },
+  { value: "angular", label: "Angular", description: "Framework completo com módulos e DI.", badge: "Em breve", isDisabled: true }
 ]
 
 export const uiLibraryOptions: ChoiceOption<UiLibrary>[] = [

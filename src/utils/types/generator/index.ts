@@ -139,7 +139,7 @@ export interface FrontendConfig {
 }
 
 export interface PublishingConfig {
-  enabled: boolean
+  isEnabled: boolean
   actions: PublishAction[]
   branch: string
   buildScript: string
@@ -172,12 +172,12 @@ export interface ChoiceOption<T extends string> {
   description: string
   example?: string
   badge?: string
-  disabled?: boolean
+  isDisabled?: boolean
 }
 
 export interface TreeNode {
   name: string
   note?: string
-  highlight?: boolean
+  isHighlighted?: boolean
   children?: TreeNode[]
 }

@@ -25,13 +25,13 @@ const PublishStep = () => {
       <Card variant="outlined">
         <Switch
           label="Usar o project-publisher neste projeto"
-          checked={publishing.enabled}
-          onChange={(event) => set("enabled", event.target.checked)}
+          checked={publishing.isEnabled}
+          onChange={(event) => set("isEnabled", event.target.checked)}
           helperText="Desligado, a skill proíbe subir versão ou publicar sem pedido."
         />
       </Card>
 
-      {publishing.enabled && (
+      {publishing.isEnabled && (
         <>
           {publishing.prompt === "everyTask" && hasActions && (
             <div className={styles.askPreview} aria-label="Prévia da pergunta que o Claude vai fazer">
@@ -79,7 +79,7 @@ const PublishStep = () => {
           </Card>
 
           {hasActions ? (
-            <CodeBlock code={buildPublishCommand(publishing)} title="Comando gerado" copyable />
+            <CodeBlock code={buildPublishCommand(publishing)} title="Comando gerado" isCopyable />
           ) : (
             <Alert variant="warning" title="Nenhuma etapa marcada">
               Marque ao menos uma etapa para gerar o comando de publicação.

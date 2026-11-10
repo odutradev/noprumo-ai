@@ -13,7 +13,7 @@ export interface ImportLine {
   line: string
 }
 
-export const END = "§"
+export const statementEnd = "§"
 
 export const stripExtension = (path: string) => path.replace(/\.tsx?$/, "").replace(/\/index$/, "")
 
@@ -28,8 +28,8 @@ export const relativePath = (fromFile: string, toFile: string) => {
 }
 
 export const createImporter = (config: GeneratorConfig, fromFile: string) => (toFile: string) => {
-  const sameFolder = fromFile.split("/").slice(0, -1).join("/") === toFile.split("/").slice(0, -1).join("/")
-  if (sameFolder || config.conventions.importAlias === "relative") return relativePath(fromFile, toFile)
+  const isSameFolder = fromFile.split("/").slice(0, -1).join("/") === toFile.split("/").slice(0, -1).join("/")
+  if (isSameFolder || config.conventions.importAlias === "relative") return relativePath(fromFile, toFile)
   const inner = stripExtension(toFile).replace(/^src\//, "")
   return config.conventions.importAlias === "root" ? `@/${inner}` : `@${inner}`
 }
@@ -49,11 +49,11 @@ export const formatImports = (imports: ImportLine[], config: GeneratorConfig) =>
 
 export const finalize = (imports: ImportLine[], body: string, config: GeneratorConfig) => {
   const header = formatImports(
-    imports.map((item) => ({ ...item, line: `${item.line}${END}` })),
+    imports.map((item) => ({ ...item, line: `${item.line}${statementEnd}` })),
     config
   )
   const code = [header, body].filter(Boolean).join("\n\n")
-  const withSemicolons = code.replaceAll(END, config.conventions.semicolons === "always" ? ";" : "")
+  const withSemicolons = code.replaceAll(statementEnd, config.conventions.semicolons === "always" ? ";" : "")
   return config.conventions.quotes === "double" ? withSemicolons.replaceAll("'", "\"") : withSemicolons
 }
 
@@ -68,7 +68,7 @@ export const comment = (config: GeneratorConfig, pt: string, en: string, indent 
 export const exportMain = (config: GeneratorConfig, name: string, declaration: string) => {
   const style = config.conventions.exports
   if (style === "named") return `export ${declaration}`
-  return `${declaration}\n\nexport default ${name}${END}`
+  return `${declaration}\n\nexport default ${name}${statementEnd}`
 }
 
 export const fnDeclaration = (config: GeneratorConfig, name: string, params: string, returnType: string, body: string, isAsync = true) => {

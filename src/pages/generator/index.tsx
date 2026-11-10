@@ -53,7 +53,7 @@ const GeneratorPage = () => {
     { label: "Nomenclatura", hint: `${config.naming.language === "en" ? "Inglês" : "Português"} · ${caseStyleLabels[config.naming.functions]}` },
     { label: "Convenções", hint: `${selectedPrinciples(config).length} princípios` },
     { label: "Commits", hint: `${labelOf(commitGranularityOptions, config.conventions.commitGranularity)} · ${config.conventions.commitLanguage === "en" ? "Inglês" : "Português"}` },
-    { label: "Publicação", hint: config.publishing.enabled ? "project-publisher" : "Desligada" },
+    { label: "Publicação", hint: config.publishing.isEnabled ? "project-publisher" : "Desligada" },
     { label: "Resultado", hint: "SKILL.md" }
   ]
 

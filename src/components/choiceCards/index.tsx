@@ -10,9 +10,9 @@ import type { ChoiceCardsProps } from "./types"
 const ChoiceCards = <T extends string>({ legend, description, options, value, onChange, minWidth = "15rem", renderExtra, customText, onCustomChange }: ChoiceCardsProps<T>) => {
   const name = useId()
   const isCustom = customText !== undefined
-  const allowCustom = onCustomChange !== undefined
+  const hasCustomOption = onCustomChange !== undefined
 
-  const select = (next: T) => {
+  const handleSelect = (next: T) => {
     if (isCustom) onCustomChange?.(undefined)
     onChange(next)
   }
@@ -23,28 +23,28 @@ const ChoiceCards = <T extends string>({ legend, description, options, value, on
       {description && <p className={styles.description}>{description}</p>}
       <div className={styles.grid} style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${minWidth}, 100%), 1fr))` }}>
         {options.map((option) => {
-          const checked = !isCustom && option.value === value
+          const isChecked = !isCustom && option.value === value
           return (
-            <label key={option.value} className={styles.card} data-checked={checked || undefined} data-disabled={option.disabled || undefined}>
-              <input className={styles.input} type="radio" name={name} value={option.value} checked={checked} disabled={option.disabled} onChange={() => select(option.value)} />
+            <label key={option.value} className={styles.card} data-checked={isChecked || undefined} data-disabled={option.isDisabled || undefined}>
+              <input className={styles.input} type="radio" name={name} value={option.value} checked={isChecked} disabled={option.isDisabled} onChange={() => handleSelect(option.value)} />
               <span className={styles.head}>
                 <span className={styles.label}>{option.label}</span>
                 {option.badge && (
-                  <Badge size="sm" variant={option.disabled ? "neutral" : "primary"}>
+                  <Badge size="sm" variant={option.isDisabled ? "neutral" : "primary"}>
                     {option.badge}
                   </Badge>
                 )}
                 <span className={styles.check} aria-hidden="true">
-                  {checked && <CheckIcon size={14} />}
+                  {isChecked && <CheckIcon size={14} />}
                 </span>
               </span>
               <span className={styles.text}>{option.description}</span>
-              {option.example && <CodeBlock code={option.example} compact />}
+              {option.example && <CodeBlock code={option.example} isCompact />}
               {renderExtra?.(option)}
             </label>
           )
         })}
-        {allowCustom && (
+        {hasCustomOption && (
           <div className={styles.card} data-checked={isCustom || undefined}>
             <label className={styles.customLabel}>
               <input className={styles.input} type="radio" name={name} value="__custom" checked={isCustom} onChange={() => onCustomChange?.("")} />

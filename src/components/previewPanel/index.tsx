@@ -30,7 +30,7 @@ const PreviewPanel = () => {
               </button>
             ))}
           </div>
-          <CodeBlock code={activeFile.code} title={activeFile.path} copyable maxHeight="30rem" />
+          <CodeBlock code={activeFile.code} title={activeFile.path} isCopyable maxHeight="30rem" />
         </div>
       )
     },
@@ -44,7 +44,7 @@ const PreviewPanel = () => {
       ),
       content: (
         <div className={styles.tabBody}>
-          <CodeBlock code={markdown} title="SKILL.md" plain copyable maxHeight="30rem" />
+          <CodeBlock code={markdown} title="SKILL.md" isPlain isCopyable maxHeight="30rem" />
         </div>
       )
     }

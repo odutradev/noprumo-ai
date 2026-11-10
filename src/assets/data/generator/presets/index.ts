@@ -15,7 +15,7 @@ const frontendDefaults: FrontendConfig = {
 }
 
 const publishingDefaults: PublishingConfig = {
-  enabled: true,
+  isEnabled: true,
   actions: ["bumpPackage", "build", "push"],
   branch: "master",
   buildScript: "build",
@@ -122,7 +122,7 @@ export const blankPreset: GeneratorConfig = {
     branchNaming: "free",
     principles: ["earlyReturn", "noAny", "noConsoleLog"]
   },
-  publishing: { ...publishingDefaults, enabled: false }
+  publishing: { ...publishingDefaults, isEnabled: false }
 }
 
 export const bonfirePreset: GeneratorConfig = {
@@ -186,7 +186,7 @@ export const blankFrontendPreset: GeneratorConfig = {
     apiLayer: "colocated",
     asyncActions: "mutationHook"
   },
-  publishing: { ...publishingDefaults, enabled: false }
+  publishing: { ...publishingDefaults, isEnabled: false }
 }
 
 export const presets: Record<EnabledProjectType, { mine: GeneratorConfig; neutral: GeneratorConfig }> = {

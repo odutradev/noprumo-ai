@@ -1,8 +1,9 @@
 import { publishActionOptions, publishPromptOptions, publisherInvocationOptions } from "@assets/data/generator/publishOptions"
-import { sentence, type MdContext } from "@utils/functions/generator/mdContext"
 import { code } from "@utils/functions/generator/markdownHelpers"
+import { sentence } from "@utils/functions/generator/mdContext"
 
 import type { PublishAction, PublishingConfig } from "@utils/types/generator"
+import type { MdContext } from "@utils/functions/generator/mdContext"
 
 export interface PublishChoice {
   label: string
@@ -56,10 +57,10 @@ const packageScripts = (publishing: PublishingConfig) => {
 }
 
 export const publishingSection = (ctx: MdContext) => {
-  const { config, T, tr, field, isEn } = ctx
+  const { config, byLanguage, tr, field, isEn } = ctx
   const { publishing } = config
-  if (!publishing.enabled || publishing.actions.length === 0) {
-    return T(
+  if (!publishing.isEnabled || publishing.actions.length === 0) {
+    return byLanguage(
       "Este projeto não usa publicação automatizada. Não suba versão, não faça build de release e não publique sem um pedido explícito.",
       "This project does not use automated publishing. Do not bump the version, build a release or publish without an explicit request."
     )
@@ -69,57 +70,57 @@ export const publishingSection = (ctx: MdContext) => {
   const prompt = field("publishing.prompt", publishPromptOptions, publishing.prompt)
   const choices = buildPublishChoices(publishing, tr, isEn)
   const actionRows = ordered(publishing.actions).map((option) => `| \`${option.flag}\` | ${tr(option.label)} | ${tr(option.description)} |`)
-  const extraRow = publishing.extraFlags.trim() ? `\n| \`${publishing.extraFlags.trim()}\` | ${T("Flags extras", "Extra flags")} | ${T("Definidas à mão", "Set by hand")} |` : ""
-  const install = publishing.invocation === "global" && !invocation.custom ? `\n\n${T("Instalação, uma vez por máquina", "Install once per machine")}:\n\n${code("npm install -g project-publisher", "bash")}` : ""
-  const scripts = publishing.invocation === "script" && !invocation.custom ? `\n\n${T("Scripts que devem existir no `package.json`", "Scripts that must exist in `package.json`")}:\n\n${code(packageScripts(publishing), "json")}` : ""
+  const extraRow = publishing.extraFlags.trim() ? `\n| \`${publishing.extraFlags.trim()}\` | ${byLanguage("Flags extras", "Extra flags")} | ${byLanguage("Definidas à mão", "Set by hand")} |` : ""
+  const install = publishing.invocation === "global" && !invocation.isCustom ? `\n\n${byLanguage("Instalação, uma vez por máquina", "Install once per machine")}:\n\n${code("npm install -g project-publisher", "bash")}` : ""
+  const scripts = publishing.invocation === "script" && !invocation.isCustom ? `\n\n${byLanguage("Scripts que devem existir no `package.json`", "Scripts that must exist in `package.json`")}:\n\n${code(packageScripts(publishing), "json")}` : ""
   const command = code(buildPublishCommand(publishing), "bash")
   const branch = publishing.branch || "master"
 
   const everyTask = [
-    `### ${T("Pergunta obrigatória ao final de cada tarefa", "Required question at the end of every task")}`,
-    T(
+    `### ${byLanguage("Pergunta obrigatória ao final de cada tarefa", "Required question at the end of every task")}`,
+    byLanguage(
       "Ao terminar **toda** tarefa que alterou arquivos, depois de commitar seguindo a seção de commits e com typecheck, lint e build passando, a última ação é perguntar se a pessoa quer publicar. Use a ferramenta de pergunta interativa (`AskUserQuestion`), que mostra uma caixa com botões:",
       "When you finish **every** task that changed files, after committing as described in the commits section and with typecheck, lint and build passing, your last action is to ask whether to publish. Use the interactive question tool (`AskUserQuestion`), which shows a box with buttons:"
     ),
     [
-      `- **${T("Pergunta", "Question")}:** "${T("Quer subir a versão e publicar?", "Do you want to bump the version and publish?")}"`,
-      `- **${T("Cabeçalho", "Header")}:** "${T("Publicar", "Publish")}"`,
-      `- **${T("Opções", "Options")}:**`,
-      ...choices.map((choice) => `  - **${choice.label}**: ${choice.description}${choice.command ? ` → ${T("roda", "runs")} \`${choice.command}\`` : ""}`)
+      `- **${byLanguage("Pergunta", "Question")}:** "${byLanguage("Quer subir a versão e publicar?", "Do you want to bump the version and publish?")}"`,
+      `- **${byLanguage("Cabeçalho", "Header")}:** "${byLanguage("Publicar", "Publish")}"`,
+      `- **${byLanguage("Opções", "Options")}:**`,
+      ...choices.map((choice) => `  - **${choice.label}**: ${choice.description}${choice.command ? ` → ${byLanguage("roda", "runs")} \`${choice.command}\`` : ""}`)
     ].join("\n"),
-    T("Se a ferramenta não existir no ambiente, faça a mesma pergunta em texto como última linha da resposta, listando as opções.", "If the tool is not available, ask the same question in text as the last line of your reply, listing the options."),
+    byLanguage("Se a ferramenta não existir no ambiente, faça a mesma pergunta em texto como última linha da resposta, listando as opções.", "If the tool is not available, ask the same question in text as the last line of your reply, listing the options."),
     [
-      `- ${T("Só rode o comando da opção escolhida. Em \"Agora não\", não rode nada e não pergunte de novo na mesma tarefa.", "Only run the command for the chosen option. On \"Not now\", run nothing and do not ask again in the same task.")}`,
-      `- ${T("Não pergunte quando a tarefa não mudou arquivos (só perguntas, leituras ou explicações).", "Do not ask when the task changed no files (questions, reads or explanations only).")}`,
-      `- ${T("Não pergunte se o build, os testes ou o typecheck falharam: corrija primeiro ou avise que a publicação ficou bloqueada.", "Do not ask if the build, tests or typecheck failed: fix them first or say that publishing is blocked.")}`
+      `- ${byLanguage("Só rode o comando da opção escolhida. Em \"Agora não\", não rode nada e não pergunte de novo na mesma tarefa.", "Only run the command for the chosen option. On \"Not now\", run nothing and do not ask again in the same task.")}`,
+      `- ${byLanguage("Não pergunte quando a tarefa não mudou arquivos (só perguntas, leituras ou explicações).", "Do not ask when the task changed no files (questions, reads or explanations only).")}`,
+      `- ${byLanguage("Não pergunte se o build, os testes ou o typecheck falharam: corrija primeiro ou avise que a publicação ficou bloqueada.", "Do not ask if the build, tests or typecheck failed: fix them first or say that publishing is blocked.")}`
     ].join("\n")
   ].join("\n\n")
 
   const onRequest = [
-    `### ${T("Quando publicar", "When to publish")}`,
-    T("Só publique quando pedirem para \"publicar\", \"subir a versão\" ou \"fazer release\". Nesse caso, rode:", "Only publish when asked to \"publish\", \"bump the version\" or \"release\". Then run:"),
+    `### ${byLanguage("Quando publicar", "When to publish")}`,
+    byLanguage("Só publique quando pedirem para \"publicar\", \"subir a versão\" ou \"fazer release\". Nesse caso, rode:", "Only publish when asked to \"publish\", \"bump the version\" or \"release\". Then run:"),
     command
   ].join("\n\n")
 
-  const customPrompt = [`### ${T("Quando publicar", "When to publish")}`, prompt.label, command].join("\n\n")
-  const askBlock = prompt.custom ? customPrompt : publishing.prompt === "everyTask" ? everyTask : onRequest
+  const customPrompt = [`### ${byLanguage("Quando publicar", "When to publish")}`, prompt.label, command].join("\n\n")
+  const askBlock = prompt.isCustom ? customPrompt : publishing.prompt === "everyTask" ? everyTask : onRequest
 
   const before = [
-    `- ${T("Commite todo o trabalho da tarefa seguindo as regras de commit.", "Commit all of the task's work following the commit rules.")}${
+    `- ${byLanguage("Commite todo o trabalho da tarefa seguindo as regras de commit.", "Commit all of the task's work following the commit rules.")}${
       publishing.actions.includes("push")
-        ? ` ${T("O `--push` roda `git add .` e cria o commit `chore: bump version to X`: qualquer mudança pendente iria junto nesse commit.", "The `--push` flag runs `git add .` and creates the commit `chore: bump version to X`: any pending change would end up in that commit.")}`
+        ? ` ${byLanguage("O `--push` roda `git add .` e cria o commit `chore: bump version to X`: qualquer mudança pendente iria junto nesse commit.", "The `--push` flag runs `git add .` and creates the commit `chore: bump version to X`: any pending change would end up in that commit.")}`
         : ""
     }`,
-    `- ${T("A árvore de trabalho precisa estar limpa, exceto pelo que o próprio publish altera.", "The working tree must be clean, except for what publishing itself changes.")}`,
-    `- ${publishing.actions.includes("push") ? T(`O push vai para a branch \`${branch}\`.`, `The push goes to the \`${branch}\` branch.`) : T("Esta configuração não faz push.", "This setup does not push.")}`,
-    `- ${T("O bump sobe só o patch. Para mudar minor ou major, edite a versão no `package.json` à mão antes de rodar.", "The bump only raises the patch. To change minor or major, edit the version in `package.json` by hand before running.")}`
+    `- ${byLanguage("A árvore de trabalho precisa estar limpa, exceto pelo que o próprio publish altera.", "The working tree must be clean, except for what publishing itself changes.")}`,
+    `- ${publishing.actions.includes("push") ? byLanguage(`O push vai para a branch \`${branch}\`.`, `The push goes to the \`${branch}\` branch.`) : byLanguage("Esta configuração não faz push.", "This setup does not push.")}`,
+    `- ${byLanguage("O bump sobe só o patch. Para mudar minor ou major, edite a versão no `package.json` à mão antes de rodar.", "The bump only raises the patch. To change minor or major, edit the version in `package.json` by hand before running.")}`
   ].join("\n")
 
   return [
-    `${T("Este projeto publica com o", "This project publishes with")} [project-publisher](https://www.npmjs.com/package/project-publisher). ${sentence(invocation.label, invocation.description)}${install}${scripts}`,
-    `| Flag | ${T("Etapa", "Step")} | ${T("O que faz", "What it does")} |\n| :--- | :--- | :--- |\n${actionRows.join("\n")}${extraRow}`,
-    `${T("As etapas rodam na ordem das flags. Comando padrão:", "Steps run in flag order. Default command:")}\n\n${command}`,
-    `**${T("Antes de publicar", "Before publishing")}:**\n\n${before}`,
+    `${byLanguage("Este projeto publica com o", "This project publishes with")} [project-publisher](https://www.npmjs.com/package/project-publisher). ${sentence(invocation.label, invocation.description)}${install}${scripts}`,
+    `| Flag | ${byLanguage("Etapa", "Step")} | ${byLanguage("O que faz", "What it does")} |\n| :--- | :--- | :--- |\n${actionRows.join("\n")}${extraRow}`,
+    `${byLanguage("As etapas rodam na ordem das flags. Comando padrão:", "Steps run in flag order. Default command:")}\n\n${command}`,
+    `**${byLanguage("Antes de publicar", "Before publishing")}:**\n\n${before}`,
     askBlock
   ].join("\n\n")
 }

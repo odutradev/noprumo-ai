@@ -21,7 +21,7 @@ const CommitsStep = () => {
     <Flex direction="column" gap="1.5rem">
       <StepHeader title="Commits" description="Como o Claude vai registrar o trabalho no git. O histórico abaixo muda a cada escolha." />
 
-      <CodeBlock code={log} title={`git log · ${count} ${count === 1 ? "commit" : "commits"} para uma feature`} plain />
+      <CodeBlock code={log} title={`git log · ${count} ${count === 1 ? "commit" : "commits"} para uma feature`} isPlain />
 
       <Card variant="outlined" header="Quantos commits">
         <Flex direction="column" gap="2rem">

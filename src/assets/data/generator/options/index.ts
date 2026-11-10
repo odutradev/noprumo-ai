@@ -3,15 +3,15 @@ import type { ApiDocs, Architecture, ChoiceOption, CommentsPolicy, Database, Ena
 export const projectTypeOptions: ChoiceOption<ProjectType>[] = [
   { value: "backend", label: "Backend", description: "APIs, serviços, workers e integrações rodando no servidor.", example: "POST /users/create\n→ 201 { id }" },
   { value: "frontend", label: "Frontend", description: "Aplicações web, dashboards, componentes e design system.", example: "<UserCard name=\"Ana\" />" },
-  { value: "mobile", label: "Mobile", description: "Apps React Native, Expo ou nativos.", badge: "Em breve", disabled: true },
-  { value: "fullstack", label: "Fullstack", description: "Monorepo com front e back compartilhando tipos.", badge: "Em breve", disabled: true }
+  { value: "mobile", label: "Mobile", description: "Apps React Native, Expo ou nativos.", badge: "Em breve", isDisabled: true },
+  { value: "fullstack", label: "Fullstack", description: "Monorepo com front e back compartilhando tipos.", badge: "Em breve", isDisabled: true }
 ]
 
 export const languageOptions: ChoiceOption<Language>[] = [
   { value: "typescript", label: "TypeScript", description: "Tipagem estática, strict mode e tipos inferidos dos schemas.", example: "const total: number = sum(values)" },
-  { value: "javascript", label: "JavaScript", description: "ESM puro, sem etapa de compilação.", badge: "Em breve", disabled: true },
-  { value: "python", label: "Python", description: "FastAPI, Django ou Flask.", badge: "Em breve", disabled: true },
-  { value: "go", label: "Go", description: "Serviços compilados e concorrentes.", badge: "Em breve", disabled: true }
+  { value: "javascript", label: "JavaScript", description: "ESM puro, sem etapa de compilação.", badge: "Em breve", isDisabled: true },
+  { value: "python", label: "Python", description: "FastAPI, Django ou Flask.", badge: "Em breve", isDisabled: true },
+  { value: "go", label: "Go", description: "Serviços compilados e concorrentes.", badge: "Em breve", isDisabled: true }
 ]
 
 export const frameworkOptions: ChoiceOption<Framework>[] = [

@@ -6,23 +6,23 @@ import styles from "./styles"
 
 import type { CodeBlockProps } from "./types"
 
-const CodeBlock = ({ code, title, copyable = false, plain = false, compact = false, maxHeight }: CodeBlockProps) => {
+const CodeBlock = ({ code, title, isCopyable = false, isPlain = false, isCompact = false, maxHeight }: CodeBlockProps) => {
   const { success, error } = useToast()
-  const tokens = plain ? [{ text: code, type: "plain" as const }] : tokenize(code)
+  const tokens = isPlain ? [{ text: code, type: "plain" as const }] : tokenize(code)
 
-  const copy = () =>
+  const handleCopy = () =>
     navigator.clipboard
       .writeText(code)
       .then(() => success("Copiado para a área de transferência"))
       .catch(() => error("Não foi possível copiar"))
 
   return (
-    <figure className={styles.block} data-compact={compact || undefined}>
-      {(title || copyable) && (
+    <figure className={styles.block} data-compact={isCompact || undefined}>
+      {(title || isCopyable) && (
         <figcaption className={styles.header}>
           <span className={styles.title}>{title}</span>
-          {copyable && (
-            <Button size="sm" variant="ghost" onClick={copy}>
+          {isCopyable && (
+            <Button size="sm" variant="ghost" onClick={handleCopy}>
               <CheckIcon size={16} />
               Copiar
             </Button>

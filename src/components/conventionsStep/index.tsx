@@ -201,13 +201,13 @@ const ConventionsStep = () => {
                 <span className={styles.exampleTag} data-kind="good">
                   Certo
                 </span>
-                <CodeBlock code={principle.good} compact />
+                <CodeBlock code={principle.good} isCompact />
                 {principle.bad && (
                   <>
                     <span className={styles.exampleTag} data-kind="bad">
                       Errado
                     </span>
-                    <CodeBlock code={principle.bad} compact />
+                    <CodeBlock code={principle.bad} isCompact />
                   </>
                 )}
               </span>

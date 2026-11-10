@@ -18,7 +18,7 @@ const ResultStep = () => {
   const slug = slugify(config.skillName)
   const installPath = `.claude/skills/${slug}/SKILL.md`
 
-  const copy = () =>
+  const handleCopy = () =>
     navigator.clipboard
       .writeText(markdown)
       .then(() => success("SKILL.md copiado"))
@@ -54,7 +54,7 @@ const ResultStep = () => {
 
         <Flex gap="0.75rem" wrap>
           <Button onClick={() => downloadText("SKILL.md", markdown)}>Baixar SKILL.md</Button>
-          <Button variant="outline" onClick={copy}>
+          <Button variant="outline" onClick={handleCopy}>
             Copiar conteúdo
           </Button>
         </Flex>
@@ -67,7 +67,7 @@ const ResultStep = () => {
         </Alert>
       </Flex>
 
-      <CodeBlock code={markdown} title={installPath} plain copyable maxHeight="44rem" />
+      <CodeBlock code={markdown} title={installPath} isPlain isCopyable maxHeight="44rem" />
     </div>
   )
 }

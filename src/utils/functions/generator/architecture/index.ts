@@ -1,14 +1,15 @@
-import { createNamer, type Namer } from "@utils/functions/generator/namer"
 import { getFrontendLayout } from "@utils/functions/generator/frontend"
+import { createNamer } from "@utils/functions/generator/namer"
 
 import type { BackendArchitecture, GeneratorConfig, TreeNode } from "@utils/types/generator"
+import type { Namer } from "@utils/functions/generator/namer"
 
 export type UnitKind = "action" | "service" | "useCase" | "handler"
 
 export interface ProjectFile {
   path: string
   note?: string
-  highlight?: boolean
+  isHighlighted?: boolean
 }
 
 export interface ArchitectureLayout {
@@ -43,7 +44,7 @@ const buildLayout = (architecture: BackendArchitecture, n: Namer): ArchitectureL
           { path: join(domain, "index.ts"), note: "DomainModule" },
           { path: join(action, "schemas.ts"), note: "schemas Zod" },
           { path: join(action, "types.ts"), note: "z.infer" },
-          { path: join(action, "index.ts"), note: "defineAction", highlight: true },
+          { path: join(action, "index.ts"), note: "defineAction", isHighlighted: true },
           { path: join(repository, "model.ts"), note: "model do banco" },
           { path: join(repository, "types.ts"), note: "payloads" },
           { path: join(repository, "index.ts"), note: "métodos de acesso" },
@@ -66,7 +67,7 @@ const buildLayout = (architecture: BackendArchitecture, n: Namer): ArchitectureL
         errorsPath: join(src, f("errors"), n.file("appError")),
         files: [
           { path: join(src, f("controllers"), n.file("user", "controller")) },
-          { path: join(src, f("services"), n.file("user", "service")), note: "regra de negócio", highlight: true },
+          { path: join(src, f("services"), n.file("user", "service")), note: "regra de negócio", isHighlighted: true },
           { path: join(src, f("repositories"), n.file("user", "repository")) },
           { path: join(src, f("models"), n.file("user", "schema")) },
           { path: join(src, f("errors"), n.file("appError")) },
@@ -84,7 +85,7 @@ const buildLayout = (architecture: BackendArchitecture, n: Namer): ArchitectureL
         files: [
           { path: join(src, f("domain"), f("entities"), n.file("user", "entity")) },
           { path: join(src, f("domain"), f("errors"), n.file("appError")) },
-          { path: join(src, f("application"), f("useCases"), n.file("getUserById", "useCase")), note: "caso de uso", highlight: true },
+          { path: join(src, f("application"), f("useCases"), n.file("getUserById", "useCase")), note: "caso de uso", isHighlighted: true },
           { path: join(src, f("application"), f("repositories"), n.file("user", "repository")), note: "interface" },
           { path: join(src, f("infra"), f("database"), n.file("user", "repository")), note: "implementação" },
           { path: join(src, f("infra"), f("http"), n.file("user", "controller")) },
@@ -102,7 +103,7 @@ const buildLayout = (architecture: BackendArchitecture, n: Namer): ArchitectureL
           { path: join(src, f("core"), f("domain"), n.file("user", "entity")) },
           { path: join(src, f("core"), f("domain"), n.file("appError")) },
           { path: join(src, f("core"), f("ports"), n.file("user", "repository")), note: "porta de saída" },
-          { path: join(src, f("core"), f("services"), n.file("user", "service")), note: "núcleo", highlight: true },
+          { path: join(src, f("core"), f("services"), n.file("user", "service")), note: "núcleo", isHighlighted: true },
           { path: join(src, f("adapters"), f("inbound"), f("http"), n.file("user", "controller")), note: "adaptador de entrada" },
           { path: join(src, f("adapters"), f("outbound"), f("database"), n.file("user", "repository")), note: "adaptador de saída" }
         ]
@@ -117,7 +118,7 @@ const buildLayout = (architecture: BackendArchitecture, n: Namer): ArchitectureL
         errorsPath: join(src, f("shared"), f("errors"), n.file("appError")),
         files: [
           { path: join(module, n.file("user", "controller")) },
-          { path: join(module, n.file("user", "service")), highlight: true },
+          { path: join(module, n.file("user", "service")), isHighlighted: true },
           { path: join(module, n.file("user", "repository")) },
           { path: join(module, n.file("user", "schema")) },
           { path: join(src, f("shared"), f("errors"), n.file("appError")) },
@@ -137,7 +138,7 @@ const buildLayout = (architecture: BackendArchitecture, n: Namer): ArchitectureL
           { path: join(context, f("domain"), f("aggregates"), n.file("user", "aggregate")), note: "raiz do agregado" },
           { path: join(context, f("domain"), f("valueObjects"), n.file("email", "valueObject")) },
           { path: join(context, f("domain"), f("repositories"), n.file("user", "repository")), note: "contrato" },
-          { path: join(context, f("application"), f("services"), n.file("user", "service")), note: "serviço de aplicação", highlight: true },
+          { path: join(context, f("application"), f("services"), n.file("user", "service")), note: "serviço de aplicação", isHighlighted: true },
           { path: join(context, f("infra"), f("database"), n.file("user", "repository")), note: "implementação" },
           { path: join(src, f("shared"), f("errors"), n.file("appError")) }
         ]
@@ -152,7 +153,7 @@ const buildLayout = (architecture: BackendArchitecture, n: Namer): ArchitectureL
         repositoryPath: join(src, f("shared"), f("database"), n.file("user", "repository")),
         errorsPath: join(src, f("shared"), f("errors"), n.file("appError")),
         files: [
-          { path: join(feature, n.file("getUserById", "handler")), note: "fatia completa", highlight: true },
+          { path: join(feature, n.file("getUserById", "handler")), note: "fatia completa", isHighlighted: true },
           { path: join(feature, n.file("getUserById", "schema")) },
           { path: join(src, f("features"), f("createUser"), n.file("createUser", "handler")) },
           { path: join(src, f("features"), f("createUser"), n.file("createUser", "schema")) },
@@ -195,7 +196,7 @@ const insert = (nodes: TreeNode[], segments: string[], file: ProjectFile): TreeN
   const existing = nodes.find((node) => node.name === head)
 
   if (rest.length === 0) {
-    return existing ? nodes : [...nodes, { name: head, note: file.note, highlight: file.highlight }]
+    return existing ? nodes : [...nodes, { name: head, note: file.note, isHighlighted: file.isHighlighted }]
   }
 
   const folder: TreeNode = existing ?? { name: head, children: [] }

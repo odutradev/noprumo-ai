@@ -7,7 +7,7 @@ import type { ReactElement } from "react"
 const renderNodes = (nodes: TreeNode[], depth: number): ReactElement[] =>
   nodes.map((node) => (
     <li key={`${depth}-${node.name}`}>
-      <span className={styles.row} data-highlight={node.highlight || undefined} data-folder={node.children ? true : undefined}>
+      <span className={styles.row} data-highlight={node.isHighlighted || undefined} data-folder={node.children ? true : undefined}>
         <span className={styles.icon} aria-hidden="true">
           {node.children ? "▾" : "•"}
         </span>

@@ -2,12 +2,13 @@ import { apiDocsOptions, architectureInfo, commentsOptions, databaseOptions, err
 import { booleanPrefixOptions, fileOrganizationOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { code, extraPrinciples, gitSection, principlesSection, samplesSection, selectedPrinciples, slugify } from "@utils/functions/generator/markdownHelpers"
 import { buildTree, getArchitectureLayout, renderTree } from "@utils/functions/generator/architecture"
-import { createMdContext, sentence, type MdContext } from "@utils/functions/generator/mdContext"
 import { buildFrontendMarkdown } from "@utils/functions/generator/frontendMarkdown"
+import { createMdContext, sentence } from "@utils/functions/generator/mdContext"
 import { publishingSection } from "@utils/functions/generator/publishing"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
 import { createNamer } from "@utils/functions/generator/namer"
 
+import type { MdContext } from "@utils/functions/generator/mdContext"
 import type { GeneratorConfig } from "@utils/types/generator"
 
 export { slugify } from "@utils/functions/generator/markdownHelpers"
@@ -18,19 +19,19 @@ export const namingRow = (ctx: MdContext, key: string, label: string, value: str
 }
 
 export const architectureBlock = (ctx: MdContext, tree: string) => {
-  const { config, T, tr } = ctx
+  const { config, byLanguage, tr } = ctx
   const custom = ctx.customText("architecture")
-  if (custom) return `## 2. ${T("Arquitetura", "Architecture")}\n\n${custom}\n\n${T("Siga essa organização ao criar pastas e arquivos.", "Follow this organization when creating folders and files.")}`
+  if (custom) return `## 2. ${byLanguage("Arquitetura", "Architecture")}\n\n${custom}\n\n${byLanguage("Siga essa organização ao criar pastas e arquivos.", "Follow this organization when creating folders and files.")}`
   const architecture = architectureInfo[config.architecture]
-  return `## 2. ${T("Arquitetura", "Architecture")}: ${tr(architecture.label)}
+  return `## 2. ${byLanguage("Arquitetura", "Architecture")}: ${tr(architecture.label)}
 
 ${tr(architecture.summary)}
 
-**${T("Regras", "Rules")}:**
+**${byLanguage("Regras", "Rules")}:**
 
 ${architecture.rules.map((rule) => `- ${tr(rule)}`).join("\n")}
 
-**${T("Estrutura de pastas", "Folder structure")}:**
+**${byLanguage("Estrutura de pastas", "Folder structure")}:**
 
 ${code(tree, "text")}`
 }
@@ -44,12 +45,12 @@ export const buildSkillMarkdown = (config: GeneratorConfig): string => {
   if (config.projectType === "frontend") return buildFrontendMarkdown(config)
 
   const ctx = createMdContext(config)
-  const { T, tr, field } = ctx
+  const { byLanguage, tr, field } = ctx
   const { naming, conventions } = config
   const n = createNamer(naming)
   const tree = [".", ...renderTree(buildTree(getArchitectureLayout(config).files))].join("\n")
   const language = field("naming.language", identifierLanguageOptions, naming.language)
-  const isPt = !language.custom && naming.language === "pt"
+  const isPt = !language.isCustom && naming.language === "pt"
 
   const namingRows = namingGroups.flatMap((group) => group.categories.map((category) => namingRow(ctx, category.key, category.label, caseStyleLabels[naming[category.key]], category.example(n))))
   const extraRows = [
@@ -57,7 +58,7 @@ export const buildSkillMarkdown = (config: GeneratorConfig): string => {
     namingRow(ctx, "booleanPrefix", "Booleanos", tr(booleanPrefixOptions.find((option) => option.value === naming.booleanPrefix)?.label ?? ""), n.boolean("isActive")),
     namingRow(ctx, "fileOrganization", "Organização", tr(fileOrganizationOptions.find((option) => option.value === naming.fileOrganization)?.label ?? ""), n.file("user", "repository")),
     namingRow(ctx, "tableNumber", "Número das tabelas", tr(tableNumberOptions.find((option) => option.value === naming.tableNumber)?.label ?? ""), n.table()),
-    `| ${T("Variáveis de ambiente", "Environment variables")} | SCREAMING_SNAKE | \`DATABASE_URL\` |`
+    `| ${byLanguage("Variáveis de ambiente", "Environment variables")} | SCREAMING_SNAKE | \`DATABASE_URL\` |`
   ]
 
   const paradigm = field("conventions.paradigm", paradigmOptions, conventions.paradigm)
@@ -76,125 +77,125 @@ export const buildSkillMarkdown = (config: GeneratorConfig): string => {
   const testLocation = field("conventions.testLocation", testLocationOptions, conventions.testLocation)
   const testSuffix = field("conventions.testSuffix", testSuffixOptions, conventions.testSuffix)
   const principles = selectedPrinciples(config)
-  const noTests = !testing.custom && conventions.testing === "none"
-  const commentsLanguage = conventions.commentsLanguage === "pt" ? T("português", "Portuguese") : T("inglês", "English")
+  const hasNoTests = !testing.isCustom && conventions.testing === "none"
+  const commentsLanguage = conventions.commentsLanguage === "pt" ? byLanguage("português", "Portuguese") : byLanguage("inglês", "English")
 
-  const testSection = noTests
-    ? T("Este projeto não exige testes automatizados.", "This project does not require automated tests.")
+  const testSection = hasNoTests
+    ? byLanguage("Este projeto não exige testes automatizados.", "This project does not require automated tests.")
     : [
         `- Framework: **${testing.label}**.`,
-        `- ${T("Localização", "Location")}: ${sentence(`**${testLocation.label}**`, testLocation.description)}`,
-        `- ${T("Sufixo dos arquivos", "File suffix")}: ${testSuffix.custom ? testSuffix.label : `\`.${conventions.testSuffix}.ts\`${conventions.testLocation === "hybrid" ? ` (E2E: \`.e2e-${conventions.testSuffix}.ts\`)` : ""}`}.`,
-        `- ${T("Os testes seguem as mesmas regras de nomenclatura, imports e comentários do código de produção.", "Tests follow the same naming, import and comment rules as production code.")}`,
-        `- ${T("Unitários não acessam banco nem rede. Integração usa banco em memória ou isolado, criado no setup e limpo após cada caso.", "Unit tests never touch the database or network. Integration tests use an in-memory or isolated database, created in setup and cleaned after each case.")}`
+        `- ${byLanguage("Localização", "Location")}: ${sentence(`**${testLocation.label}**`, testLocation.description)}`,
+        `- ${byLanguage("Sufixo dos arquivos", "File suffix")}: ${testSuffix.isCustom ? testSuffix.label : `\`.${conventions.testSuffix}.ts\`${conventions.testLocation === "hybrid" ? ` (E2E: \`.e2e-${conventions.testSuffix}.ts\`)` : ""}`}.`,
+        `- ${byLanguage("Os testes seguem as mesmas regras de nomenclatura, imports e comentários do código de produção.", "Tests follow the same naming, import and comment rules as production code.")}`,
+        `- ${byLanguage("Unitários não acessam banco nem rede. Integração usa banco em memória ou isolado, criado no setup e limpo após cada caso.", "Unit tests never touch the database or network. Integration tests use an in-memory or isolated database, created in setup and cleaned after each case.")}`
       ].join("\n")
 
   const checklist = [
-    T(`Nomes seguem a tabela de nomenclatura e estão em ${language.label.toLowerCase()}.`, `Names follow the naming table and are in ${language.label}.`),
-    T("Arquivos estão na pasta certa da arquitetura.", "Files are in the right folder for the architecture."),
-    T(`Imports seguem "${imports.label}" e "${importOrder.label}".`, `Imports follow "${imports.label}" and "${importOrder.label}".`),
-    T(`Erros seguem o padrão "${errors.label}".`, `Errors follow "${errors.label}".`),
-    validation.custom || conventions.validation !== "none" ? T(`Toda entrada externa é validada (${validation.label}).`, `All external input is validated (${validation.label}).`) : "",
-    !comments.custom && conventions.comments === "none" ? T("Nenhum comentário no código.", "No comments in the code.") : "",
-    noTests ? "" : T("Código novo tem testes no local e com o sufixo definidos.", "New code has tests in the defined location and with the defined suffix."),
-    ...principles.map((principle) => T(`Princípio "${principle.label}" aplicado.`, `Principle "${tr(principle.label)}" applied.`)),
+    byLanguage(`Nomes seguem a tabela de nomenclatura e estão em ${language.label.toLowerCase()}.`, `Names follow the naming table and are in ${language.label}.`),
+    byLanguage("Arquivos estão na pasta certa da arquitetura.", "Files are in the right folder for the architecture."),
+    byLanguage(`Imports seguem "${imports.label}" e "${importOrder.label}".`, `Imports follow "${imports.label}" and "${importOrder.label}".`),
+    byLanguage(`Erros seguem o padrão "${errors.label}".`, `Errors follow "${errors.label}".`),
+    validation.isCustom || conventions.validation !== "none" ? byLanguage(`Toda entrada externa é validada (${validation.label}).`, `All external input is validated (${validation.label}).`) : "",
+    !comments.isCustom && conventions.comments === "none" ? byLanguage("Nenhum comentário no código.", "No comments in the code.") : "",
+    hasNoTests ? "" : byLanguage("Código novo tem testes no local e com o sufixo definidos.", "New code has tests in the defined location and with the defined suffix."),
+    ...principles.map((principle) => byLanguage(`Princípio "${principle.label}" aplicado.`, `Principle "${tr(principle.label)}" applied.`)),
     ...extraPrinciples(config),
-    config.publishing.enabled && config.publishing.prompt === "everyTask" ? T("Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.", "Publish question asked as the last action, if the task changed files.") : ""
+    config.publishing.isEnabled && config.publishing.prompt === "everyTask" ? byLanguage("Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.", "Publish question asked as the last action, if the task changed files.") : ""
   ].filter(Boolean)
 
   return `${frontmatter(config)}
 
-# ${T("Guia de padrões do projeto", "Project standards guide")}
+# ${byLanguage("Guia de padrões do projeto", "Project standards guide")}
 
-${T("Este guia define as regras de arquitetura, estrutura e código deste projeto. Seguir este guia é **obrigatório**.", "This guide defines this project's architecture, structure and code rules. Following it is **mandatory**.")}
+${byLanguage("Este guia define as regras de arquitetura, estrutura e código deste projeto. Seguir este guia é **obrigatório**.", "This guide defines this project's architecture, structure and code rules. Following it is **mandatory**.")}
 
-**${T("Diretriz", "Directive")}:** ${T(
+**${byLanguage("Diretriz", "Directive")}:** ${byLanguage(
     "antes de criar ou refatorar qualquer código, leia este guia e reproduza exatamente a estrutura e os padrões descritos aqui. Quando um padrão não estiver coberto, siga o exemplo de referência mais próximo no final do documento.",
     "before creating or refactoring any code, read this guide and follow exactly the structure and standards described here. When a standard is not covered, follow the closest reference example at the end of this document."
   )}
 
 ## 1. Stack
 
-| Item | ${T("Escolha", "Choice")} |
+| Item | ${byLanguage("Escolha", "Choice")} |
 | :--- | :--- |
-| ${T("Tipo de projeto", "Project type")} | ${field("projectType", projectTypeOptions, config.projectType).label} |
-| ${T("Linguagem", "Language")} | ${field("language", languageOptions, config.language).label} (strict) |
-| ${T("Framework HTTP", "HTTP framework")} | ${field("framework", frameworkOptions, config.framework).label} |
-| ${T("Banco de dados", "Database")} | ${field("database", databaseOptions, config.database).label} |
-| ${T("Validação", "Validation")} | ${validation.label} |
-| ${T("Testes", "Tests")} | ${testing.label} |
+| ${byLanguage("Tipo de projeto", "Project type")} | ${field("projectType", projectTypeOptions, config.projectType).label} |
+| ${byLanguage("Linguagem", "Language")} | ${field("language", languageOptions, config.language).label} (strict) |
+| ${byLanguage("Framework HTTP", "HTTP framework")} | ${field("framework", frameworkOptions, config.framework).label} |
+| ${byLanguage("Banco de dados", "Database")} | ${field("database", databaseOptions, config.database).label} |
+| ${byLanguage("Validação", "Validation")} | ${validation.label} |
+| ${byLanguage("Testes", "Tests")} | ${testing.label} |
 
 ${architectureBlock(ctx, tree)}
 
-## 3. ${T("Nomenclatura", "Naming")}
+## 3. ${byLanguage("Nomenclatura", "Naming")}
 
-- **${T("Idioma dos identificadores", "Identifier language")}:** ${language.label}. ${T(
+- **${byLanguage("Idioma dos identificadores", "Identifier language")}:** ${language.label}. ${byLanguage(
     `Variáveis, funções, tipos, chaves de objetos, tabelas e campos são escritos em ${language.label.toLowerCase()}${isPt ? ", sem acentos nem cedilha" : ""}.`,
     `Variables, functions, types, object keys, tables and fields are written in ${language.label}${isPt ? ", without accents" : ""}.`
   )}
-- ${T("Nomes precisam ser descritivos. Não use abreviações (`usr`, `tmp`, `data2`).", "Names must be descriptive. No abbreviations (`usr`, `tmp`, `data2`).")}
+- ${byLanguage("Nomes precisam ser descritivos. Não use abreviações (`usr`, `tmp`, `data2`).", "Names must be descriptive. No abbreviations (`usr`, `tmp`, `data2`).")}
 
-| ${T("Elemento", "Element")} | ${T("Padrão", "Standard")} | ${T("Exemplo", "Example")} |
+| ${byLanguage("Elemento", "Element")} | ${byLanguage("Padrão", "Standard")} | ${byLanguage("Exemplo", "Example")} |
 | :--- | :--- | :--- |
 ${[...namingRows, ...extraRows].join("\n")}
 
-## 4. ${T("Estilo de código", "Code style")}
+## 4. ${byLanguage("Estilo de código", "Code style")}
 
-- **${T("Paradigma", "Paradigm")}:** ${sentence(paradigm.label, paradigm.description)}
-- **${T("Funções", "Functions")}:** ${sentence(functionStyle.label, functionStyle.description)}
+- **${byLanguage("Paradigma", "Paradigm")}:** ${sentence(paradigm.label, paradigm.description)}
+- **${byLanguage("Funções", "Functions")}:** ${sentence(functionStyle.label, functionStyle.description)}
 - **Exports:** ${sentence(exportsStyle.label, exportsStyle.description)}
-- **${T("Ponto e vírgula", "Semicolons")}:** ${semicolons.label}.
-- **${T("Aspas", "Quotes")}:** ${quotes.label}.
-- **${T("Comentários", "Comments")}:** ${sentence(comments.label, comments.description)}${!comments.custom && conventions.comments !== "none" ? ` ${T(`Escritos em ${commentsLanguage}.`, `Written in ${commentsLanguage}.`)}` : ""}
+- **${byLanguage("Ponto e vírgula", "Semicolons")}:** ${semicolons.label}.
+- **${byLanguage("Aspas", "Quotes")}:** ${quotes.label}.
+- **${byLanguage("Comentários", "Comments")}:** ${sentence(comments.label, comments.description)}${!comments.isCustom && conventions.comments !== "none" ? ` ${byLanguage(`Escritos em ${commentsLanguage}.`, `Written in ${commentsLanguage}.`)}` : ""}
 
 ### Imports
 
-- **${T("Caminhos", "Paths")}:** ${sentence(imports.label, imports.description)}
-- **${T("Organização", "Organization")}:** ${sentence(importOrder.label, importOrder.description)}
+- **${byLanguage("Caminhos", "Paths")}:** ${sentence(imports.label, imports.description)}
+- **${byLanguage("Organização", "Organization")}:** ${sentence(importOrder.label, importOrder.description)}
 
 ${importOrder.example ? code(importOrder.example) : ""}
 
-### ${T("Tratamento de erros", "Error handling")}
+### ${byLanguage("Tratamento de erros", "Error handling")}
 
 ${sentence(errors.label, errors.description)}
 
 ${errors.example ? code(errors.example) : ""}
 
-### ${T("Validação", "Validation")}
+### ${byLanguage("Validação", "Validation")}
 
 ${sentence(validation.label, validation.description)}
 
 ${validation.example ? code(validation.example) : ""}
 
-### ${T("Rotas e documentação da API", "Routes and API docs")}
+### ${byLanguage("Rotas e documentação da API", "Routes and API docs")}
 
-- **${T("Rotas", "Routes")}:** ${sentence(routes.label, routes.description)}
+- **${byLanguage("Rotas", "Routes")}:** ${sentence(routes.label, routes.description)}
 
 ${routes.example ? code(routes.example, "text") : ""}
 
-- **${T("Documentação", "Docs")}:** ${sentence(docs.label, docs.description)}
+- **${byLanguage("Documentação", "Docs")}:** ${sentence(docs.label, docs.description)}
 
-## 5. ${T("Princípios obrigatórios", "Required principles")}
+## 5. ${byLanguage("Princípios obrigatórios", "Required principles")}
 
 ${principlesSection(ctx)}
 
-## 6. ${T("Testes", "Tests")}
+## 6. ${byLanguage("Testes", "Tests")}
 
 ${testSection}
 
-## 7. ${T("Commits e Git", "Commits and Git")}
+## 7. ${byLanguage("Commits e Git", "Commits and Git")}
 
 ${gitSection(ctx)}
 
-## 8. ${T("Publicação", "Publishing")}
+## 8. ${byLanguage("Publicação", "Publishing")}
 
 ${publishingSection(ctx)}
 
-## 9. ${T("Exemplo de referência", "Reference example")}
+## 9. ${byLanguage("Exemplo de referência", "Reference example")}
 
 ${samplesSection(ctx)}
 
-## 10. ${T("Checklist antes de entregar", "Checklist before delivering")}
+## 10. ${byLanguage("Checklist antes de entregar", "Checklist before delivering")}
 
 ${checklist.map((item) => `- [ ] ${item}`).join("\n")}
 `.replace(/\n{3,}/g, "\n\n")

@@ -1,8 +1,10 @@
-import { createImporter, END, finalize, type ImportLine, type SampleFile } from "@utils/functions/generator/codeFormat"
-import { createNamer, type Namer } from "@utils/functions/generator/namer"
+import { createImporter, statementEnd, finalize } from "@utils/functions/generator/codeFormat"
+import { createNamer } from "@utils/functions/generator/namer"
 
+import type { ImportLine, SampleFile } from "@utils/functions/generator/codeFormat"
 import type { FrontendArchitecture, GeneratorConfig } from "@utils/types/generator"
 import type { ProjectFile } from "@utils/functions/generator/architecture"
+import type { Namer } from "@utils/functions/generator/namer"
 
 interface ComponentFiles {
   main: string
@@ -167,7 +169,7 @@ export const getFrontendLayout = (config: GeneratorConfig): FrontendLayout => {
   const { extra, ...layout } = buildLayout(config.architecture as FrontendArchitecture, config, n)
   const { component } = layout
   const files: ProjectFile[] = [
-    { path: component.main, note: "componente", highlight: true },
+    { path: component.main, note: "componente", isHighlighted: true },
     ...(component.styles ? [{ path: component.styles, note: "estilos" }] : []),
     ...(component.types ? [{ path: component.types, note: "props" }] : []),
     ...(component.index ? [{ path: component.index, note: "reexport" }] : []),
@@ -200,9 +202,9 @@ const uiImports = (config: GeneratorConfig): ImportLine[] => {
 const titleElement = (config: GeneratorConfig, name: string) => {
   switch (config.frontend.uiLibrary) {
     case "mui":
-      return `<Typography variant=${Q}h6${Q}>{${name}}</Typography>`
+      return `<Typography variant=${quoteMarker}h6${quoteMarker}>{${name}}</Typography>`
     case "chakra":
-      return `<Heading size=${Q}sm${Q}>{${name}}</Heading>`
+      return `<Heading size=${quoteMarker}sm${quoteMarker}>{${name}}</Heading>`
     case "antd":
       return `<Typography.Title level={5}>{${name}}</Typography.Title>`
     default:
@@ -214,9 +216,9 @@ const buttonElement = (config: GeneratorConfig, handler: string, pending?: strin
   const disabled = pending ? ` disabled={${pending}}` : ""
   switch (config.frontend.uiLibrary) {
     case "mui":
-      return `<Button variant=${Q}contained${Q} onClick={${handler}}${disabled}>Salvar</Button>`
+      return `<Button variant=${quoteMarker}contained${quoteMarker} onClick={${handler}}${disabled}>Salvar</Button>`
     case "none":
-      return `<button type=${Q}button${Q} onClick={${handler}}${disabled}>Salvar</button>`
+      return `<button type=${quoteMarker}button${quoteMarker} onClick={${handler}}${disabled}>Salvar</button>`
     default:
       return `<Button onClick={${handler}}${disabled}>Salvar</Button>`
   }
@@ -224,7 +226,7 @@ const buttonElement = (config: GeneratorConfig, handler: string, pending?: strin
 
 const toPropName = (config: GeneratorConfig) => createNamer({ ...config.naming, handlerPrefix: "on" }).handler("saved")
 
-const Q = "¤"
+const quoteMarker = "¤"
 
 const buildComponentFile = (config: GeneratorConfig, n: Namer, layout: FrontendLayout): SampleFile => {
   const { frontend } = config
@@ -254,14 +256,14 @@ const buildComponentFile = (config: GeneratorConfig, n: Namer, layout: FrontendL
       case "useAction":
         imports.push({ kind: "internal", from: importer(layout.hook), line: `import ${n.fn("useAction")} from '${importer(layout.hook)}'` })
         imports.push({ kind: "internal", from: importer(layout.api), line: `import { ${updateUser} } from '${importer(layout.api)}'` })
-        return `  const ${handler} = () =>\n    ${n.fn("useAction")}({\n      action: async () => await ${updateUser}(${userId}, { ${userName} }),\n      toastMessages: {\n        pending: 'Salvando...',\n        success: 'Salvo com sucesso',\n        error: 'Erro ao salvar'\n      },\n      callback: ${onSaved}\n    })${END}`
+        return `  const ${handler} = () =>\n    ${n.fn("useAction")}({\n      action: async () => await ${updateUser}(${userId}, { ${userName} }),\n      toastMessages: {\n        pending: 'Salvando...',\n        success: 'Salvo com sucesso',\n        error: 'Erro ao salvar'\n      },\n      callback: ${onSaved}\n    })${statementEnd}`
       case "tryCatch":
         imports.push({ kind: "external", from: "react-toastify", line: "import { toast } from 'react-toastify'" })
         imports.push({ kind: "internal", from: importer(layout.api), line: `import { ${updateUser} } from '${importer(layout.api)}'` })
-        return `  const ${handler} = async () => {\n    try {\n      await ${updateUser}(${userId}, { ${userName} })${END}\n      ${onSaved}?.()${END}\n    } catch {\n      toast.error('Erro ao salvar')${END}\n    }\n  }${END}`
+        return `  const ${handler} = async () => {\n    try {\n      await ${updateUser}(${userId}, { ${userName} })${statementEnd}\n      ${onSaved}?.()${statementEnd}\n    } catch {\n      toast.error('Erro ao salvar')${statementEnd}\n    }\n  }${statementEnd}`
       case "mutationHook":
         imports.push({ kind: "internal", from: importer(layout.api), line: `import { ${n.fn("useUpdateUser")} } from '${importer(layout.api)}'` })
-        return `  const { mutate, isPending } = ${n.fn("useUpdateUser")}()${END}\n\n  const ${handler} = () => mutate({ ${userId}, ${userName} }, { onSuccess: ${onSaved} })${END}`
+        return `  const { mutate, isPending } = ${n.fn("useUpdateUser")}()${statementEnd}\n\n  const ${handler} = () => mutate({ ${userId}, ${userName} }, { onSuccess: ${onSaved} })${statementEnd}`
     }
   })()
 
@@ -271,31 +273,31 @@ const buildComponentFile = (config: GeneratorConfig, n: Namer, layout: FrontendL
       case "styledComponents":
         return [`<${container}>`, `</${container}>`]
       case "tailwind":
-        return [`<div className=${Q}flex items-center justify-between gap-4 rounded-lg border p-4${Q}>`, "</div>"]
+        return [`<div className=${quoteMarker}flex items-center justify-between gap-4 rounded-lg border p-4${quoteMarker}>`, "</div>"]
       default:
         return [`<div className={styles.${n.variable("container")}}>`, "</div>"]
     }
   })()
 
-  const jsx = `  return (\n    ${wrapperOpen[0]}\n      ${titleElement(config, userName)}\n      ${buttonElement(config, handler, pending)}\n    ${wrapperOpen[1]}\n  )${END}`
+  const jsx = `  return (\n    ${wrapperOpen[0]}\n      ${titleElement(config, userName)}\n      ${buttonElement(config, handler, pending)}\n    ${wrapperOpen[1]}\n  )${statementEnd}`
   const params = `{ ${userId}, ${userName}, ${onSaved} }`
-  const inlineProps = layout.component.types ? "" : `interface ${propsType} {\n  ${userId}: string${END}\n  ${userName}: string${END}\n  ${onSaved}?: () => void${END}\n}\n\n`
+  const inlineProps = layout.component.types ? "" : `interface ${propsType} {\n  ${userId}: string${statementEnd}\n  ${userName}: string${statementEnd}\n  ${onSaved}?: () => void${statementEnd}\n}\n\n`
   const isNamed = config.conventions.exports === "named"
   const exportWord = isNamed ? "export " : ""
 
   const declaration = (() => {
     switch (frontend.componentDeclaration) {
       case "arrowFC":
-        return `${exportWord}const ${name}: React.FC<${propsType}> = (${params}) => {\n${handlerBody}\n\n${jsx}\n}${END}`
+        return `${exportWord}const ${name}: React.FC<${propsType}> = (${params}) => {\n${handlerBody}\n\n${jsx}\n}${statementEnd}`
       case "arrowProps":
-        return `${exportWord}const ${name} = (${params}: ${propsType}) => {\n${handlerBody}\n\n${jsx}\n}${END}`
+        return `${exportWord}const ${name} = (${params}: ${propsType}) => {\n${handlerBody}\n\n${jsx}\n}${statementEnd}`
       case "function":
         return `${exportWord}function ${name}(${params}: ${propsType}) {\n${handlerBody}\n\n${jsx}\n}`
     }
   })()
 
-  const body = `${inlineProps}${declaration}${isNamed ? "" : `\n\nexport default ${name}${END}`}`
-  return { path: layout.component.main, code: finalize(imports, body, config).replaceAll(Q, "\"") }
+  const body = `${inlineProps}${declaration}${isNamed ? "" : `\n\nexport default ${name}${statementEnd}`}`
+  return { path: layout.component.main, code: finalize(imports, body, config).replaceAll(quoteMarker, "\"") }
 }
 
 const buildStylesFile = (config: GeneratorConfig, n: Namer, layout: FrontendLayout): SampleFile | undefined => {
@@ -313,7 +315,7 @@ const buildStylesFile = (config: GeneratorConfig, n: Namer, layout: FrontendLayo
 const buildTypesFile = (config: GeneratorConfig, n: Namer, layout: FrontendLayout): SampleFile | undefined => {
   const path = layout.component.types
   if (!path) return undefined
-  const body = `export interface ${n.type("userCardProps")} {\n  ${n.variable("userId")}: string${END}\n  ${n.variable("userName")}: string${END}\n  ${toPropName(config)}?: () => void${END}\n}`
+  const body = `export interface ${n.type("userCardProps")} {\n  ${n.variable("userId")}: string${statementEnd}\n  ${n.variable("userName")}: string${statementEnd}\n  ${toPropName(config)}?: () => void${statementEnd}\n}`
   return { path, code: finalize([], body, config) }
 }
 
@@ -328,17 +330,17 @@ const buildApiFile = (config: GeneratorConfig, n: Namer, layout: FrontendLayout)
   const request = (() => {
     if (config.frontend.dataFetching === "fetch") {
       imports.push({ kind: "internal", from: "config", line: `import { ${n.constant("baseUrl")} } from '${importer(`src/${n.folder("config")}/index.ts`)}'` })
-      return `export const ${updateUser} = async (${userId}: string, data: Partial<${user}>): Promise<${user}> => {\n  const response = await fetch(\`\${${n.constant("baseUrl")}}/${users}/\${${userId}}\`, {\n    method: 'PATCH',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(data)\n  })${END}\n  return response.json()${END}\n}${END}`
+      return `export const ${updateUser} = async (${userId}: string, data: Partial<${user}>): Promise<${user}> => {\n  const response = await fetch(\`\${${n.constant("baseUrl")}}/${users}/\${${userId}}\`, {\n    method: 'PATCH',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(data)\n  })${statementEnd}\n  return response.json()${statementEnd}\n}${statementEnd}`
     }
     imports.push({ kind: "internal", from: "api", line: `import api from '${importer(`src/${n.folder("utils")}/api.ts`)}'` })
-    return `export const ${updateUser} = async (${userId}: string, data: Partial<${user}>) => {\n  const response = await api.patch<${user}>(\`/${users}/\${${userId}}\`, data)${END}\n  return response.data${END}\n}${END}`
+    return `export const ${updateUser} = async (${userId}: string, data: Partial<${user}>) => {\n  const response = await api.patch<${user}>(\`/${users}/\${${userId}}\`, data)${statementEnd}\n  return response.data${statementEnd}\n}${statementEnd}`
   })()
 
   const mutation =
     config.frontend.asyncActions === "mutationHook"
       ? (() => {
           imports.push({ kind: "external", from: "@tanstack/react-query", line: "import { useMutation } from '@tanstack/react-query'" })
-          return `\n\nexport const ${n.fn("useUpdateUser")} = () =>\n  useMutation({\n    mutationFn: ({ ${userId}, ...data }: { ${userId}: string } & Partial<${user}>) => ${updateUser}(${userId}, data)\n  })${END}`
+          return `\n\nexport const ${n.fn("useUpdateUser")} = () =>\n  useMutation({\n    mutationFn: ({ ${userId}, ...data }: { ${userId}: string } & Partial<${user}>) => ${updateUser}(${userId}, data)\n  })${statementEnd}`
         })()
       : ""
 
@@ -350,37 +352,37 @@ const buildStoreFile = (config: GeneratorConfig, n: Namer, layout: FrontendLayou
   const user = n.type("user")
   const setUser = n.fn("setUser")
   const userVar = n.variable("user")
-  const persisted = config.conventions.principles.includes("persistedStores")
+  const isPersisted = config.conventions.principles.includes("persistedStores")
   const imports: ImportLine[] = [{ kind: "type", from: importer(layout.userType), line: `import type { ${user} } from '${importer(layout.userType)}'` }]
   const isNamed = config.conventions.exports === "named"
 
   switch (config.frontend.state) {
     case "zustand": {
       imports.push({ kind: "external", from: "zustand", line: "import { create } from 'zustand'" })
-      if (persisted) imports.push({ kind: "external", from: "zustand/middleware", line: "import { persist } from 'zustand/middleware'" })
+      if (isPersisted) imports.push({ kind: "external", from: "zustand/middleware", line: "import { persist } from 'zustand/middleware'" })
       const storeType = n.type("userStore")
       const hook = n.fn("useUserStore")
       const state = `(set) => ({\n    ${userVar}: null,\n    ${setUser}: (${userVar}) => set({ ${userVar} })\n  })`
-      const creator = persisted ? `create<${storeType}>()(\n  persist(\n    ${state.replaceAll("\n", "\n  ")},\n    { name: '${userVar}' }\n  )\n)` : `create<${storeType}>()(${state.replaceAll("\n  ", "\n")})`
-      const body = `interface ${storeType} {\n  ${userVar}: ${user} | null${END}\n  ${setUser}: (${userVar}: ${user} | null) => void${END}\n}\n\n${isNamed ? "export " : ""}const ${hook} = ${creator}${END}${isNamed ? "" : `\n\nexport default ${hook}${END}`}`
+      const creator = isPersisted ? `create<${storeType}>()(\n  persist(\n    ${state.replaceAll("\n", "\n  ")},\n    { name: '${userVar}' }\n  )\n)` : `create<${storeType}>()(${state.replaceAll("\n  ", "\n")})`
+      const body = `interface ${storeType} {\n  ${userVar}: ${user} | null${statementEnd}\n  ${setUser}: (${userVar}: ${user} | null) => void${statementEnd}\n}\n\n${isNamed ? "export " : ""}const ${hook} = ${creator}${statementEnd}${isNamed ? "" : `\n\nexport default ${hook}${statementEnd}`}`
       return { path: layout.store, code: finalize(imports, body, config) }
     }
     case "redux": {
       imports.push({ kind: "external", from: "@reduxjs/toolkit", line: "import { createSlice, type PayloadAction } from '@reduxjs/toolkit'" })
       const slice = n.variable("userSlice")
-      const body = `const ${slice} = createSlice({\n  name: '${userVar}',\n  initialState: { ${userVar}: null as ${user} | null },\n  reducers: {\n    ${setUser}: (state, action: PayloadAction<${user} | null>) => {\n      state.${userVar} = action.payload${END}\n    }\n  }\n})${END}\n\nexport const { ${setUser} } = ${slice}.actions${END}\n\nexport default ${slice}.reducer${END}`
+      const body = `const ${slice} = createSlice({\n  name: '${userVar}',\n  initialState: { ${userVar}: null as ${user} | null },\n  reducers: {\n    ${setUser}: (state, action: PayloadAction<${user} | null>) => {\n      state.${userVar} = action.payload${statementEnd}\n    }\n  }\n})${statementEnd}\n\nexport const { ${setUser} } = ${slice}.actions${statementEnd}\n\nexport default ${slice}.reducer${statementEnd}`
       return { path: layout.store, code: finalize(imports, body, config) }
     }
     case "context": {
       imports.push({ kind: "external", from: "react", line: "import { createContext, useContext } from 'react'" })
       const valueType = n.type("userContextValue")
       const context = n.component("userContext")
-      const body = `interface ${valueType} {\n  ${userVar}: ${user} | null${END}\n  ${setUser}: (${userVar}: ${user} | null) => void${END}\n}\n\nexport const ${context} = createContext<${valueType}>({ ${userVar}: null, ${setUser}: () => undefined })${END}\n\nexport const ${n.fn("useUserContext")} = () => useContext(${context})${END}`
+      const body = `interface ${valueType} {\n  ${userVar}: ${user} | null${statementEnd}\n  ${setUser}: (${userVar}: ${user} | null) => void${statementEnd}\n}\n\nexport const ${context} = createContext<${valueType}>({ ${userVar}: null, ${setUser}: () => undefined })${statementEnd}\n\nexport const ${n.fn("useUserContext")} = () => useContext(${context})${statementEnd}`
       return { path: layout.store, code: finalize(imports, body, config) }
     }
     case "jotai": {
-      imports.push(persisted ? { kind: "external", from: "jotai/utils", line: "import { atomWithStorage } from 'jotai/utils'" } : { kind: "external", from: "jotai", line: "import { atom } from 'jotai'" })
-      const body = persisted ? `export const ${n.variable("userAtom")} = atomWithStorage<${user} | null>('${userVar}', null)${END}` : `export const ${n.variable("userAtom")} = atom<${user} | null>(null)${END}`
+      imports.push(isPersisted ? { kind: "external", from: "jotai/utils", line: "import { atomWithStorage } from 'jotai/utils'" } : { kind: "external", from: "jotai", line: "import { atom } from 'jotai'" })
+      const body = isPersisted ? `export const ${n.variable("userAtom")} = atomWithStorage<${user} | null>('${userVar}', null)${statementEnd}` : `export const ${n.variable("userAtom")} = atom<${user} | null>(null)${statementEnd}`
       return { path: layout.store, code: finalize(imports, body, config) }
     }
   }
