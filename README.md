@@ -11,24 +11,32 @@ Construído com React + Vite + TypeScript.
 - TypeScript
 - [enchase](https://www.npmjs.com/package/enchase) (design system: componentes, tema claro/escuro e toasts)
 - Zustand (estado global)
+- Zod (validação de formulários)
+- ESLint (regras de código da skill do projeto)
 
 ## Estrutura
 
+O projeto segue a skill `.claude/skills/minhaskill-codeguide/SKILL.md` (pastas por tipo).
+
 ```
 src/
-  components/   componentes reutilizáveis (ChoiceCards, OptionChips, CodeBlock, FileTree)
-  config/       configurações gerais da aplicação
-  data/         catálogos de opções, vocabulário e presets do gerador
-  pages/        páginas (generator, notFound)
-  providers/    providers do enchase (tema, locale pt-BR, navegação, toasts)
-  routes/       definição de rotas
-  stores/       stores do Zustand (estado do gerador, salvo no navegador)
-  styles/       tema do enchase (`theme.ts`)
-  types/        tipos do domínio
-  utils/        geração do SKILL.md, do código de exemplo e da estrutura de pastas
+  assets/
+    config/       configurações gerais da aplicação
+    data/         catálogos de opções, vocabulário e presets do gerador
+  components/     um componente por pasta (index.tsx, styles.ts, types.ts)
+  hooks/          hooks customizados (useAction, useCustomField)
+  pages/          páginas (generator, notFound), cada uma com seus metadados
+  providers/      providers do enchase (tema, locale pt-BR, navegação, toasts)
+  routes/         tabela de rotas
+  stores/         stores do Zustand (estado do gerador, salvo no navegador)
+  styles/         tema do enchase (`theme.ts`)
+  utils/
+    functions/    geração do SKILL.md, do código de exemplo, logger e helpers
+    types/        tipos do domínio
+    validations/  schemas do Zod
 ```
 
-Aliases de import: `@/`, `@components/`, `@pages/`, `@routes/`, `@stores/`, `@styles/`, `@utils/`, `@assets/`.
+Aliases de import, um por pasta raiz: `@assets/`, `@components/`, `@hooks/`, `@pages/`, `@providers`, `@routes/`, `@stores/`, `@styles/`, `@utils/`.
 
 ## Design
 
@@ -50,6 +58,8 @@ O servidor sobe em `http://localhost:8080`.
 - `npm run build` — build de produção em `build/`
 - `npm run preview` — pré-visualiza o build
 - `npm run typecheck` — checagem de tipos
+- `npm run lint` — ESLint com as regras da skill (aspas duplas, sem ponto e vírgula, sem comentários, sem `let`/`for`/`while`, sem `any`, sem `console`, imports em 3 blocos)
+- `npm run lint:fix` — corrige o que for automático
 
 ## Docker
 
