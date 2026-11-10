@@ -2,6 +2,7 @@ import { Alert, Button, Card, Flex, Input, SegmentedControl, Textarea } from "en
 import { useMemo } from "react"
 
 import { buildSkillMarkdown, slugify } from "@utils/functions/generator/skillMarkdown"
+import { validateSkillMetadata } from "@utils/validations/skill"
 import { downloadText } from "@utils/functions/download"
 import useGeneratorStore from "@stores/generator"
 import StepHeader from "@components/stepHeader"
@@ -17,6 +18,10 @@ const ResultStep = () => {
   const markdown = useMemo(() => buildSkillMarkdown(config), [config])
   const slug = slugify(config.skillName)
   const installPath = `.claude/skills/${slug}/SKILL.md`
+  const errors = validateSkillMetadata({ skillName: config.skillName, skillDescription: config.skillDescription })
+  const hasErrors = Object.keys(errors).length > 0
+
+  const handleDownload = () => downloadText("SKILL.md", markdown)
 
   const handleCopy = useAction({
     action: () => navigator.clipboard.writeText(markdown),
@@ -39,12 +44,13 @@ const ResultStep = () => {
               value={config.outputLanguage}
               onValueChange={(value: string) => update("outputLanguage", value as IdentifierLanguage)}
             />
-            <Input label="Nome da skill" value={config.skillName} onChange={(event) => update("skillName", event.target.value)} helperText={`Identificador: ${slug}`} fullWidth />
+            <Input label="Nome da skill" value={config.skillName} onChange={(event) => update("skillName", event.target.value)} helperText={`Identificador: ${slug}`} error={errors.skillName?.[0]} fullWidth />
             <Textarea
               label="Quando usar"
               value={config.skillDescription}
               onChange={(event) => update("skillDescription", event.target.value)}
               helperText="O Claude lê esta descrição para decidir quando ativar a skill. Escreva no mesmo idioma do prompt."
+              error={errors.skillDescription?.[0]}
               rows={3}
               fullWidth
             />
@@ -52,8 +58,10 @@ const ResultStep = () => {
         </Card>
 
         <Flex gap="0.75rem" wrap>
-          <Button onClick={() => downloadText("SKILL.md", markdown)}>Baixar SKILL.md</Button>
-          <Button variant="outline" onClick={handleCopy}>
+          <Button onClick={handleDownload} disabled={hasErrors}>
+            Baixar SKILL.md
+          </Button>
+          <Button variant="outline" onClick={handleCopy} disabled={hasErrors}>
             Copiar conteúdo
           </Button>
         </Flex>

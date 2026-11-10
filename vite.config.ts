@@ -11,7 +11,7 @@ export default defineConfig({
     dedupe: ["react", "react-dom"]
   },
   optimizeDeps: {
-    include: ["react", "react-dom", "react-dom/client", "react-router", "zustand", "zustand/middleware", "enchase", "enchase/icons", "enchase/locales"]
+    include: ["react", "react-dom", "react-dom/client", "react-router", "zustand", "zustand/middleware", "enchase", "enchase/icons", "enchase/locales", "zod"]
   },
   server: {
     host: "0.0.0.0",
