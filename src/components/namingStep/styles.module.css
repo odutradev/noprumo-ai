@@ -1,0 +1,4 @@
+.hint {
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-text-secondary);
+}

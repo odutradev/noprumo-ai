@@ -1,9 +1,9 @@
 import { persist } from 'zustand/middleware'
 import { create } from 'zustand'
 
-import { bonfirePreset, codeGuidePreset } from '@/data/generator/presets'
+import { bonfirePreset, codeGuidePreset } from '@assets/data/generator/presets'
 
-import type { ConventionsConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle, PublishAction, PublishingConfig } from '@/types/generator'
+import type { ConventionsConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle, PublishAction, PublishingConfig } from '@utils/types/generator'
 import type { GeneratorState } from './types'
 
 export const generatorSteps = ['project', 'language', 'architecture', 'naming', 'conventions', 'commits', 'publish', 'result'] as const

@@ -1,0 +1,9 @@
+.title {
+  margin: 0;
+  font-size: var(--enchase-font-size-xl);
+}
+
+.subtitle {
+  margin-block: var(--enchase-space-xs) 0;
+  color: var(--enchase-color-text-secondary);
+}

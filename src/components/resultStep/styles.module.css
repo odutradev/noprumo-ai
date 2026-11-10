@@ -1,0 +1,20 @@
+.resultGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: var(--enchase-space-xl);
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .resultGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.inlineCode {
+  padding-inline: 0.25rem;
+  border-radius: var(--enchase-radius-xs);
+  background: var(--enchase-color-code-background);
+  font-family: var(--enchase-font-mono);
+  font-size: 0.9em;
+}

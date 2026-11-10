@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router'
 
-import Providers from '@/providers'
+import Providers from '@providers'
 import NotFound from '@pages/notFound'
 import Generator from '@pages/generator'
 
