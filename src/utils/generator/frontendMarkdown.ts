@@ -21,6 +21,7 @@ import { buildTree, renderTree } from './architecture'
 import { getFrontendLayout } from './frontend'
 import { caseStyleLabels } from './naming'
 import { createNamer } from './namer'
+import { publishingSection } from './publishing'
 
 export const buildFrontendMarkdown = (config: GeneratorConfig): string => {
   const { naming, conventions, frontend } = config
@@ -74,7 +75,8 @@ export const buildFrontendMarkdown = (config: GeneratorConfig): string => {
     `Estilos usam ${styling.label} com os tokens do tema.`,
     `Imports usam ${imports.label.toLowerCase()}.`,
     conventions.commitFormat === 'conventional' ? 'Commits seguem Conventional Commits.' : '',
-    ...principles.map((principle) => `Princípio "${principle.label}" aplicado.`)
+    ...principles.map((principle) => `Princípio "${principle.label}" aplicado.`),
+    config.publishing.enabled && config.publishing.prompt === 'everyTask' ? 'Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.' : ''
   ].filter(Boolean)
 
   return `---
@@ -171,13 +173,17 @@ ${testLines.join('\n')}
 
 ${gitSection(config)}
 
-## 12. Exemplo de referência
+## 12. Publicação
+
+${publishingSection(config)}
+
+## 13. Exemplo de referência
 
 Use estes arquivos como modelo. Eles seguem todas as regras acima.
 
 ${samplesSection(config)}
 
-## 13. Checklist antes de entregar
+## 14. Checklist antes de entregar
 
 ${checklist.map((item) => `- [ ] ${item}`).join('\n')}
 `

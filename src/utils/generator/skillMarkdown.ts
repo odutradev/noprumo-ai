@@ -27,6 +27,7 @@ import { buildTree, getArchitectureLayout, renderTree } from './architecture'
 import { buildFrontendMarkdown } from './frontendMarkdown'
 import { caseStyleLabels } from './naming'
 import { createNamer } from './namer'
+import { publishingSection } from './publishing'
 
 export { slugify } from './markdownHelpers'
 
@@ -80,7 +81,8 @@ export const buildSkillMarkdown = (config: GeneratorConfig): string => {
     conventions.validation !== 'none' ? `Toda entrada externa é validada com ${validation.label}.` : '',
     conventions.comments === 'none' ? 'Nenhum comentário no código.' : '',
     conventions.testing !== 'none' ? 'Código novo tem testes no local e com o sufixo definidos.' : '',
-    ...principles.map((principle) => `Princípio "${principle.label}" aplicado.`)
+    ...principles.map((principle) => `Princípio "${principle.label}" aplicado.`),
+    config.publishing.enabled && config.publishing.prompt === 'everyTask' ? 'Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.' : ''
   ].filter(Boolean)
 
   return `---
@@ -174,13 +176,17 @@ ${testSection}
 
 ${gitSection(config)}
 
-## 8. Exemplo de referência
+## 8. Publicação
+
+${publishingSection(config)}
+
+## 9. Exemplo de referência
 
 Use estes arquivos como modelo. Eles seguem todas as regras acima.
 
 ${samplesSection(config)}
 
-## 9. Checklist antes de entregar
+## 10. Checklist antes de entregar
 
 ${checklist.map((item) => `- [ ] ${item}`).join('\n')}
 `
