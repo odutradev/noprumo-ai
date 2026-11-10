@@ -9,7 +9,9 @@ import CodeBlock from "@components/codeBlock"
 import FileTree from "@components/fileTree"
 import styles from "./styles"
 
-const PreviewPanel = () => {
+import type { PreviewPanelProps } from "./types"
+
+const PreviewPanel = ({ hasHeader = true }: PreviewPanelProps) => {
   const config = useGeneratorStore((state) => state.config)
   const [fileIndex, setFileIndex] = useState(0)
   const files = useMemo(() => buildSampleFiles(config), [config])
@@ -30,34 +32,44 @@ const PreviewPanel = () => {
               </button>
             ))}
           </div>
-          <CodeBlock code={activeFile.code} title={activeFile.path} isCopyable maxHeight="30rem" />
+          <CodeBlock code={activeFile.code} title={activeFile.path} isCopyable />
         </div>
       )
     },
-    { value: "tree", label: "Estrutura", content: <div className={styles.tabBody}><FileTree nodes={tree} label="Estrutura de pastas gerada" /></div> },
+    {
+      value: "tree",
+      label: "Estrutura",
+      content: (
+        <div className={styles.tabBody}>
+          <FileTree nodes={tree} label="Estrutura de pastas gerada" />
+        </div>
+      )
+    },
     {
       value: "skill",
       label: (
         <span className={styles.tabLabel}>
-          SKILL.md <Badge size="sm">{markdown.split("\n").length} linhas</Badge>
+          SKILL.md <Badge size="sm">{markdown.split("\n").length}</Badge>
         </span>
       ),
       content: (
         <div className={styles.tabBody}>
-          <CodeBlock code={markdown} title="SKILL.md" isPlain isCopyable maxHeight="30rem" />
+          <CodeBlock code={markdown} title="SKILL.md" isPlain isCopyable />
         </div>
       )
     }
   ]
 
   return (
-    <aside className={styles.preview} aria-label="Pré-visualização">
-      <div className={styles.previewHead}>
-        <span className={styles.previewTitle}>Resultado ao vivo</span>
-        <span className={styles.previewHint}>Atualiza a cada escolha</span>
-      </div>
-      <Tabs items={items} ariaLabel="Pré-visualização da skill" />
-    </aside>
+    <div className={styles.preview}>
+      {hasHeader && (
+        <div className={styles.previewHead}>
+          <span className={styles.previewTitle}>Prévia ao vivo</span>
+          <span className={styles.previewHint}>Atualiza a cada escolha</span>
+        </div>
+      )}
+      <Tabs items={items} ariaLabel="Prévia da skill" />
+    </div>
   )
 }
 

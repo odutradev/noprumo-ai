@@ -1,74 +1,140 @@
-.page {
-  padding-block: var(--enchase-space-xl) calc(var(--enchase-space-xl) * 2);
+.navbar [data-slot="container"] {
   max-inline-size: 1600px;
+  padding-inline: var(--enchase-space-lg);
 }
 
-.hero {
+.logo {
+  font-weight: var(--enchase-font-weight-semibold);
+  letter-spacing: -0.01em;
+}
+
+.presets {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--enchase-space-lg);
-  scroll-margin-block-start: 5rem;
+  gap: var(--enchase-space-xs);
 }
 
-.heroText {
-  max-inline-size: 46rem;
-}
+.shell {
+  --sticky-top: calc(var(--enchase-navbar-bar-height, 4rem) + var(--enchase-space-lg));
 
-.eyebrow {
-  font-size: var(--enchase-font-size-sm);
-  font-weight: var(--enchase-font-weight-semibold);
-  color: var(--enchase-color-primary);
-}
-
-.heading {
-  margin-block: var(--enchase-space-xs);
-  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-
-.lead {
-  margin: 0;
-  font-size: var(--enchase-font-size-lg);
-  color: var(--enchase-color-text-secondary);
-  text-wrap: pretty;
-}
-
-.progress {
-  display: flex;
-  flex-direction: column;
-  gap: var(--enchase-space-sm);
-  margin-block: var(--enchase-space-xl);
-}
-
-.layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: var(--enchase-space-xl);
+  grid-template-columns: 14rem minmax(0, 1fr) minmax(22rem, 0.85fr);
+  grid-template-areas: "steps content preview";
+  gap: calc(var(--enchase-space-xl) * 1.25);
   align-items: start;
+  max-inline-size: 1600px;
+  margin-inline: auto;
+  padding: var(--enchase-space-lg) var(--enchase-space-lg) 0;
 }
 
-.layout[data-result] {
-  grid-template-columns: minmax(0, 1fr);
+.shell[data-result] {
+  grid-template-columns: 14rem minmax(0, 1fr);
+  grid-template-areas: "steps content";
 }
 
-.main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--enchase-space-xl);
+.steps {
+  grid-area: steps;
+  position: sticky;
+  inset-block-start: var(--sticky-top);
   min-inline-size: 0;
 }
 
-.nav {
-  padding-block-start: var(--enchase-space-lg);
-  border-block-start: var(--enchase-border-width) solid var(--enchase-color-border-light);
+.content {
+  grid-area: content;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  min-block-size: calc(100dvh - var(--sticky-top));
 }
 
-@media (max-width: 1100px) {
-  .layout {
+.stepBody {
+  flex: 1;
+  padding-block-end: var(--enchase-space-xl);
+}
+
+.footer {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--enchase-space-sm);
+  padding-block: calc(var(--enchase-space-md) * 0.75);
+  border-block-start: var(--enchase-border-width) solid var(--enchase-color-border);
+  background: var(--enchase-color-background);
+}
+
+.footerEnd {
+  display: flex;
+  align-items: center;
+  gap: var(--enchase-space-sm);
+}
+
+.previewButton {
+  display: none;
+}
+
+.nextShort {
+  display: none;
+}
+
+.footer button {
+  white-space: nowrap;
+}
+
+.preview {
+  grid-area: preview;
+  position: sticky;
+  inset-block-start: var(--sticky-top);
+  max-block-size: calc(100dvh - var(--sticky-top) - var(--enchase-space-lg));
+  min-inline-size: 0;
+  padding: var(--enchase-space-md);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-lg);
+  background: var(--enchase-color-surface);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 1280px) {
+  .shell,
+  .shell[data-result] {
+    grid-template-columns: 13rem minmax(0, 1fr);
+    grid-template-areas: "steps content";
+  }
+
+  .preview {
+    display: none;
+  }
+
+  .previewButton {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 960px) {
+  .navbar [data-slot="container"] {
+    padding-inline: var(--enchase-space-md);
+  }
+
+  .shell,
+  .shell[data-result] {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "steps" "content";
+    gap: var(--enchase-space-lg);
+    padding-inline: var(--enchase-space-md);
+  }
+
+  .steps {
+    position: static;
+  }
+
+  .nextFull {
+    display: none;
+  }
+
+  .nextShort {
+    display: inline;
   }
 }

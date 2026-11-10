@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Flex, Input, SegmentedControl, Textarea } from "enchase"
+import { Alert, Button, Flex, Input, SegmentedControl, Textarea } from "enchase"
 import { useMemo } from "react"
 
 import { buildSkillMarkdown, slugify } from "@utils/functions/generator/skillMarkdown"
@@ -33,8 +33,7 @@ const ResultStep = () => {
       <Flex direction="column" gap="var(--enchase-space-lg)">
         <StepHeader title="Sua skill está pronta" description="Dê um nome, revise e instale no projeto." />
 
-        <Card variant="outlined">
-          <Flex direction="column" gap="var(--enchase-space-md)">
+        <div className={styles.form}>
             <SegmentedControl
               label="Idioma do prompt"
               items={[
@@ -54,8 +53,7 @@ const ResultStep = () => {
               rows={3}
               fullWidth
             />
-          </Flex>
-        </Card>
+        </div>
 
         <Flex gap="calc(var(--enchase-space-md) * 0.75)" wrap>
           <Button onClick={handleDownload} disabled={hasErrors}>
@@ -74,7 +72,9 @@ const ResultStep = () => {
         </Alert>
       </Flex>
 
-      <CodeBlock code={markdown} title={installPath} isPlain isCopyable maxHeight="44rem" />
+      <div className={styles.preview}>
+        <CodeBlock code={markdown} title={installPath} isPlain isCopyable maxHeight="calc(100dvh - 9rem)" />
+      </div>
     </div>
   )
 }

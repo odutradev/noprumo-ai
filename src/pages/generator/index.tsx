@@ -1,4 +1,4 @@
-import { Button, ConfirmModal, Container, Flex, Navbar, Progress } from "enchase"
+import { Button, ConfirmModal, Drawer, Navbar } from "enchase"
 import { useEffect, useRef, useState } from "react"
 
 import { architectureInfo, frameworkOptions, languageOptions, projectTypeOptions } from "@assets/data/generator/options"
@@ -35,7 +35,7 @@ const GeneratorPage = () => {
   const setStep = useGeneratorStore((state) => state.setStep)
   const applyPreset = useGeneratorStore((state) => state.applyPreset)
   const [pendingPreset, setPendingPreset] = useState<GeneratorConfig | null>(null)
-  const topRef = useRef<HTMLDivElement>(null)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const isFirstRender = useRef(true)
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const GeneratorPage = () => {
       isFirstRender.current = false
       return
     }
-    topRef.current?.scrollIntoView({ block: "start" })
+    window.scrollTo({ top: 0 })
   }, [step])
 
   const isFrontend = config.projectType === "frontend"
@@ -61,56 +61,78 @@ const GeneratorPage = () => {
   ]
 
   const CurrentStep = stepComponents[step]
+  const isFirst = step === 0
   const isLast = step === generatorSteps.length - 1
   const isResult = generatorSteps[step] === "result"
 
+  const handleConfirmPreset = () => {
+    if (pendingPreset) applyPreset(pendingPreset)
+  }
+
   return (
     <>
-      <Navbar logo="minhaskill" sections={[{ id: "main", items: [{ id: "generator", label: "Gerador de skills", href: "/" }] }]} translucent />
-      <Container as="main" maxWidth="full" className={styles.page}>
-        <header className={styles.hero} ref={topRef}>
-          <div className={styles.heroText}>
-            <span className={styles.eyebrow}>Gerador de skills</span>
-            <h1 className={styles.heading}>Transforme os padrões do seu time em uma skill</h1>
-            <p className={styles.lead}>Escolha arquitetura, nomenclatura e convenções. O resultado é um SKILL.md pronto para o Claude Code seguir no seu projeto.</p>
-          </div>
-          <Flex gap="var(--enchase-space-sm)" wrap className={styles.presets}>
-            <Button variant="outline" size="sm" onClick={() => setPendingPreset(typePresets.mine)}>
-              {isFrontend ? "Usar meu padrão de frontend" : "Usar meu padrão de backend"}
+      <Navbar
+        className={styles.navbar}
+        sections={[]}
+        logo={<span className={styles.logo}>minhaskill</span>}
+        actions={
+          <div className={styles.presets}>
+            <Button variant="ghost" size="sm" onClick={() => setPendingPreset(typePresets.mine)}>
+              {isFrontend ? "Meu padrão de frontend" : "Meu padrão de backend"}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setPendingPreset(typePresets.neutral)}>
-              Começar do padrão neutro
+              Padrão neutro
             </Button>
-          </Flex>
-        </header>
+          </div>
+        }
+      />
 
-        <div className={styles.progress}>
+      <div className={styles.shell} data-result={isResult || undefined}>
+        <aside className={styles.steps}>
           <Stepper steps={steps} current={step} onSelect={setStep} />
-          <Progress value={step + 1} max={generatorSteps.length} size="sm" aria-label="Progresso do gerador" />
-        </div>
+        </aside>
 
-        <div className={styles.layout} data-result={isResult || undefined}>
-          <section className={styles.main} aria-label={steps[step].label}>
+        <main className={styles.content} aria-label={steps[step].label}>
+          <div className={styles.stepBody}>
             <CurrentStep />
-            <Flex justify="between" gap="calc(var(--enchase-space-md) * 0.75)" className={styles.nav}>
-              <Button variant="outline" onClick={() => setStep(step - 1)} disabled={step === 0}>
-                Voltar
-              </Button>
-              {!isLast && <Button onClick={() => setStep(step + 1)}>Próximo: {steps[step + 1].label}</Button>}
-            </Flex>
-          </section>
-          {!isResult && <PreviewPanel />}
-        </div>
-      </Container>
+          </div>
+          <div className={styles.footer}>
+            <Button variant="outline" onClick={() => setStep(step - 1)} disabled={isFirst}>
+              Voltar
+            </Button>
+            <div className={styles.footerEnd}>
+              {!isResult && (
+                <Button variant="ghost" className={styles.previewButton} onClick={() => setIsPreviewOpen(true)}>
+                  Prévia
+                </Button>
+              )}
+              {!isLast && (
+                <Button onClick={() => setStep(step + 1)}>
+                  <span className={styles.nextFull}>Próximo: {steps[step + 1].label}</span>
+                  <span className={styles.nextShort}>Próximo</span>
+                </Button>
+              )}
+            </div>
+          </div>
+        </main>
+
+        {!isResult && (
+          <aside className={styles.preview} aria-label="Pré-visualização">
+            <PreviewPanel />
+          </aside>
+        )}
+      </div>
+
+      <Drawer open={isPreviewOpen && !isResult} onClose={() => setIsPreviewOpen(false)} title="Prévia ao vivo" side="end" size="lg">
+        <PreviewPanel hasHeader={false} />
+      </Drawer>
 
       <ConfirmModal
         isOpen={pendingPreset !== null}
         title="Substituir as escolhas atuais?"
         message={`As escolhas de ${isFrontend ? "frontend" : "backend"} vão voltar para o preset selecionado.`}
         confirmText="Substituir"
-        onConfirm={() => {
-          if (pendingPreset) applyPreset(pendingPreset)
-        }}
+        onConfirm={handleConfirmPreset}
         onClose={() => setPendingPreset(null)}
       />
     </>
