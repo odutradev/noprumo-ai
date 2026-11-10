@@ -20,7 +20,8 @@ const publishingDefaults: PublishingConfig = {
   branch: 'master',
   buildScript: 'build',
   invocation: 'npx',
-  prompt: 'everyTask'
+  prompt: 'everyTask',
+  extraFlags: ''
 }
 
 const componentNaming: Pick<NamingConfig, 'components' | 'componentFolders' | 'handlerPrefix'> = {
@@ -83,10 +84,13 @@ export const codeGuidePreset: GeneratorConfig = {
     commitBody: 'subjectOnly',
     commitTiming: 'afterTask',
     aiAttribution: 'never',
+    extraPrinciples: '',
     principles: ['earlyReturn', 'immutability', 'noAny', 'noConsoleLog', 'parallelAsync', 'leanResponses', 'repositoryIsolation', 'auditMutations', 'standardPagination', 'noReinvent']
   },
   frontend: frontendDefaults,
-  publishing: { ...publishingDefaults, actions: ['bumpPackage', 'push'] }
+  publishing: { ...publishingDefaults, actions: ['bumpPackage', 'push'] },
+  custom: {},
+  outputLanguage: 'pt'
 }
 
 export const blankPreset: GeneratorConfig = {

@@ -34,6 +34,11 @@ const useGeneratorStore = create<GeneratorState>()(
           const next = actions.includes(action) ? actions.filter((item) => item !== action) : [...actions, action]
           return withConfig(state, { ...state.config, publishing: { ...state.config.publishing, actions: next } })
         }),
+      setCustom: (key: string, text: string | undefined) =>
+        set((state) => {
+          const { [key]: _removed, ...rest } = state.config.custom
+          return withConfig(state, { ...state.config, custom: text === undefined ? rest : { ...rest, [key]: text } })
+        }),
       togglePrinciple: (principle: Principle) =>
         set((state) => {
           const { principles } = state.config.conventions
@@ -42,7 +47,7 @@ const useGeneratorStore = create<GeneratorState>()(
         }),
       applyPreset: (preset) => set((state) => withConfig(state, preset))
     }),
-    { name: 'minhaskill-generator', version: 4, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0 }) as GeneratorState }
+    { name: 'minhaskill-generator', version: 5, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0 }) as GeneratorState }
   )
 )
 

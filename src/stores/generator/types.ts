@@ -12,6 +12,7 @@ export interface GeneratorState {
   updateFrontend: <K extends keyof FrontendConfig>(key: K, value: FrontendConfig[K]) => void
   updatePublishing: <K extends keyof PublishingConfig>(key: K, value: PublishingConfig[K]) => void
   togglePublishAction: (action: PublishAction) => void
+  setCustom: (key: string, text: string | undefined) => void
   togglePrinciple: (principle: Principle) => void
   applyPreset: (preset: GeneratorConfig) => void
 }

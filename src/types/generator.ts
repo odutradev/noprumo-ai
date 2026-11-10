@@ -120,6 +120,7 @@ export interface ConventionsConfig {
   commitBody: CommitBody
   commitTiming: CommitTiming
   aiAttribution: AiAttribution
+  extraPrinciples: string
   principles: Principle[]
 }
 
@@ -144,6 +145,7 @@ export interface PublishingConfig {
   buildScript: string
   invocation: PublisherInvocation
   prompt: PublishPrompt
+  extraFlags: string
 }
 
 export interface GeneratorConfig {
@@ -158,6 +160,8 @@ export interface GeneratorConfig {
   conventions: ConventionsConfig
   frontend: FrontendConfig
   publishing: PublishingConfig
+  custom: Record<string, string>
+  outputLanguage: IdentifierLanguage
 }
 
 export type EnabledProjectType = Extract<ProjectType, 'backend' | 'frontend'>
