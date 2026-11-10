@@ -1,6 +1,8 @@
 # minhaskill
 
-Frontend do **minhaskill**, construído com React + Vite + TypeScript.
+Frontend do **minhaskill**, um gerador de skills para o Claude Code. A pessoa escolhe o tipo de projeto, a stack, a arquitetura, a nomenclatura e as convenções de código, vê o resultado ao vivo e baixa um `SKILL.md` pronto para instalar em `.claude/skills/`.
+
+Construído com React + Vite + TypeScript.
 
 ## Stack
 
@@ -14,14 +16,16 @@ Frontend do **minhaskill**, construído com React + Vite + TypeScript.
 
 ```
 src/
-  components/   componentes reutilizáveis
+  components/   componentes reutilizáveis (ChoiceCards, OptionChips, CodeBlock, FileTree)
   config/       configurações gerais da aplicação
-  pages/        páginas (home, notFound)
+  data/         catálogos de opções, vocabulário e presets do gerador
+  pages/        páginas (generator, notFound)
   providers/    providers do enchase (tema, locale pt-BR, navegação, toasts)
   routes/       definição de rotas
-  stores/       stores do Zustand
+  stores/       stores do Zustand (estado do gerador, salvo no navegador)
   styles/       tema do enchase (`theme.ts`)
-  utils/        funções utilitárias
+  types/        tipos do domínio
+  utils/        geração do SKILL.md, do código de exemplo e da estrutura de pastas
 ```
 
 Aliases de import: `@/`, `@components/`, `@pages/`, `@routes/`, `@stores/`, `@styles/`, `@utils/`, `@assets/`.
