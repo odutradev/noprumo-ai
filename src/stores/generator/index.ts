@@ -3,10 +3,10 @@ import { create } from 'zustand'
 
 import { bonfirePreset, codeGuidePreset } from '@/data/generator/presets'
 
-import type { ConventionsConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle } from '@/types/generator'
+import type { ConventionsConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle, PublishAction, PublishingConfig } from '@/types/generator'
 import type { GeneratorState } from './types'
 
-export const generatorSteps = ['project', 'language', 'architecture', 'naming', 'conventions', 'commits', 'result'] as const
+export const generatorSteps = ['project', 'language', 'architecture', 'naming', 'conventions', 'commits', 'publish', 'result'] as const
 
 const withConfig = (state: GeneratorState, config: GeneratorConfig) => ({
   config,
@@ -26,6 +26,14 @@ const useGeneratorStore = create<GeneratorState>()(
       updateConventions: <K extends keyof ConventionsConfig>(key: K, value: ConventionsConfig[K]) =>
         set((state) => withConfig(state, { ...state.config, conventions: { ...state.config.conventions, [key]: value } })),
       updateFrontend: <K extends keyof FrontendConfig>(key: K, value: FrontendConfig[K]) => set((state) => withConfig(state, { ...state.config, frontend: { ...state.config.frontend, [key]: value } })),
+      updatePublishing: <K extends keyof PublishingConfig>(key: K, value: PublishingConfig[K]) =>
+        set((state) => withConfig(state, { ...state.config, publishing: { ...state.config.publishing, [key]: value } })),
+      togglePublishAction: (action: PublishAction) =>
+        set((state) => {
+          const { actions } = state.config.publishing
+          const next = actions.includes(action) ? actions.filter((item) => item !== action) : [...actions, action]
+          return withConfig(state, { ...state.config, publishing: { ...state.config.publishing, actions: next } })
+        }),
       togglePrinciple: (principle: Principle) =>
         set((state) => {
           const { principles } = state.config.conventions
@@ -34,7 +42,7 @@ const useGeneratorStore = create<GeneratorState>()(
         }),
       applyPreset: (preset) => set((state) => withConfig(state, preset))
     }),
-    { name: 'minhaskill-generator', version: 3, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0 }) as GeneratorState }
+    { name: 'minhaskill-generator', version: 4, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0 }) as GeneratorState }
   )
 )
 

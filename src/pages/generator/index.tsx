@@ -11,6 +11,7 @@ import { selectedPrinciples } from '@/utils/generator/markdownHelpers'
 
 import ConventionsStep from './steps/ConventionsStep'
 import CommitsStep from './steps/CommitsStep'
+import PublishStep from './steps/PublishStep'
 import ArchitectureStep from './steps/ArchitectureStep'
 import PreviewPanel from './components/PreviewPanel'
 import LanguageStep from './steps/LanguageStep'
@@ -23,7 +24,7 @@ import type { EnabledProjectType, GeneratorConfig } from '@/types/generator'
 
 import styles from './styles.module.css'
 
-const stepComponents = [ProjectStep, LanguageStep, ArchitectureStep, NamingStep, ConventionsStep, CommitsStep, ResultStep]
+const stepComponents = [ProjectStep, LanguageStep, ArchitectureStep, NamingStep, ConventionsStep, CommitsStep, PublishStep, ResultStep]
 
 const labelOf = <T extends string>(options: { value: T; label: string }[], value: T) => options.find((option) => option.value === value)?.label ?? value
 
@@ -54,6 +55,7 @@ const GeneratorPage = () => {
     { label: 'Nomenclatura', hint: `${config.naming.language === 'en' ? 'Inglês' : 'Português'} · ${caseStyleLabels[config.naming.functions]}` },
     { label: 'Convenções', hint: `${selectedPrinciples(config).length} princípios` },
     { label: 'Commits', hint: `${labelOf(commitGranularityOptions, config.conventions.commitGranularity)} · ${config.conventions.commitLanguage === 'en' ? 'Inglês' : 'Português'}` },
+    { label: 'Publicação', hint: config.publishing.enabled ? 'project-publisher' : 'Desligada' },
     { label: 'Resultado', hint: 'SKILL.md' }
   ]
 
