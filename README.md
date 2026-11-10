@@ -4,27 +4,31 @@ Frontend do **minhaskill**, construído com React + Vite + TypeScript.
 
 ## Stack
 
-- React 18 + React Router
-- Vite
+- React 19 + React Router 7
+- Vite 8
 - TypeScript
+- [enchase](https://www.npmjs.com/package/enchase) (design system: componentes, tema claro/escuro e toasts)
 - Zustand (estado global)
-- Tailwind CSS (via CDN, tokens de tema em `index.html`)
-- react-icons
 
 ## Estrutura
 
 ```
 src/
-  components/   componentes reutilizáveis (ex.: Icon)
+  components/   componentes reutilizáveis
   config/       configurações gerais da aplicação
   pages/        páginas (home, notFound)
+  providers/    providers do enchase (tema, locale pt-BR, navegação, toasts)
   routes/       definição de rotas
-  stores/       stores do Zustand (system: tema claro/escuro)
-  styles/       helpers de tema
+  stores/       stores do Zustand
+  styles/       tema do enchase (`theme.ts`)
   utils/        funções utilitárias
 ```
 
 Aliases de import: `@/`, `@components/`, `@pages/`, `@routes/`, `@stores/`, `@styles/`, `@utils/`, `@assets/`.
+
+## Design
+
+O tema fica em `src/styles/theme.ts` (`brand`, `shape`, `style`...). A documentação completa da lib vem no pacote, em `node_modules/enchase/API.md`, e também está no [Storybook](https://enchase.othiagosilva.com.br/docs/).
 
 ## Rodando localmente
 
