@@ -1,12 +1,15 @@
-import type { ConventionsConfig, GeneratorConfig, NamingConfig, Principle } from '@/types/generator'
+import type { ConventionsConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle } from '@/types/generator'
 
 export interface GeneratorState {
   config: GeneratorConfig
+  configs: Record<EnabledProjectType, GeneratorConfig>
   step: number
   setStep: (step: number) => void
+  setProjectType: (projectType: EnabledProjectType) => void
   update: <K extends keyof GeneratorConfig>(key: K, value: GeneratorConfig[K]) => void
   updateNaming: <K extends keyof NamingConfig>(key: K, value: NamingConfig[K]) => void
   updateConventions: <K extends keyof ConventionsConfig>(key: K, value: ConventionsConfig[K]) => void
+  updateFrontend: <K extends keyof FrontendConfig>(key: K, value: FrontendConfig[K]) => void
   togglePrinciple: (principle: Principle) => void
   applyPreset: (preset: GeneratorConfig) => void
 }
