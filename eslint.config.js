@@ -71,7 +71,8 @@ export default [
         { selector: "VariableDeclaration[kind='var']", message: "Use const: sem var." },
         { selector: "ForStatement, ForInStatement, ForOfStatement", message: "Sem for: use map, filter, reduce e spread." },
         { selector: "WhileStatement, DoWhileStatement", message: "Sem while: use map, filter, reduce e spread." },
-        { selector: "TSAnyKeyword", message: "any é proibido." }
+        { selector: "TSAnyKeyword", message: "any é proibido." },
+        { selector: "ImportSpecifier[importKind='type']", message: "Tipos vão no bloco de import type." }
       ],
       "local/no-comments": "error",
       "local/one-line-destructuring": "error",
