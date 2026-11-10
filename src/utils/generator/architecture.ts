@@ -1,6 +1,7 @@
-import type { Architecture, GeneratorConfig, TreeNode } from '@/types/generator'
+import type { BackendArchitecture, GeneratorConfig, TreeNode } from '@/types/generator'
 
 import { createNamer, type Namer } from './namer'
+import { getFrontendLayout } from './frontend'
 
 export type UnitKind = 'action' | 'service' | 'useCase' | 'handler'
 
@@ -22,7 +23,7 @@ export interface ArchitectureLayout {
 
 const join = (...parts: string[]) => parts.join('/')
 
-const buildLayout = (architecture: Architecture, n: Namer): ArchitectureLayout => {
+const buildLayout = (architecture: BackendArchitecture, n: Namer): ArchitectureLayout => {
   const f = n.folder
   const src = 'src'
 
@@ -206,7 +207,7 @@ export const buildTree = (files: ProjectFile[]): TreeNode[] => sortTree(files.re
 
 export const getArchitectureLayout = (config: GeneratorConfig) => {
   const namer = createNamer(config.naming)
-  const layout = buildLayout(config.architecture, namer)
+  const layout = buildLayout(config.architecture as BackendArchitecture, namer)
   return { ...layout, files: withTests(layout, config, namer) }
 }
 
@@ -216,3 +217,5 @@ export const renderTree = (nodes: TreeNode[], prefix = ''): string[] =>
     const label = `${prefix}${isLast ? '└── ' : '├── '}${node.name}${node.children ? '/' : ''}${node.note ? `  # ${node.note}` : ''}`
     return node.children ? [label, ...renderTree(node.children, `${prefix}${isLast ? '    ' : '│   '}`)] : [label]
   })
+
+export const getProjectFiles = (config: GeneratorConfig): ProjectFile[] => (config.projectType === 'frontend' ? getFrontendLayout(config).files : getArchitectureLayout(config).files)

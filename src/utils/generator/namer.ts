@@ -20,6 +20,9 @@ export interface Namer {
   table: () => string
   column: (key: TermRef) => string
   route: () => string
+  component: (key: TermRef) => string
+  componentFolder: (key: TermRef) => string
+  handler: (key: TermRef) => string
 }
 
 const typePrefixes = { none: '', i: 'I', t: 'T' } as const
@@ -52,6 +55,9 @@ export const createNamer = (naming: NamingConfig): Namer => {
     folder: (key) => toCase(get(key), naming.folders),
     table: () => toCase(get(naming.tableNumber === 'plural' ? 'users' : 'user'), naming.dbTables),
     column: (key) => toCase(get(key), naming.dbColumns),
-    route: () => `/${toCase(get('userProfiles'), naming.routes)}`
+    route: () => `/${toCase(get('userProfiles'), naming.routes)}`,
+    component: (key) => toCase(get(key), naming.components),
+    componentFolder: (key) => toCase(get(key), naming.componentFolders),
+    handler: (key) => toCase([naming.handlerPrefix, ...get(key)], naming.functions)
   }
 }

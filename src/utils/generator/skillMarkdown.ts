@@ -11,7 +11,6 @@ import {
   importOrderOptions,
   languageOptions,
   paradigmOptions,
-  principleOptions,
   projectTypeOptions,
   quoteOptions,
   routeStyleOptions,
@@ -21,26 +20,18 @@ import {
   validationOptions
 } from '@/data/generator/options'
 import { booleanPrefixOptions, fileOrganizationOptions, identifierLanguageOptions, namingGroups, typePrefixOptions } from '@/data/generator/naming'
-import type { ChoiceOption, GeneratorConfig } from '@/types/generator'
+import type { GeneratorConfig } from '@/types/generator'
 
+import { code, gitSection, pick, principlesSection, samplesSection, selectedPrinciples, slugify } from './markdownHelpers'
 import { buildTree, getArchitectureLayout, renderTree } from './architecture'
+import { buildFrontendMarkdown } from './frontendMarkdown'
 import { caseStyleLabels } from './naming'
-import { buildSampleFiles } from './codeSample'
 import { createNamer } from './namer'
 
-const pick = <T extends string>(options: ChoiceOption<T>[], value: T) => options.find((option) => option.value === value) ?? options[0]
-
-const code = (content: string, language = 'typescript') => `\`\`\`${language}\n${content}\n\`\`\``
-
-export const slugify = (value: string) =>
-  value
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || 'skill'
+export { slugify } from './markdownHelpers'
 
 export const buildSkillMarkdown = (config: GeneratorConfig): string => {
+  if (config.projectType === 'frontend') return buildFrontendMarkdown(config)
   const { naming, conventions } = config
   const n = createNamer(naming)
   const architecture = architectureInfo[config.architecture]
@@ -58,15 +49,7 @@ export const buildSkillMarkdown = (config: GeneratorConfig): string => {
     '| Variáveis de ambiente | SCREAMING_SNAKE | `DATABASE_URL` |'
   ]
 
-  const principles = principleOptions.filter((principle) => conventions.principles.includes(principle.value))
-  const principlesSection = principles.length
-    ? principles
-        .map((principle) => {
-          const examples = [`✅ Certo:\n${code(principle.good)}`, principle.bad ? `❌ Errado:\n${code(principle.bad)}` : ''].filter(Boolean).join('\n\n')
-          return `### ${principle.label}\n\n${principle.description}\n\n${examples}`
-        })
-        .join('\n\n')
-    : 'Nenhum princípio adicional obrigatório.'
+  const principles = selectedPrinciples(config)
 
   const imports = pick(importAliasOptions, conventions.importAlias)
   const importOrder = pick(importOrderOptions, conventions.importOrder)
@@ -88,10 +71,6 @@ export const buildSkillMarkdown = (config: GeneratorConfig): string => {
           '- Os testes seguem as mesmas regras de nomenclatura, imports e comentários do código de produção.',
           `- Unitários não acessam banco nem rede. Integração usa banco em memória ou isolado, criado no setup e limpo após cada caso.`
         ].join('\n')
-
-  const samples = buildSampleFiles(config)
-    .map((file) => `### \`${file.path}\`\n\n${code(file.code)}`)
-    .join('\n\n')
 
   const checklist = [
     `Nomes seguem a tabela de nomenclatura e estão em ${language?.label.toLowerCase()}.`,
@@ -185,19 +164,23 @@ ${code(routes.example ?? '', 'text')}
 
 ## 5. Princípios obrigatórios
 
-${principlesSection}
+${principlesSection(config)}
 
 ## 6. Testes
 
 ${testSection}
 
-## 7. Exemplo de referência
+## 7. Commits e Git
+
+${gitSection(config)}
+
+## 8. Exemplo de referência
 
 Use estes arquivos como modelo. Eles seguem todas as regras acima.
 
-${samples}
+${samplesSection(config)}
 
-## 8. Checklist antes de entregar
+## 9. Checklist antes de entregar
 
 ${checklist.map((item) => `- [ ] ${item}`).join('\n')}
 `
