@@ -96,7 +96,7 @@ const NamingStep = () => {
       }
 
   return (
-    <Flex direction="column" gap="1.5rem">
+    <Flex direction="column" gap="var(--enchase-space-lg)">
       <StepHeader title="Nomenclatura" description="Cada opção mostra o nome real que vai aparecer no código." />
 
       <Card variant="outlined">

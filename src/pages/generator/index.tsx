@@ -71,7 +71,7 @@ const GeneratorPage = () => {
             <h1 className={styles.heading}>Transforme os padrões do seu time em uma skill</h1>
             <p className={styles.lead}>Escolha arquitetura, nomenclatura e convenções. O resultado é um SKILL.md pronto para o Claude Code seguir no seu projeto.</p>
           </div>
-          <Flex gap="0.5rem" wrap className={styles.presets}>
+          <Flex gap="var(--enchase-space-sm)" wrap className={styles.presets}>
             <Button variant="outline" size="sm" onClick={() => setPendingPreset(typePresets.mine)}>
               {isFrontend ? "Usar meu padrão de frontend" : "Usar meu padrão de backend"}
             </Button>
@@ -89,7 +89,7 @@ const GeneratorPage = () => {
         <div className={styles.layout} data-result={isResult || undefined}>
           <section className={styles.main} aria-label={steps[step].label}>
             <CurrentStep />
-            <Flex justify="between" gap="0.75rem" className={styles.nav}>
+            <Flex justify="between" gap="calc(var(--enchase-space-md) * 0.75)" className={styles.nav}>
               <Button variant="outline" onClick={() => setStep(step - 1)} disabled={step === 0}>
                 Voltar
               </Button>

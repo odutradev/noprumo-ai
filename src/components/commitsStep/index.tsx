@@ -18,13 +18,13 @@ const CommitsStep = () => {
   const count = buildCommitExamples(config).length
 
   return (
-    <Flex direction="column" gap="1.5rem">
+    <Flex direction="column" gap="var(--enchase-space-lg)">
       <StepHeader title="Commits" description="Como o Claude vai registrar o trabalho no git. O histórico abaixo muda a cada escolha." />
 
       <CodeBlock code={log} title={`git log · ${count} ${count === 1 ? "commit" : "commits"} para uma feature`} isPlain />
 
       <Card variant="outlined" header="Quantos commits">
-        <Flex direction="column" gap="2rem">
+        <Flex direction="column" gap="var(--enchase-space-xl)">
           <ChoiceCards
             legend="Granularidade"
             description="Como o trabalho de uma tarefa é dividido em commits."
@@ -46,7 +46,7 @@ const CommitsStep = () => {
       </Card>
 
       <Card variant="outlined" header="Mensagem">
-        <Flex direction="column" gap="2rem">
+        <Flex direction="column" gap="var(--enchase-space-xl)">
           <ChoiceCards
             legend="Formato"
             options={commitFormatOptions}

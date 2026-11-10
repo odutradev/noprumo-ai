@@ -30,11 +30,11 @@ const ResultStep = () => {
 
   return (
     <div className={styles.resultGrid}>
-      <Flex direction="column" gap="1.5rem">
+      <Flex direction="column" gap="var(--enchase-space-lg)">
         <StepHeader title="Sua skill está pronta" description="Dê um nome, revise e instale no projeto." />
 
         <Card variant="outlined">
-          <Flex direction="column" gap="1rem">
+          <Flex direction="column" gap="var(--enchase-space-md)">
             <SegmentedControl
               label="Idioma do prompt"
               items={[
@@ -57,7 +57,7 @@ const ResultStep = () => {
           </Flex>
         </Card>
 
-        <Flex gap="0.75rem" wrap>
+        <Flex gap="calc(var(--enchase-space-md) * 0.75)" wrap>
           <Button onClick={handleDownload} disabled={hasErrors}>
             Baixar SKILL.md
           </Button>

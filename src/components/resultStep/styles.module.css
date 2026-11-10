@@ -12,7 +12,7 @@
 }
 
 .inlineCode {
-  padding-inline: 0.25rem;
+  padding-inline: var(--enchase-space-xs);
   border-radius: var(--enchase-radius-xs);
   background: var(--enchase-color-code-background);
   font-family: var(--enchase-font-mono);

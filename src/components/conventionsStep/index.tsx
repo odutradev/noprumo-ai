@@ -29,13 +29,13 @@ const ConventionsStep = () => {
   const activeCount = principles.filter((principle) => conventions.principles.includes(principle.value)).length
 
   return (
-    <Flex direction="column" gap="1.5rem">
+    <Flex direction="column" gap="var(--enchase-space-lg)">
       <StepHeader title="Convenções de código" description="Como o código é escrito no dia a dia. Cada escolha muda o exemplo ao lado." />
 
       {isFrontend ? (
         <>
           <Card variant="outlined" header="Componentes">
-            <Flex direction="column" gap="2rem">
+            <Flex direction="column" gap="var(--enchase-space-xl)">
               <ChoiceCards
                 legend="Declaração"
                 options={componentDeclarationOptions}
@@ -57,7 +57,7 @@ const ConventionsStep = () => {
           </Card>
 
           <Card variant="outlined" header="Dados e ações">
-            <Flex direction="column" gap="2rem">
+            <Flex direction="column" gap="var(--enchase-space-xl)">
               <ChoiceCards legend="Camada de API" options={apiLayerOptions} value={frontend.apiLayer} onChange={(value) => setFrontend("apiLayer", value)} {...custom("frontend.apiLayer")} />
               <ChoiceCards
                 legend="Ações assíncronas"
@@ -73,7 +73,7 @@ const ConventionsStep = () => {
       ) : (
         <>
           <Card variant="outlined" header="Estrutura">
-            <Flex direction="column" gap="2rem">
+            <Flex direction="column" gap="var(--enchase-space-xl)">
               <ChoiceCards legend="Paradigma" options={paradigmOptions} value={conventions.paradigm} onChange={(value) => set("paradigm", value)} {...custom("conventions.paradigm")} />
               <ChoiceCards
                 legend="Declaração de funções"
@@ -87,7 +87,7 @@ const ConventionsStep = () => {
           </Card>
 
           <Card variant="outlined" header="Erros e validação">
-            <Flex direction="column" gap="2rem">
+            <Flex direction="column" gap="var(--enchase-space-xl)">
               <ChoiceCards
                 legend="Tratamento de erros"
                 options={errorHandlingOptions}
@@ -107,7 +107,7 @@ const ConventionsStep = () => {
           </Card>
 
           <Card variant="outlined" header="API">
-            <Flex direction="column" gap="2rem">
+            <Flex direction="column" gap="var(--enchase-space-xl)">
               <ChoiceCards
                 legend="Rotas"
                 options={routeStyleOptions}
@@ -123,7 +123,7 @@ const ConventionsStep = () => {
       )}
 
       <Card variant="outlined" header="Imports">
-        <Flex direction="column" gap="2rem">
+        <Flex direction="column" gap="var(--enchase-space-xl)">
           <ChoiceCards
             legend="Caminhos"
             options={importAliasOptions}
@@ -144,7 +144,7 @@ const ConventionsStep = () => {
       </Card>
 
       <Card variant="outlined" header="Testes">
-        <Flex direction="column" gap="2rem">
+        <Flex direction="column" gap="var(--enchase-space-xl)">
           <ChoiceCards
             legend={isFrontend ? "Testes unitários" : "Framework"}
             options={testingOptions}
@@ -171,7 +171,7 @@ const ConventionsStep = () => {
       </Card>
 
       <Card variant="outlined" header="Formatação e comentários">
-        <Flex direction="column" gap="2rem">
+        <Flex direction="column" gap="var(--enchase-space-xl)">
           <ChoiceCards legend="Ponto e vírgula" options={semicolonOptions} value={conventions.semicolons} onChange={(value) => set("semicolons", value)} {...custom("conventions.semicolons")} />
           <ChoiceCards legend="Aspas" options={quoteOptions} value={conventions.quotes} onChange={(value) => set("quotes", value)} {...custom("conventions.quotes")} />
           <ChoiceCards legend="Comentários" options={commentsOptions} value={conventions.comments} onChange={(value) => set("comments", value)} {...custom("conventions.comments")} />

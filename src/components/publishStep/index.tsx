@@ -19,7 +19,7 @@ const PublishStep = () => {
   const hasActions = publishing.actions.length > 0
 
   return (
-    <Flex direction="column" gap="1.5rem">
+    <Flex direction="column" gap="var(--enchase-space-lg)">
       <StepHeader title="Publicação" description="Use o project-publisher para subir a versão, buildar, empacotar e publicar no git ou no npm." />
 
       <Card variant="outlined">
@@ -68,9 +68,9 @@ const PublishStep = () => {
           </Card>
 
           <Card variant="outlined" header="Execução">
-            <Flex direction="column" gap="1.5rem">
+            <Flex direction="column" gap="var(--enchase-space-lg)">
               <ChoiceCards legend="Como rodar" options={publisherInvocationOptions} value={publishing.invocation} onChange={(value) => set("invocation", value)} {...custom("publishing.invocation")} />
-              <Flex gap="1rem" wrap>
+              <Flex gap="var(--enchase-space-md)" wrap>
                 <Input label="Branch do push" value={publishing.branch} onChange={(event) => set("branch", event.target.value)} helperText="Padrão do project-publisher: master" />
                 <Input label="Script de build" value={publishing.buildScript} onChange={(event) => set("buildScript", event.target.value)} helperText="Script do package.json usado pelo --build" />
                 <Input label="Outras flags" value={publishing.extraFlags} onChange={(event) => set("extraFlags", event.target.value)} helperText="Adicionadas ao fim do comando, como --bump-manifest" />

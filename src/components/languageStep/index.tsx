@@ -14,7 +14,7 @@ const LanguageStep = () => {
   const { frontend } = config
 
   return (
-    <Flex direction="column" gap="2.5rem">
+    <Flex direction="column" gap="calc(var(--enchase-space-xl) * 1.25)">
       <ChoiceCards
         legend="Linguagem"
         description="A linguagem principal do código."

@@ -29,7 +29,7 @@ const ArchitectureStep = () => {
   }
 
   return (
-    <Flex direction="column" gap="1.5rem">
+    <Flex direction="column" gap="var(--enchase-space-lg)">
       <ChoiceCards
         legend="Arquitetura"
         description="Como o código é organizado em pastas e camadas. As árvores já usam a nomenclatura que você escolher."

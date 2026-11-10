@@ -16,17 +16,17 @@
 }
 
 .list {
-  margin-inline-start: 0.5rem;
-  padding-inline-start: 0.75rem;
-  border-inline-start: 1px dashed var(--enchase-color-border);
+  margin-inline-start: var(--enchase-space-sm);
+  padding-inline-start: calc(var(--enchase-space-md) * 0.75);
+  border-inline-start: var(--enchase-border-width) dashed var(--enchase-color-border);
 }
 
 .row {
   display: flex;
   align-items: baseline;
-  gap: 0.5rem;
-  padding-block: 0.125rem;
-  padding-inline: 0.375rem;
+  gap: var(--enchase-space-sm);
+  padding-block: calc(var(--enchase-space-xs) / 2);
+  padding-inline: calc(var(--enchase-space-sm) * 0.75);
   border-radius: var(--enchase-radius-sm);
   white-space: nowrap;
   color: var(--enchase-color-text-primary);

@@ -47,7 +47,7 @@
 
 .flag {
   margin-inline-start: auto;
-  padding-inline: 0.375rem;
+  padding-inline: calc(var(--enchase-space-sm) * 0.75);
   border-radius: var(--enchase-radius-xs);
   background: var(--enchase-color-code-background);
   font-family: var(--enchase-font-mono);
