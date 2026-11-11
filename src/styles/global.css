@@ -1,3 +1,9 @@
+html:root {
+  --enchase-button-font-weight: 600;
+  --enchase-button-font-size-lg: var(--enchase-font-size-md);
+  --enchase-button-letter-spacing: -0.005em;
+}
+
 :root {
   --scrollbar-thumb: color-mix(in srgb, var(--enchase-color-primary) 45%, transparent);
   --scrollbar-thumb-hover: color-mix(in srgb, var(--enchase-color-primary) 70%, transparent);
