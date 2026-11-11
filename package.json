@@ -1,9 +1,9 @@
 {
-  "name": "prumo-ai",
+  "name": "noprumo",
   "version": "1.1.5",
   "private": true,
   "type": "module",
-  "description": "Prumo: transforma os padrões do seu time em instruções que agentes de IA seguem",
+  "description": "noprumo: transforma os padrões do seu time em instruções que agentes de IA seguem",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

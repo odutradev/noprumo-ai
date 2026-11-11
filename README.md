@@ -1,6 +1,8 @@
-# prumo-ai
+# noprumo
 
-Frontend do **Prumo**, que transforma os padrões do seu time em instruções que agentes de IA seguem. A pessoa escolhe o tipo de projeto (backend, frontend ou fullstack), a stack, a arquitetura, a nomenclatura, as convenções de código, commits, Docker e publicação, vê o resultado ao vivo e baixa um `SKILL.md` ou `CLAUDE.md` pronto para instalar.
+**Sua IA no prumo.**
+
+Frontend do **noprumo**, que transforma os padrões do seu time em instruções que agentes de IA seguem. A pessoa escolhe o tipo de projeto (backend, frontend ou fullstack), a stack, a arquitetura, a nomenclatura, as convenções de código, commits, Docker e publicação, vê o resultado ao vivo e baixa um `SKILL.md` ou `CLAUDE.md` pronto para instalar.
 
 Construído com React + Vite + TypeScript.
 
@@ -64,6 +66,6 @@ O servidor sobe em `http://localhost:8080`.
 ## Docker
 
 ```bash
-docker build -t prumo-ai .
-docker run -p 80:80 prumo-ai
+docker build -t noprumo .
+docker run -p 80:80 noprumo
 ```

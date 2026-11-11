@@ -35,15 +35,16 @@ const migrate = (persisted: unknown, version: number) => {
   return { ...state, config, configs, step: clampStep(config, state.step), format: state.format ?? "skill" } as GeneratorState
 }
 
-const storageKey = "prumo-ai-generator"
-const legacyStorageKey = "minhaskill-generator"
+const storageKey = "noprumo-generator"
+const legacyStorageKeys = ["prumo-ai-generator", "minhaskill-generator"]
 
 const moveLegacyStorage = () => {
   try {
-    const legacy = localStorage.getItem(legacyStorageKey)
-    if (!legacy || localStorage.getItem(storageKey)) return
-    localStorage.setItem(storageKey, legacy)
-    localStorage.removeItem(legacyStorageKey)
+    const legacyKey = legacyStorageKeys.find((key) => localStorage.getItem(key))
+    if (!legacyKey) return
+    const legacy = localStorage.getItem(legacyKey)
+    if (legacy && !localStorage.getItem(storageKey)) localStorage.setItem(storageKey, legacy)
+    legacyStorageKeys.forEach((key) => localStorage.removeItem(key))
   } catch {
     return
   }
