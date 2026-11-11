@@ -38,7 +38,7 @@ const internalFolders = "assets|components|hooks|pages|providers|routes|stores|s
 const babelOptions = (plugins) => ({ requireConfigFile: false, babelOptions: { babelrc: false, configFile: false, parserOpts: { plugins } } })
 
 export default [
-  { ignores: ["build", "dist", "node_modules"] },
+  { ignores: ["build", "dist", "node_modules", ".example-project"] },
   js.configs.recommended,
   {
     files: ["**/*.{js,ts,tsx}"],
