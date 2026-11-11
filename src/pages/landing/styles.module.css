@@ -5,7 +5,7 @@
 .navbar [data-slot="container"],
 .page {
   box-sizing: border-box;
-  inline-size: min(84%, 76rem);
+  inline-size: 80%;
   max-inline-size: none;
   margin-inline: auto;
   padding-inline: 0;
@@ -310,13 +310,15 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .navbar [data-slot="container"],
   .page {
-    inline-size: auto;
-    margin-inline: var(--enchase-space-md);
+    inline-size: 100%;
+    padding-inline: var(--enchase-space-md);
   }
+}
 
+@media (max-width: 900px) {
   .hero {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--enchase-space-md);
