@@ -148,6 +148,14 @@ export interface PublishingConfig {
   extraFlags: string
 }
 
+export type OutputFormat = "skill" | "claudeMd"
+
+export interface OutputFile {
+  fileName: string
+  installPath: string
+  globalPath: string
+}
+
 export interface GeneratorConfig {
   skillName: string
   skillDescription: string

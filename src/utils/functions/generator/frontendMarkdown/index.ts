@@ -2,7 +2,7 @@ import { apiLayerOptions, asyncActionsOptions, componentDeclarationOptions, comp
 import { commentsOptions, exportOptions, importAliasOptions, importOrderOptions, languageOptions, quoteOptions, semicolonOptions, testSuffixOptions, testingOptions } from "@assets/data/generator/options"
 import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { code, extraPrinciples, gitSection, principlesSection, samplesSection, selectedPrinciples } from "@utils/functions/generator/markdownHelpers"
-import { architectureBlock, frontmatter, namingRow } from "@utils/functions/generator/skillMarkdown"
+import { architectureBlock, namingRow } from "@utils/functions/generator/skillMarkdown"
 import { createMdContext, sentence } from "@utils/functions/generator/mdContext"
 import { buildTree, renderTree } from "@utils/functions/generator/architecture"
 import { publishingSection } from "@utils/functions/generator/publishing"
@@ -89,9 +89,7 @@ export const buildFrontendMarkdown = (config: GeneratorConfig): string => {
 
   const propsWhere = !structure.isCustom && frontend.componentStructure === "singleFile" ? byLanguage(" no próprio arquivo", " in the same file") : byLanguage(" no arquivo de tipos do componente", " in the component's types file")
 
-  return `${frontmatter(config)}
-
-# ${byLanguage("Guia de padrões do frontend", "Frontend standards guide")}
+  return `# ${byLanguage("Guia de padrões do frontend", "Frontend standards guide")}
 
 ${byLanguage("Este guia define as regras de arquitetura, componentes, estado e código deste frontend. Seguir este guia é **obrigatório**.", "This guide defines this frontend's architecture, component, state and code rules. Following it is **mandatory**.")}
 

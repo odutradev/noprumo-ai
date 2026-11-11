@@ -41,7 +41,7 @@ name: ${slugify(config.skillName)}
 description: ${createMdContext(config).tr(config.skillDescription.trim()).replace(/\n/g, " ")}
 ---`
 
-export const buildSkillMarkdown = (config: GeneratorConfig): string => {
+export const buildGuideMarkdown = (config: GeneratorConfig): string => {
   if (config.projectType === "frontend") return buildFrontendMarkdown(config)
 
   const ctx = createMdContext(config)
@@ -103,9 +103,7 @@ export const buildSkillMarkdown = (config: GeneratorConfig): string => {
     config.publishing.isEnabled && config.publishing.prompt === "everyTask" ? byLanguage("Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.", "Publish question asked as the last action, if the task changed files.") : ""
   ].filter(Boolean)
 
-  return `${frontmatter(config)}
-
-# ${byLanguage("Guia de padrões do projeto", "Project standards guide")}
+  return `# ${byLanguage("Guia de padrões do projeto", "Project standards guide")}
 
 ${byLanguage("Este guia define as regras de arquitetura, estrutura e código deste projeto. Seguir este guia é **obrigatório**.", "This guide defines this project's architecture, structure and code rules. Following it is **mandatory**.")}
 

@@ -19,6 +19,8 @@ const useGeneratorStore = create<GeneratorState>()(
       config: codeGuidePreset,
       configs: { backend: codeGuidePreset, frontend: bonfirePreset },
       step: 0,
+      format: "skill",
+      setFormat: (format) => set({ format }),
       setStep: (step) => set({ step: Math.min(Math.max(step, 0), generatorSteps.length - 1) }),
       setProjectType: (projectType) => set((state) => ({ config: state.configs[projectType] })),
       update: <K extends keyof GeneratorConfig>(key: K, value: GeneratorConfig[K]) => set((state) => withConfig(state, { ...state.config, [key]: value })),
@@ -47,7 +49,7 @@ const useGeneratorStore = create<GeneratorState>()(
         }),
       applyPreset: (preset) => set((state) => withConfig(state, preset))
     }),
-    { name: "minhaskill-generator", version: 6, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0 }) as GeneratorState }
+    { name: "minhaskill-generator", version: 6, migrate: () => ({ config: codeGuidePreset, configs: { backend: codeGuidePreset, frontend: bonfirePreset }, step: 0, format: "skill" }) as GeneratorState }
   )
 )
 
