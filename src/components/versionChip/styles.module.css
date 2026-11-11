@@ -1,0 +1,12 @@
+.chip {
+  flex: none;
+  padding: 0.125rem var(--enchase-space-sm);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-full);
+  background: var(--enchase-color-surface);
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xs);
+  line-height: var(--enchase-line-height-tight, 1.4);
+  color: var(--enchase-color-text-secondary);
+  white-space: nowrap;
+}

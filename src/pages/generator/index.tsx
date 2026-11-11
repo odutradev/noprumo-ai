@@ -20,6 +20,7 @@ import GoNamingStep from "@components/goNamingStep"
 import CommitsStep from "@components/commitsStep"
 import PublishStep from "@components/publishStep"
 import ProjectStep from "@components/projectStep"
+import VersionChip from "@components/versionChip"
 import DeployStep from "@components/deployStep"
 import NamingStep from "@components/namingStep"
 import ResultStep from "@components/resultStep"
@@ -96,7 +97,12 @@ const GeneratorPage = () => {
       <Navbar
         className={styles.navbar}
         sections={[]}
-        logo={<BrandLogo label={appConfig.name} className={styles.logo} />}
+        logo={
+          <span className={styles.brand}>
+            <BrandLogo label={appConfig.name} className={styles.logo} />
+            <VersionChip />
+          </span>
+        }
         logoHref="/"
       />
 

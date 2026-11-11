@@ -7,6 +7,12 @@
   padding-inline: 0;
 }
 
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--enchase-space-sm);
+}
+
 .logo {
   block-size: 1.625rem;
 }
