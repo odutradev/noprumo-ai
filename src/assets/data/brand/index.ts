@@ -101,8 +101,8 @@ export const brandPalettes: BrandPalette[] = [
 ]
 
 export const brandTiles: BrandTile[] = [
-  { id: "ink", label: "Grafite (principal)", description: "App, PWA, avatar da organização e favicon.", colors: { ink: brandColors.chalk, muted: brandColors.mutedDark, mark: brandColors.orange, tile: brandColors.ink, tileBorder: "transparent" } },
-  { id: "orange", label: "Laranja (alternativo)", description: "Eventos, stickers e destaques em lojas.", colors: { ink: brandColors.ink, muted: brandColors.deepOrange, mark: brandColors.paper, tile: brandColors.orange, tileBorder: "transparent" } },
+  { id: "ink", label: "Grafite", description: "Avatar da organização, perfis e peças escuras.", colors: { ink: brandColors.chalk, muted: brandColors.mutedDark, mark: brandColors.orange, tile: brandColors.ink, tileBorder: "transparent" } },
+  { id: "orange", label: "Laranja (principal)", description: "Favicon, ícone do app e PWA, eventos e stickers.", colors: { ink: brandColors.ink, muted: brandColors.deepOrange, mark: brandColors.paper, tile: brandColors.orange, tileBorder: "transparent" } },
   { id: "paper", label: "Claro", description: "Documentação e materiais em fundo claro.", colors: { ink: brandColors.graphite, muted: brandColors.mutedLight, mark: brandColors.orangeMark, tile: brandColors.paper, tileBorder: brandColors.border } }
 ]
 

@@ -227,8 +227,8 @@ export const downloadArtwork = async (spec: ArtworkSpec, format: ExportFormat, p
 }
 
 export const downloadFavicon = async (fileName: string, size: number) => {
-  const artwork = buildArtwork({ kind: "icon", palette: "dark", tile: "ink", background: "transparent", ratio: "original", pixelSize: size })
+  const artwork = buildArtwork({ kind: "icon", palette: "dark", tile: "orange", background: "transparent", ratio: "original", pixelSize: size })
   downloadBlob(fileName, await rasterizeArtwork(artwork, size, "png"))
 }
 
-export const downloadFaviconSvg = () => downloadBlob("favicon.svg", svgBlob(buildArtwork({ kind: "icon", palette: "dark", tile: "ink", background: "transparent", ratio: "original", pixelSize: 32 })))
+export const downloadFaviconSvg = () => downloadBlob("favicon.svg", svgBlob(buildArtwork({ kind: "icon", palette: "dark", tile: "orange", background: "transparent", ratio: "original", pixelSize: 32 })))
