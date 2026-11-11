@@ -9,6 +9,7 @@
   <a href="https://github.com/odutradev/noprumo-ai/stargazers"><img src="https://img.shields.io/github/stars/odutradev/noprumo-ai?style=flat-square&color=FF8A4C&labelColor=0F1012" alt="Estrelas no GitHub" /></a>
   <img src="https://img.shields.io/github/package-json/v/odutradev/noprumo-ai?style=flat-square&color=FF8A4C&labelColor=0F1012&label=vers%C3%A3o" alt="Versão" />
   <img src="https://img.shields.io/badge/pre%C3%A7o-gratuito-4CC38A?style=flat-square&labelColor=0F1012" alt="Gratuito" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-MIT-FF8A4C?style=flat-square&labelColor=0F1012" alt="Licença MIT" /></a>
 </p>
 
 <p align="center">
@@ -153,6 +154,10 @@ npx project-publisher --bump-package --build --push
 ```
 
 O comando sobe o patch do `package.json`, roda o build e faz o commit `chore: bump version to X` com push para a `master`.
+
+## Licença
+
+Distribuído sob a licença MIT. Veja o arquivo [LICENSE](LICENSE).
 
 ## Apoie o projeto
 
