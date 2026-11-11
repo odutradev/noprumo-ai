@@ -8,6 +8,7 @@ import { downloadText } from "@utils/functions/download"
 import useGeneratorStore from "@stores/generator"
 import StepHeader from "@components/stepHeader"
 import CodeBlock from "@components/codeBlock"
+import StarCard from "@components/starCard"
 import useAction from "@hooks/useAction"
 import styles from "./styles.module.css"
 
@@ -124,6 +125,8 @@ const ResultStep = () => {
             </p>
           )}
         </Alert>
+
+        <StarCard isCompact />
       </Flex>
 
       <div className={styles.preview}>

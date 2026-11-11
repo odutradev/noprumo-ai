@@ -11,6 +11,7 @@ import NavbarSlot from "@components/navbarSlot"
 import HeroPlumb from "@components/heroPlumb"
 import AlignWall from "@components/alignWall"
 import BrandLogo from "@components/brandLogo"
+import StarCard from "@components/starCard"
 import CtaLink from "@components/ctaLink"
 import styles from "./styles.module.css"
 import Reveal from "@components/reveal"
@@ -138,6 +139,10 @@ const LandingPage = () => {
             </CtaLink>
           </Reveal>
         </section>
+
+        <Reveal className={styles.support}>
+          <StarCard />
+        </Reveal>
 
         <LandingFooter />
       </main>

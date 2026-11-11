@@ -226,6 +226,10 @@
   color: var(--enchase-color-primary);
 }
 
+.support {
+  margin-block: calc(var(--enchase-space-2xl) * -1) var(--enchase-space-3xl);
+}
+
 .final {
   position: relative;
   display: grid;
