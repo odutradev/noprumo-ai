@@ -37,6 +37,10 @@
   text-underline-offset: 0.2em;
 }
 
+.separator {
+  margin-inline: var(--enchase-space-sm);
+}
+
 .link:hover {
   color: var(--enchase-color-primary);
 }
