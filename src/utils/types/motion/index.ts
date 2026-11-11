@@ -7,6 +7,7 @@ export interface PendulumOptions {
 export interface ScrollProgressOptions {
   anchor?: number
   isPinned?: boolean
+  smoothing?: number
   onProgress?: (progress: number) => void
 }
 

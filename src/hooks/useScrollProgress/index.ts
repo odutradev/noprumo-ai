@@ -8,7 +8,7 @@ const measure = (rect: DOMRect, anchor: number, isPinned: boolean) => {
   return (viewport * anchor - rect.top) / Math.max(rect.height, 1)
 }
 
-const useScrollProgress = <T extends HTMLElement>({ anchor = 0.6, isPinned = false, onProgress }: ScrollProgressOptions = {}) => {
+const useScrollProgress = <T extends HTMLElement>({ anchor = 0.6, isPinned = false, smoothing = 1, onProgress }: ScrollProgressOptions = {}) => {
   const ref = useRef<T>(null)
   const callbackRef = useRef(onProgress)
 
@@ -19,13 +19,18 @@ const useScrollProgress = <T extends HTMLElement>({ anchor = 0.6, isPinned = fal
   useEffect(() => {
     const element = ref.current
     if (!element) return
-    const state = { frame: 0 }
+    const isStill = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const ease = isStill ? 1 : smoothing
+    const target = () => Math.min(1, Math.max(0, measure(element.getBoundingClientRect(), anchor, isPinned)))
+    const state = { frame: 0, current: target() }
 
     const update = () => {
-      state.frame = 0
-      const progress = Math.min(1, Math.max(0, measure(element.getBoundingClientRect(), anchor, isPinned)))
-      element.style.setProperty("--progress", progress.toFixed(4))
-      callbackRef.current?.(progress)
+      const goal = target()
+      const gap = goal - state.current
+      state.current = Math.abs(gap) < 0.0005 ? goal : state.current + gap * ease
+      element.style.setProperty("--progress", state.current.toFixed(4))
+      callbackRef.current?.(state.current)
+      state.frame = state.current === goal ? 0 : requestAnimationFrame(update)
     }
 
     const schedule = () => {
@@ -41,7 +46,7 @@ const useScrollProgress = <T extends HTMLElement>({ anchor = 0.6, isPinned = fal
       window.removeEventListener("scroll", schedule)
       window.removeEventListener("resize", schedule)
     }
-  }, [anchor, isPinned])
+  }, [anchor, isPinned, smoothing])
 
   return ref
 }

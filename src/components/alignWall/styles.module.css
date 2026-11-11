@@ -67,7 +67,6 @@
   background: var(--enchase-color-primary);
   transform: scaleY(var(--align));
   transform-origin: 50% 0;
-  transition: transform 0.25s ease-out;
 }
 
 .plumbBob {
@@ -99,7 +98,7 @@
   align-items: center;
   transform: translateX(calc(var(--shift) * var(--rest) * 1px)) rotate(calc(var(--tilt) * var(--rest) * 1deg));
   transform-origin: 0 50%;
-  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
 }
 
 .rowLabel {
@@ -147,7 +146,6 @@
   font-weight: var(--enchase-font-weight-medium);
   opacity: calc(1 - var(--fade));
   transform: translateX(calc(var(--fade) * 1.5rem)) scale(calc(1 - var(--fade) * 0.15));
-  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
 }
 
 @media (max-width: 700px) {
@@ -163,13 +161,5 @@
   .hint,
   .notes {
     display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .row,
-  .note,
-  .plumbLine {
-    transition: none;
   }
 }
