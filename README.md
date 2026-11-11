@@ -32,6 +32,7 @@ Agentes de IA, como o Claude Code, escrevem código rápido. Mas, sem um padrão
 O **noprumo** é um gerador de guias de padrões. Você responde poucas etapas sobre o projeto e baixa um `CLAUDE.md` ou uma skill (`SKILL.md`) pronta para instalar. O agente lê o guia e passa a construir seguindo as suas regras: estrutura de pastas, nomenclatura, princípios de código, commits, deploy e publicação.
 
 - **Gratuito e sem cadastro.** Tudo roda no navegador, e as suas escolhas ficam salvas só nele.
+- **Privado.** Sem cookies e sem anúncios. Os acessos são medidos de forma anônima, num Umami próprio, como explica a página [`/privacy`](https://noprumo.odutra.com/privacy).
 - **Prévia ao vivo.** A cada escolha, você vê o código de exemplo, a árvore de pastas e o arquivo final.
 - **Pronto para colar.** O guia sai com seções numeradas, exemplos de certo e errado, código de referência e checklist de entrega.
 
@@ -119,7 +120,18 @@ O `docker-compose.yml` sobe o site e um [Umami](https://umami.is) self-hosted co
 
 3. Em **Domains**, ligue o domínio do site ao serviço `app` na porta `80` e um domínio para o painel (por exemplo, `umami.seudominio.com`) ao serviço `noprumo-analytics` na porta `3000`.
 4. Faça o deploy, entre no painel com `admin` / `umami` e **troque a senha na hora**.
-5. Cadastre o site no Umami, copie o ID para `UMAMI_WEBSITE_ID` e faça o deploy de novo. O ID entra no build, então sem ele o site funciona normalmente, só que sem registrar acessos.
+5. Cadastre o site no Umami com o domínio `noprumo.odutra.com`, copie o ID para `UMAMI_WEBSITE_ID` e faça o deploy de novo. O ID entra no build, então sem ele o site funciona normalmente, só que sem registrar acessos.
+
+> [!IMPORTANT]
+> No Dokploy, a variável se chama `UMAMI_WEBSITE_ID`, **sem** o prefixo `VITE_`. O compose lê esse nome e repassa para o build como `VITE_UMAMI_WEBSITE_ID`. Se você usar o nome com `VITE_` no Environment, ele é ignorado e o site sai sem o script. Depois de trocar o ID, o `app` precisa de um novo build: salvar a variável não basta.
+
+Para conferir se o site está ligado ao Umami, abra o site, aperte F12 e rode no console:
+
+```js
+document.querySelector("script[data-website-id]")?.dataset.websiteId
+```
+
+Tem que aparecer o ID do site. Se aparecer `undefined`, o build saiu sem o ID. Navegadores com "Do Not Track" ligado não são contados, porque o site respeita essa opção.
 
 O serviço `noprumo-analytics-retention` roda uma vez por dia o [`deploy/umami/retention.sql`](deploy/umami/retention.sql) e apaga do banco os acessos e eventos mais antigos que `UMAMI_RETENTION_MONTHS`. O mesmo valor entra no build e aparece no texto da página [`/privacy`](https://noprumo.odutra.com/privacy), então a página e a limpeza sempre dizem o mesmo prazo. O resultado de cada limpeza fica nos logs desse serviço no Dokploy.
 
@@ -148,19 +160,21 @@ Em desenvolvimento nada é enviado: os eventos aparecem só no console, pelo log
 O projeto segue o próprio guia, em [`.claude/CLAUDE.md`](.claude/CLAUDE.md), gerado pelo noprumo.
 
 ```text
+deploy/
+└── umami/            rotina de limpeza dos dados antigos do Umami (retention.sql)
 src/
 ├── assets/
-│   ├── config/       nome, título, versão e links da aplicação
-│   └── data/         opções, vocabulário, presets e textos do gerador
+│   ├── config/       nome, título, versão e links da aplicação; analytics/ com a configuração do Umami
+│   └── data/         opções, vocabulário, presets e textos do gerador e da página de privacidade
 ├── components/       um componente por pasta: index.tsx, styles.module.css e types.ts
-├── hooks/            hooks customizados, como useAction e useScrollProgress
-├── pages/            uma pasta por página, cada uma com seus metadados
+├── hooks/            hooks customizados, como useAction, useAnalytics e useScrollProgress
+├── pages/            uma pasta por página (landing, generator, brand, privacy e 404), cada uma com seus metadados
 ├── providers/        providers do enchase: tema, locale pt-BR, navegação e toasts
-├── routes/           tabela de rotas
-├── stores/           estado do gerador, salvo no navegador
+├── routes/           tabela de rotas e o aviso de privacidade
+├── stores/           estado do gerador e do aviso de privacidade, salvos no navegador
 ├── styles/           tema do enchase e estilos globais
 └── utils/
-    ├── functions/    geração dos guias, do código de exemplo e utilitários
+    ├── functions/    geração dos guias, do código de exemplo, analytics e utilitários
     ├── types/        tipos do domínio
     └── validations/  schemas do Zod
 ```
