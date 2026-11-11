@@ -16,10 +16,12 @@ export interface GeneratorState {
   configs: Record<EnabledProjectType, GeneratorConfig>
   step: number
   format: OutputFormat
+  editingPart: AppProjectType | null
   setStep: (step: number) => void
   setFormat: (format: OutputFormat) => void
   setProjectType: (projectType: EnabledProjectType) => void
-  editApp: (projectType: AppProjectType, step: number) => void
+  editApp: (projectType: AppProjectType) => void
+  finishEditingApp: () => void
   update: <K extends keyof GeneratorConfig>(key: K, value: GeneratorConfig[K]) => void
   updateNaming: <K extends keyof NamingConfig>(key: K, value: NamingConfig[K]) => void
   updateConventions: <K extends keyof ConventionsConfig>(key: K, value: ConventionsConfig[K]) => void

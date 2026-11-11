@@ -6,7 +6,7 @@ import { deployDefaults, workspaceDefaults } from "@assets/data/generator/deploy
 import { normalizeForLanguage } from "@utils/functions/generator/language"
 import { goDefaults } from "@assets/data/generator/go"
 
-import type { ContainerService, ConventionsConfig, DeployConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, GoConfig, GoPrinciple, NamingConfig, Principle, PublishAction, PublishingConfig, WorkspaceConfig } from "@utils/types/generator"
+import type { AppProjectType, ContainerService, ConventionsConfig, DeployConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, GoConfig, GoPrinciple, NamingConfig, Principle, PublishAction, PublishingConfig, WorkspaceConfig } from "@utils/types/generator"
 import type { GeneratorState, GeneratorStep, LegacyConfig, LegacyState } from "./types"
 
 export const stepsByType: Record<EnabledProjectType, GeneratorStep[]> = {
@@ -15,7 +15,11 @@ export const stepsByType: Record<EnabledProjectType, GeneratorStep[]> = {
   fullstack: ["project", "workspace", "deploy", "commits", "publish", "result"]
 }
 
-export const getSteps = (config: GeneratorConfig) => stepsByType[config.projectType as EnabledProjectType]
+export const partSteps: GeneratorStep[] = ["language", "architecture", "naming", "conventions"]
+
+export const getSteps = (config: GeneratorConfig, editingPart: AppProjectType | null = null) => (editingPart ? partSteps : stepsByType[config.projectType as EnabledProjectType])
+
+const workspaceStep = stepsByType.fullstack.indexOf("workspace")
 
 const initialConfigs: Record<EnabledProjectType, GeneratorConfig> = { backend: codeGuidePreset, frontend: bonfirePreset, fullstack: fullstackPreset }
 
@@ -26,7 +30,7 @@ const withConfig = (state: GeneratorState, config: GeneratorConfig) => ({
   configs: { ...state.configs, [config.projectType as EnabledProjectType]: config }
 })
 
-const clampStep = (config: GeneratorConfig, step: number) => Math.min(Math.max(step, 0), getSteps(config).length - 1)
+const clampStep = (config: GeneratorConfig, step: number, editingPart: AppProjectType | null = null) => Math.min(Math.max(step, 0), getSteps(config, editingPart).length - 1)
 
 const migrate = (persisted: unknown, version: number) => {
   const initial = { config: codeGuidePreset, configs: initialConfigs, step: 0, format: "claudeMd" }
@@ -35,7 +39,7 @@ const migrate = (persisted: unknown, version: number) => {
   const config = withDefaults(state.config)
   const legacyConfigs = state.configs as Record<string, LegacyConfig | undefined>
   const configs = { backend: withDefaults(state.configs.backend), frontend: withDefaults(state.configs.frontend), fullstack: legacyConfigs.fullstack ? withDefaults(legacyConfigs.fullstack) : fullstackPreset }
-  return { ...state, config, configs, step: clampStep(config, state.step), format: "claudeMd" } as GeneratorState
+  return { ...state, config, configs, step: clampStep(config, state.step), format: "claudeMd", editingPart: null } as GeneratorState
 }
 
 const storageKey = "noprumo-generator"
@@ -62,10 +66,12 @@ const useGeneratorStore = create<GeneratorState>()(
       configs: initialConfigs,
       step: 0,
       format: "claudeMd",
+      editingPart: null,
       setFormat: (format) => set({ format }),
-      setStep: (step) => set((state) => ({ step: clampStep(state.config, step) })),
-      setProjectType: (projectType) => set((state) => ({ config: state.configs[projectType], step: clampStep(state.configs[projectType], state.step) })),
-      editApp: (projectType, step) => set((state) => ({ config: state.configs[projectType], step: clampStep(state.configs[projectType], step) })),
+      setStep: (step) => set((state) => ({ step: clampStep(state.config, step, state.editingPart) })),
+      setProjectType: (projectType) => set((state) => ({ config: state.configs[projectType], step: clampStep(state.configs[projectType], state.step), editingPart: null })),
+      editApp: (projectType) => set((state) => ({ config: state.configs[projectType], step: 0, editingPart: projectType })),
+      finishEditingApp: () => set((state) => ({ config: state.configs.fullstack, step: workspaceStep, editingPart: null })),
       update: <K extends keyof GeneratorConfig>(key: K, value: GeneratorConfig[K]) => set((state) => withConfig(state, { ...state.config, [key]: value })),
       updateNaming: <K extends keyof NamingConfig>(key: K, value: NamingConfig[K]) => set((state) => withConfig(state, { ...state.config, naming: { ...state.config.naming, [key]: value } })),
       updateConventions: <K extends keyof ConventionsConfig>(key: K, value: ConventionsConfig[K]) =>
