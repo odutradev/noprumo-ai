@@ -10,6 +10,7 @@ import PlumbCursor from "@components/plumbCursor"
 import HeroPlumb from "@components/heroPlumb"
 import AlignWall from "@components/alignWall"
 import BrandLogo from "@components/brandLogo"
+import CtaLink from "@components/ctaLink"
 import styles from "./styles.module.css"
 import Reveal from "@components/reveal"
 import appConfig from "@assets/config"
@@ -29,9 +30,9 @@ const LandingPage = () => {
         sections={[]}
         logo={<BrandLogo label={appConfig.name} className={styles.logo} />}
         actions={
-          <ButtonLink href={toolPath} size="sm">
+          <CtaLink href={toolPath} size="sm">
             Abrir o gerador
-          </ButtonLink>
+          </CtaLink>
         }
       />
 
@@ -54,9 +55,9 @@ const LandingPage = () => {
             </h1>
             <p className={styles.heroLead}>O noprumo transforma os padrões do seu time em um guia que agentes de IA, como o Claude Code, leem e seguem. Defina uma vez: a IA constrói do seu jeito.</p>
             <div className={styles.heroActions}>
-              <ButtonLink href={toolPath} size="lg">
+              <CtaLink href={toolPath} size="lg">
                 Criar meu guia grátis
-              </ButtonLink>
+              </CtaLink>
               <ButtonLink href="#como-funciona" size="lg" variant="ghost">
                 Como funciona
               </ButtonLink>
@@ -126,9 +127,9 @@ const LandingPage = () => {
               Sua IA <span className={styles.light}>no</span> prumo.
             </h2>
             <p className={styles.sectionLead}>Monte o guia do seu time agora. É totalmente gratuito e não pede cadastro.</p>
-            <ButtonLink href={toolPath} size="lg">
+            <CtaLink href={toolPath} size="lg">
               Abrir o gerador
-            </ButtonLink>
+            </CtaLink>
           </Reveal>
         </section>
 
