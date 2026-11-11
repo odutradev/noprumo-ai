@@ -2,9 +2,11 @@ import { useEffect, useRef } from "react"
 
 import type { PendulumOptions } from "@utils/types/motion"
 
-const stiffness = 0.018
-const damping = 0.035
-const restThreshold = 0.002
+const stiffness = 0.012
+const damping = 0.085
+const restThreshold = 0.004
+const maxAngle = 18
+const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value))
 
 const usePendulum = <T extends HTMLElement | SVGElement>({ initialAngle = 0, delay = 0, sensitivity = 1 }: PendulumOptions = {}) => {
   const ref = useRef<T>(null)
@@ -14,43 +16,40 @@ const usePendulum = <T extends HTMLElement | SVGElement>({ initialAngle = 0, del
     if (!element) return
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
 
-    const motion = { angle: 0, velocity: 0, frame: 0, lastX: 0, lastScroll: window.scrollY, isReady: false }
-
-    const render = () => {
-      element.style.transform = `rotate(${motion.angle.toFixed(3)}deg)`
-    }
+    const motion = { angle: 0, velocity: 0, scrollLean: 0, pointerLean: 0, frame: 0, lastScroll: window.scrollY, isReady: false }
 
     const step = () => {
-      const acceleration = -stiffness * motion.angle - damping * motion.velocity
-      motion.velocity += acceleration
+      motion.scrollLean *= 0.94
+      const target = clamp(motion.scrollLean + motion.pointerLean, maxAngle)
+      motion.velocity += -stiffness * (motion.angle - target) - damping * motion.velocity
       motion.angle += motion.velocity
-      render()
-      const isResting = Math.abs(motion.angle) < restThreshold && Math.abs(motion.velocity) < restThreshold
+      element.style.transform = `rotate(${motion.angle.toFixed(3)}deg)`
+      const isResting = Math.abs(motion.angle - target) < restThreshold && Math.abs(motion.velocity) < restThreshold && Math.abs(motion.scrollLean) < restThreshold
       motion.frame = isResting ? 0 : requestAnimationFrame(step)
     }
 
-    const kick = (impulse: number) => {
-      if (!motion.isReady) return
-      motion.velocity = Math.max(-2.4, Math.min(2.4, motion.velocity + impulse * sensitivity))
-      if (!motion.frame) motion.frame = requestAnimationFrame(step)
+    const wake = () => {
+      if (motion.isReady && !motion.frame) motion.frame = requestAnimationFrame(step)
     }
 
     const handlePointer = (event: PointerEvent) => {
-      const delta = motion.lastX ? event.clientX - motion.lastX : 0
-      motion.lastX = event.clientX
-      kick(-delta * 0.012)
+      const rect = element.getBoundingClientRect()
+      const offset = (event.clientX - (rect.left + rect.width / 2)) / window.innerWidth
+      motion.pointerLean = clamp(-offset * 10 * sensitivity, 6)
+      wake()
     }
 
     const handleScroll = () => {
       const delta = window.scrollY - motion.lastScroll
       motion.lastScroll = window.scrollY
-      kick(delta * 0.01)
+      motion.scrollLean = clamp(motion.scrollLean + delta * 0.06 * sensitivity, maxAngle)
+      wake()
     }
 
     const start = window.setTimeout(() => {
       motion.isReady = true
       motion.angle = initialAngle
-      motion.frame = requestAnimationFrame(step)
+      wake()
     }, delay)
 
     window.addEventListener("pointermove", handlePointer, { passive: true })

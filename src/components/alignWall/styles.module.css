@@ -1,15 +1,21 @@
-.wall {
-  display: flex;
-  flex-direction: column;
-  gap: var(--enchase-space-md);
-  opacity: 0;
-  transform: translateY(1.5rem);
-  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+.track {
+  --progress: 0;
+  --align: clamp(0, (var(--progress) - 0.12) / 0.62, 1);
+
+  position: relative;
+  block-size: 230vh;
 }
 
-.wall[data-visible] {
-  opacity: 1;
-  transform: none;
+.wall {
+  position: sticky;
+  inset-block-start: var(--enchase-navbar-bar-height, 4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--enchase-space-lg);
+  min-block-size: calc(100svh - var(--enchase-navbar-bar-height, 4rem));
+  box-sizing: border-box;
+  padding-block: var(--enchase-space-xl);
 }
 
 .toolbar {
@@ -26,14 +32,22 @@
   transition: color 0.4s ease;
 }
 
-.wall[data-aligned] .status {
+.track[data-aligned] .status {
   color: var(--enchase-color-success);
+}
+
+.hint {
+  margin-inline-start: auto;
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-text-secondary);
+  opacity: calc(1 - var(--align) * 2);
 }
 
 .stage {
   position: relative;
   padding: var(--enchase-space-xl) var(--enchase-space-xl) var(--enchase-space-xl) calc(var(--enchase-space-xl) * 2);
-  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border: var(--enchase-border-width) solid color-mix(in srgb, var(--enchase-color-error) calc((1 - var(--align)) * 45%), var(--enchase-color-border));
   border-radius: var(--enchase-radius-xl);
   background-color: var(--enchase-color-surface);
   background-image: linear-gradient(to right, var(--enchase-color-border-light) var(--enchase-border-width), transparent var(--enchase-border-width));
@@ -51,9 +65,9 @@
   align-items: center;
   inline-size: 2px;
   background: var(--enchase-color-primary);
-  transform: scaleY(0);
+  transform: scaleY(var(--align));
   transform-origin: 50% 0;
-  transition: transform 0.8s cubic-bezier(0.65, 0, 0.2, 1);
+  transition: transform 0.25s ease-out;
 }
 
 .plumbBob {
@@ -61,16 +75,9 @@
   inline-size: 1.25rem;
   margin-block-end: -1.25rem;
   fill: var(--enchase-color-primary);
-  opacity: 0;
-  transition: opacity 0.3s ease 0.6s;
-}
-
-.wall[data-aligned] .plumbLine {
-  transform: scaleY(1);
-}
-
-.wall[data-aligned] .plumbBob {
-  opacity: 1;
+  opacity: clamp(0, (var(--align) - 0.85) * 8, 1);
+  transform: scaleY(calc(1 / max(var(--align), 0.01)));
+  transform-origin: 50% 0;
 }
 
 .rows {
@@ -83,12 +90,16 @@
 }
 
 .row {
+  --local: clamp(0, var(--align) * 1.6 - var(--i) * 0.12, 1);
+  --rest: calc(1 - var(--local));
+
   display: grid;
   grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
   gap: var(--enchase-space-md);
   align-items: center;
+  transform: translateX(calc(var(--shift) * var(--rest) * 1px)) rotate(calc(var(--tilt) * var(--rest) * 1deg));
   transform-origin: 0 50%;
-  transition: transform 0.7s cubic-bezier(0.34, 1.4, 0.5, 1);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .rowLabel {
@@ -104,18 +115,12 @@
   display: block;
   block-size: 0.75rem;
   border-radius: var(--enchase-radius-full);
-  background: var(--enchase-color-error);
-  opacity: 0.55;
-  transition: background-color 0.5s ease, opacity 0.5s ease;
+  background: color-mix(in srgb, var(--enchase-color-text-primary) calc(var(--local) * 100%), var(--enchase-color-error));
+  opacity: calc(0.55 + var(--local) * 0.3);
 }
 
-.wall[data-aligned] .rowBar {
-  background: var(--enchase-color-text-primary);
-  opacity: 0.85;
-}
-
-.wall[data-aligned] .row:nth-child(3n) .rowBar {
-  background: var(--enchase-color-primary);
+.row:nth-child(3n) .rowBar {
+  background: color-mix(in srgb, var(--enchase-color-primary) calc(var(--local) * 100%), var(--enchase-color-error));
 }
 
 .notes {
@@ -132,34 +137,38 @@
 }
 
 .note {
+  --fade: clamp(0, var(--align) * 2.4 - var(--i) * 0.25, 1);
+
   padding: var(--enchase-space-xs) var(--enchase-space-sm);
   border-radius: var(--enchase-radius-full);
   background: var(--enchase-color-error-container);
   color: var(--enchase-color-on-error-container);
   font-size: var(--enchase-font-size-xs);
   font-weight: var(--enchase-font-weight-medium);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.wall[data-aligned] .note {
-  opacity: 0;
-  transform: translateX(1rem);
+  opacity: calc(1 - var(--fade));
+  transform: translateX(calc(var(--fade) * 1.5rem)) scale(calc(1 - var(--fade) * 0.15));
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
 }
 
 @media (max-width: 700px) {
+  .track {
+    block-size: 180vh;
+  }
+
   .row {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--enchase-space-xs);
   }
 
+  .hint,
   .notes {
     display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wall,
   .row,
+  .note,
   .plumbLine {
     transition: none;
   }
