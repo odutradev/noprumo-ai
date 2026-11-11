@@ -115,7 +115,7 @@
   block-size: 0.75rem;
   border-radius: var(--enchase-radius-full);
   background: color-mix(in srgb, var(--enchase-color-text-primary) calc(var(--local) * 100%), var(--enchase-color-error));
-  opacity: calc(0.55 + var(--local) * 0.3);
+  opacity: calc(var(--bar-opacity, 0.55) + var(--local) * (0.85 - var(--bar-opacity, 0.55)));
 }
 
 .row:nth-child(3n) .rowBar {
@@ -146,6 +146,17 @@
   font-weight: var(--enchase-font-weight-medium);
   opacity: calc(1 - var(--fade));
   transform: translateX(calc(var(--fade) * 1.5rem)) scale(calc(1 - var(--fade) * 0.15));
+}
+
+:global([data-theme="light"]) .track {
+  --bar-opacity: 0.85;
+}
+
+:global([data-theme="light"]) .note {
+  border: var(--enchase-border-width) solid color-mix(in srgb, var(--enchase-color-error) 35%, transparent);
+  background: var(--enchase-color-surface);
+  color: var(--enchase-color-error);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--enchase-color-error) 12%, transparent);
 }
 
 @media (max-width: 700px) {
