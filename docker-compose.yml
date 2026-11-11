@@ -4,6 +4,7 @@ services:
       context: .
       args:
         VITE_UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
+        VITE_ANALYTICS_RETENTION_MONTHS: ${UMAMI_RETENTION_MONTHS:-24}
     restart: unless-stopped
     expose:
       - "80"
@@ -43,6 +44,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  noprumo-analytics-retention:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      PGHOST: noprumo-analytics-db
+      PGUSER: umami
+      PGDATABASE: umami
+      PGPASSWORD: ${UMAMI_DB_PASSWORD:?defina UMAMI_DB_PASSWORD}
+      RETENTION_MONTHS: ${UMAMI_RETENTION_MONTHS:-24}
+    volumes:
+      - ./deploy/umami/retention.sql:/retention.sql:ro
+    entrypoint: ["sh", "-c", "while true; do psql -q -v ON_ERROR_STOP=1 -v months=\"$$RETENTION_MONTHS\" -f /retention.sql; sleep 86400; done"]
+    depends_on:
+      noprumo-analytics-db:
+        condition: service_healthy
 
 volumes:
   noprumo-analytics-data:

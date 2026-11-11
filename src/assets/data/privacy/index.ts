@@ -1,10 +1,12 @@
+import analyticsConfig from "@assets/config/analytics"
+
 import type { PrivacySection } from "@utils/types/privacy"
 
 export const privacyPath = "/privacy"
 
 export const privacyUpdatedAt = "11 de novembro de 2026"
 
-export const privacyRetentionMonths = 24
+const { retentionMonths } = analyticsConfig
 
 export const privacyNotice = "Sem cookies. Medimos os acessos de forma anônima."
 
@@ -51,7 +53,7 @@ export const privacySections: PrivacySection[] = [
   {
     id: "retention",
     title: "Por quanto tempo",
-    paragraphs: [`Os dados de acesso são guardados por até ${privacyRetentionMonths} meses e depois apagados.`]
+    paragraphs: [`Os dados de acesso são guardados por até ${retentionMonths} meses. Uma rotina diária no servidor apaga automaticamente tudo o que passou desse prazo.`]
   },
   {
     id: "rights",

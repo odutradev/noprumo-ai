@@ -40,5 +40,6 @@ export interface AnalyticsConfig {
   tag: string
   isDoNotTrackRespected: boolean
   isSearchExcluded: boolean
+  retentionMonths: number
   isEnabled: boolean
 }

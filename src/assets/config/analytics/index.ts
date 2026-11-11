@@ -4,6 +4,10 @@ import type { AnalyticsConfig } from "@utils/types/analytics"
 
 const websiteId = import.meta.env.VITE_UMAMI_WEBSITE_ID ?? ""
 
+const defaultRetentionMonths = 24
+
+const parsedRetentionMonths = Number.parseInt(import.meta.env.VITE_ANALYTICS_RETENTION_MONTHS ?? "", 10)
+
 const analyticsConfig: AnalyticsConfig = {
   websiteId,
   basePath: "/pulse",
@@ -12,6 +16,7 @@ const analyticsConfig: AnalyticsConfig = {
   tag: `v${appConfig.version}`,
   isDoNotTrackRespected: true,
   isSearchExcluded: false,
+  retentionMonths: parsedRetentionMonths > 0 ? parsedRetentionMonths : defaultRetentionMonths,
   isEnabled: import.meta.env.PROD && websiteId.length > 0
 }
 
