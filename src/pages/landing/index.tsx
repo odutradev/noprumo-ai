@@ -7,6 +7,7 @@ import LandingFooter from "@components/landingFooter"
 import StackMarquee from "@components/stackMarquee"
 import StepTimeline from "@components/stepTimeline"
 import PlumbCursor from "@components/plumbCursor"
+import NavbarSlot from "@components/navbarSlot"
 import HeroPlumb from "@components/heroPlumb"
 import AlignWall from "@components/alignWall"
 import BrandLogo from "@components/brandLogo"
@@ -35,6 +36,11 @@ const LandingPage = () => {
           </CtaLink>
         }
       />
+      <NavbarSlot navbarClassName={styles.navbar}>
+        <CtaLink href={toolPath} size="sm" isIconOnly className={styles.mobileCta}>
+          Abrir o gerador
+        </CtaLink>
+      </NavbarSlot>
 
       <main className={styles.page}>
         <section ref={heroRef} className={styles.hero} aria-labelledby="hero-title">

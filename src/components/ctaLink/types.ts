@@ -5,4 +5,5 @@ export interface CtaLinkProps {
   size?: "sm" | "md" | "lg"
   children: ReactNode
   className?: string
+  isIconOnly?: boolean
 }
