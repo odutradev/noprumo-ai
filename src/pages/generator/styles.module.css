@@ -11,12 +11,6 @@
   block-size: 1.625rem;
 }
 
-.presets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--enchase-space-xs);
-}
-
 .shell {
   --sticky-top: calc(var(--enchase-navbar-bar-height, 4rem) + var(--enchase-space-lg));
 

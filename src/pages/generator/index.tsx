@@ -1,5 +1,5 @@
-import { Button, ButtonLink, ConfirmModal, Drawer, Navbar } from "enchase"
 import { useEffect, useRef, useState } from "react"
+import { Button, Drawer, Navbar } from "enchase"
 
 import { architectureInfo, frameworkOptions, languageOptions, projectTypeOptions } from "@assets/data/generator/options"
 import { frontendFrameworkOptions } from "@assets/data/generator/frontendOptions"
@@ -9,7 +9,6 @@ import { caseStyleLabels } from "@utils/functions/generator/naming"
 import useGeneratorStore, { getSteps } from "@stores/generator"
 import ArchitectureStep from "@components/architectureStep"
 import ConventionsStep from "@components/conventionsStep"
-import { presets } from "@assets/data/generator/presets"
 import WorkspaceStep from "@components/workspaceStep"
 import PreviewPanel from "@components/previewPanel"
 import LanguageStep from "@components/languageStep"
@@ -24,7 +23,6 @@ import Stepper from "@components/stepper"
 import styles from "./styles.module.css"
 import appConfig from "@assets/config"
 
-import type { EnabledProjectType, GeneratorConfig } from "@utils/types/generator"
 import type { GeneratorStep } from "@stores/generator/types"
 import type { PageMetadata } from "@utils/types/page"
 import type { ComponentType } from "react"
@@ -44,8 +42,6 @@ const stepComponents: Record<GeneratorStep, ComponentType> = {
   result: ResultStep
 }
 
-const typeNames: Record<EnabledProjectType, string> = { backend: "backend", frontend: "frontend", fullstack: "fullstack" }
-
 const labelOf = <T extends string>(options: { value: T; label: string }[], value: T) => options.find((option) => option.value === value)?.label ?? value
 
 const GeneratorPage = () => {
@@ -53,8 +49,6 @@ const GeneratorPage = () => {
   const step = useGeneratorStore((state) => state.step)
   const format = useGeneratorStore((state) => state.format)
   const setStep = useGeneratorStore((state) => state.setStep)
-  const applyPreset = useGeneratorStore((state) => state.applyPreset)
-  const [pendingPreset, setPendingPreset] = useState<GeneratorConfig | null>(null)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const isFirstRender = useRef(true)
 
@@ -67,7 +61,6 @@ const GeneratorPage = () => {
   }, [step])
 
   const isFrontend = config.projectType === "frontend"
-  const typePresets = presets[config.projectType as EnabledProjectType]
 
   const stepInfo: Record<GeneratorStep, { label: string; hint: string }> = {
     project: { label: "Projeto", hint: labelOf(projectTypeOptions, config.projectType) },
@@ -90,29 +83,13 @@ const GeneratorPage = () => {
   const isLast = step === stepIds.length - 1
   const isResult = currentId === "result"
 
-  const handleConfirmPreset = () => {
-    if (pendingPreset) applyPreset(pendingPreset)
-  }
-
   return (
     <>
       <Navbar
         className={styles.navbar}
         sections={[]}
         logo={<BrandLogo label={appConfig.name} className={styles.logo} />}
-        actions={
-          <div className={styles.presets}>
-            <Button variant="ghost" size="sm" onClick={() => setPendingPreset(typePresets.mine)}>
-              Meu padrão de {typeNames[config.projectType as EnabledProjectType]}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => setPendingPreset(typePresets.neutral)}>
-              Padrão neutro
-            </Button>
-            <ButtonLink href="/id" variant="ghost" size="sm">
-              Identidade visual
-            </ButtonLink>
-          </div>
-        }
+        logoHref="/"
       />
 
       <div className={styles.shell} data-result={isResult || undefined}>
@@ -155,14 +132,6 @@ const GeneratorPage = () => {
         <PreviewPanel hasHeader={false} />
       </Drawer>
 
-      <ConfirmModal
-        isOpen={pendingPreset !== null}
-        title="Substituir as escolhas atuais?"
-        message={`As escolhas de ${typeNames[config.projectType as EnabledProjectType]} vão voltar para o preset selecionado.`}
-        confirmText="Substituir"
-        onConfirm={handleConfirmPreset}
-        onClose={() => setPendingPreset(null)}
-      />
     </>
   )
 }
