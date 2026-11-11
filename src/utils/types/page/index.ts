@@ -7,5 +7,4 @@ export interface PageMetadata {
 export interface PageRoute {
   path: string
   page: ComponentType
-  metadata: PageMetadata
 }

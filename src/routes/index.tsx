@@ -1,9 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router"
+import { Suspense, lazy } from "react"
 
-import Generator, { metadata as generatorMetadata } from "@pages/generator"
-import NotFound, { metadata as notFoundMetadata } from "@pages/notFound"
-import Landing, { metadata as landingMetadata } from "@pages/landing"
-import Brand, { metadata as brandMetadata } from "@pages/brand"
 import PageLayout from "@components/pageLayout"
 import { toolPath } from "@assets/data/landing"
 import Providers from "@providers"
@@ -11,20 +8,22 @@ import Providers from "@providers"
 import type { PageRoute } from "@utils/types/page"
 
 const routes: PageRoute[] = [
-  { path: "/", page: Landing, metadata: landingMetadata },
-  { path: toolPath, page: Generator, metadata: generatorMetadata },
-  { path: "/id", page: Brand, metadata: brandMetadata },
-  { path: "*", page: NotFound, metadata: notFoundMetadata }
+  { path: "/", page: lazy(() => import("@pages/landing")) },
+  { path: toolPath, page: lazy(() => import("@pages/generator")) },
+  { path: "/id", page: lazy(() => import("@pages/brand")) },
+  { path: "*", page: lazy(() => import("@pages/notFound")) }
 ]
 
 const Router = () => (
   <BrowserRouter>
     <Providers>
-      <Routes>
-        {routes.map(({ path, page: Page, metadata }) => (
-          <Route key={path} path={path} element={<PageLayout metadata={metadata}><Page /></PageLayout>} />
-        ))}
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          {routes.map(({ path, page: Page }) => (
+            <Route key={path} path={path} element={<PageLayout><Page /></PageLayout>} />
+          ))}
+        </Routes>
+      </Suspense>
     </Providers>
   </BrowserRouter>
 )
