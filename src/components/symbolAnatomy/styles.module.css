@@ -1,0 +1,103 @@
+.anatomy {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: var(--enchase-space-xl);
+  align-items: start;
+}
+
+.canvas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-md);
+  padding: var(--enchase-space-xl);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-lg);
+  background: var(--enchase-color-surface);
+  color: var(--enchase-color-text-primary);
+}
+
+.svg {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 26rem;
+  margin-inline: auto;
+  aspect-ratio: 1;
+  overflow: visible;
+}
+
+.grid {
+  fill: none;
+  stroke: var(--enchase-color-border);
+  stroke-width: 0.08;
+}
+
+.guide {
+  fill: none;
+  stroke: var(--enchase-color-secondary);
+  stroke-width: 0.15;
+  stroke-dasharray: 0.6 0.5;
+}
+
+.toggle {
+  display: flex;
+  justify-content: center;
+}
+
+.notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.note {
+  display: flex;
+  gap: var(--enchase-space-md);
+  padding: var(--enchase-space-lg);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-lg);
+  background: var(--enchase-color-surface);
+}
+
+.noteIndex {
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-sm);
+  color: var(--enchase-color-primary);
+}
+
+.noteTitle {
+  display: block;
+  font-size: var(--enchase-font-size-lg);
+}
+
+.noteMeasure {
+  display: block;
+  margin-block-start: var(--enchase-space-xs);
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-secondary);
+}
+
+.noteText {
+  margin: var(--enchase-space-sm) 0 0;
+  font-size: var(--enchase-font-size-sm);
+  line-height: var(--enchase-line-height-normal);
+  color: var(--enchase-color-text-secondary);
+}
+
+.rule {
+  padding: var(--enchase-space-md) var(--enchase-space-lg);
+  border-radius: var(--enchase-radius-lg);
+  background: var(--enchase-color-primary-container);
+  color: var(--enchase-color-on-primary-container);
+  font-size: var(--enchase-font-size-sm);
+  line-height: var(--enchase-line-height-normal);
+}
+
+@media (max-width: 900px) {
+  .anatomy {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

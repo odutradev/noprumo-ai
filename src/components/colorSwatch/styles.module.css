@@ -1,0 +1,88 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-lg);
+  overflow: hidden;
+  background: var(--enchase-color-surface);
+}
+
+.color {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-block-size: 7.5rem;
+  padding: var(--enchase-space-md);
+  border: 0;
+  border-block-end: var(--enchase-border-width) solid var(--enchase-color-border);
+  font: inherit;
+  cursor: pointer;
+}
+
+.hex {
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-lg);
+  font-weight: var(--enchase-font-weight-semibold);
+}
+
+.copy {
+  font-size: var(--enchase-font-size-xs);
+  font-weight: var(--enchase-font-weight-medium);
+  opacity: 0;
+  transition: opacity var(--enchase-motion-duration-fast, 150ms);
+}
+
+.color:hover .copy,
+.color:focus-visible .copy {
+  opacity: 1;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-xs);
+  padding: var(--enchase-space-md);
+}
+
+.name {
+  font-size: var(--enchase-font-size-base);
+}
+
+.meta {
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-text-secondary);
+}
+
+.description {
+  margin: var(--enchase-space-xs) 0 0;
+  font-size: var(--enchase-font-size-sm);
+  line-height: var(--enchase-line-height-normal);
+  color: var(--enchase-color-text-secondary);
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--enchase-space-lg);
+  min-inline-size: 0;
+  min-block-size: 5.5rem;
+  padding: var(--enchase-space-sm);
+  border: 0;
+  border-radius: var(--enchase-radius-md);
+  box-shadow: inset 0 0 0 var(--enchase-border-width) var(--enchase-color-border-light);
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xs);
+  text-align: start;
+  cursor: pointer;
+}
+
+.chipStep {
+  font-weight: var(--enchase-font-weight-semibold);
+}
+
+.chipHex {
+  overflow-wrap: anywhere;
+}
