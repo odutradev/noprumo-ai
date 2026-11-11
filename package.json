@@ -1,6 +1,6 @@
 {
   "name": "noprumo",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "private": true,
   "type": "module",
   "description": "noprumo: transforma os padrões do seu time em instruções que agentes de IA seguem",
