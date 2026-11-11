@@ -1,7 +1,7 @@
-import { Alert, Button, Flex, Input, SegmentedControl, Textarea } from "enchase"
+import { Alert, Button, Flex, Input, SegmentedControl, Tabs, Textarea } from "enchase"
 import { useMemo } from "react"
 
-import { buildOutputMarkdown, getOutputFile } from "@utils/functions/generator/outputFormat"
+import { buildOutputFiles, getGlobalPath, getSkillFolder } from "@utils/functions/generator/outputFormat"
 import { slugify } from "@utils/functions/generator/skillMarkdown"
 import { validateSkillMetadata } from "@utils/validations/skill"
 import { downloadText } from "@utils/functions/download"
@@ -11,7 +11,7 @@ import CodeBlock from "@components/codeBlock"
 import useAction from "@hooks/useAction"
 import styles from "./styles.module.css"
 
-import type { IdentifierLanguage, OutputFormat } from "@utils/types/generator"
+import type { IdentifierLanguage, OutputFile, OutputFormat } from "@utils/types/generator"
 
 const formatHints: Record<OutputFormat, string> = {
   skill: "Carrega só quando o Claude acha que a descrição combina com a tarefa, ou quando você chama /nome. Bom para procedimentos sob demanda.",
@@ -20,22 +20,34 @@ const formatHints: Record<OutputFormat, string> = {
 
 const ResultStep = () => {
   const config = useGeneratorStore((state) => state.config)
+  const configs = useGeneratorStore((state) => state.configs)
   const update = useGeneratorStore((state) => state.update)
   const format = useGeneratorStore((state) => state.format)
   const setFormat = useGeneratorStore((state) => state.setFormat)
-  const markdown = useMemo(() => buildOutputMarkdown(config, format), [config, format])
-  const { fileName, installPath, globalPath } = getOutputFile(format, config.skillName)
+  const files = useMemo(() => buildOutputFiles(config, format, configs), [config, format, configs])
   const isSkill = format === "skill"
+  const isFullstack = config.projectType === "fullstack"
+  const isMultiple = files.length > 1
   const slug = slugify(config.skillName)
+  const globalPath = getGlobalPath(config, format)
   const errors = isSkill ? validateSkillMetadata({ skillName: config.skillName, skillDescription: config.skillDescription }) : {}
   const hasErrors = Object.keys(errors).length > 0
+  const mainName = isSkill ? "SKILL.md" : "CLAUDE.md"
 
-  const handleDownload = () => downloadText(fileName, markdown)
+  const handleDownload = (file: OutputFile) => downloadText(file.fileName, file.content)
+
+  const handleDownloadAll = () => files.forEach((file) => handleDownload(file))
 
   const handleCopy = useAction({
-    action: () => navigator.clipboard.writeText(markdown),
-    toastMessages: { pending: "Copiando...", success: `${fileName} copiado`, error: "Não foi possível copiar" }
+    action: () => navigator.clipboard.writeText(files[0].content),
+    toastMessages: { pending: "Copiando...", success: `${mainName} copiado`, error: "Não foi possível copiar" }
   })
+
+  const installText = isFullstack
+    ? isSkill
+      ? `Salve os três arquivos em ${getSkillFolder(config)}/ na raiz do repositório. O SKILL.md aponta para backend.md e frontend.md na mesma pasta.`
+      : "Salve cada arquivo no caminho indicado: o guia do monorepo na raiz e o de cada app dentro da pasta dele. O Claude Code carrega o CLAUDE.md da pasta em que está trabalhando."
+    : ""
 
   return (
     <div className={styles.resultGrid}>
@@ -81,24 +93,48 @@ const ResultStep = () => {
         </div>
 
         <Flex gap="calc(var(--enchase-space-md) * 0.75)" wrap>
-          <Button onClick={handleDownload} disabled={hasErrors}>
-            Baixar {fileName}
+          <Button onClick={isMultiple ? handleDownloadAll : () => handleDownload(files[0])} disabled={hasErrors}>
+            {isMultiple ? `Baixar os ${files.length} arquivos` : `Baixar ${mainName}`}
           </Button>
           <Button variant="outline" onClick={handleCopy} disabled={hasErrors}>
-            Copiar conteúdo
+            {isMultiple ? `Copiar ${mainName}` : "Copiar conteúdo"}
           </Button>
         </Flex>
 
+        {isMultiple && (
+          <ul className={styles.fileList}>
+            {files.map((file) => (
+              <li key={file.path} className={styles.fileRow}>
+                <code className={styles.inlineCode}>{file.path}</code>
+                <Button variant="ghost" size="sm" onClick={() => handleDownload(file)} disabled={hasErrors}>
+                  Baixar
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
+
         <Alert variant="success" title="Como instalar">
-          <p>
-            Salve o arquivo em <code className={styles.inlineCode}>{installPath}</code> na raiz do projeto. Para valer em todos os seus projetos, use <code className={styles.inlineCode}>{globalPath}</code>.{" "}
-            {isSkill ? "A skill aparece na próxima sessão do Claude Code." : "Se o projeto já tem um CLAUDE.md, junte o conteúdo ao arquivo existente."}
-          </p>
+          {isFullstack ? (
+            <p>{installText}</p>
+          ) : (
+            <p>
+              Salve o arquivo em <code className={styles.inlineCode}>{files[0].path}</code> na raiz do projeto. Para valer em todos os seus projetos, use <code className={styles.inlineCode}>{globalPath}</code>.{" "}
+              {isSkill ? "A skill aparece na próxima sessão do Claude Code." : "Se o projeto já tem um CLAUDE.md, junte o conteúdo ao arquivo existente."}
+            </p>
+          )}
         </Alert>
       </Flex>
 
       <div className={styles.preview}>
-        <CodeBlock code={markdown} title={installPath} isPlain isCopyable maxHeight="calc(100dvh - 9rem)" />
+        {isMultiple ? (
+          <Tabs
+            ariaLabel="Arquivos gerados"
+            items={files.map((file) => ({ value: file.path, label: file.path.split("/").slice(-2).join("/"), content: <CodeBlock code={file.content} title={file.path} isPlain isCopyable maxHeight="calc(100dvh - 12rem)" /> }))}
+          />
+        ) : (
+          <CodeBlock code={files[0].content} title={files[0].path} isPlain isCopyable maxHeight="calc(100dvh - 9rem)" />
+        )}
       </div>
     </div>
   )

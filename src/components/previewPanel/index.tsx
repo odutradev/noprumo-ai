@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react"
 import { Badge, Tabs } from "enchase"
 
-import { buildOutputMarkdown, getOutputFile } from "@utils/functions/generator/outputFormat"
+import { buildFullstackSampleFiles, getFullstackFiles } from "@utils/functions/generator/fullstack"
 import { buildTree, getProjectFiles } from "@utils/functions/generator/architecture"
+import { buildOutputFiles } from "@utils/functions/generator/outputFormat"
 import { buildSampleFiles } from "@utils/functions/generator/codeSample"
+import { buildDeployFiles } from "@utils/functions/generator/deploy"
 import useGeneratorStore from "@stores/generator"
 import CodeBlock from "@components/codeBlock"
 import FileTree from "@components/fileTree"
@@ -14,11 +16,14 @@ import type { PreviewPanelProps } from "./types"
 const PreviewPanel = ({ hasHeader = true }: PreviewPanelProps) => {
   const config = useGeneratorStore((state) => state.config)
   const format = useGeneratorStore((state) => state.format)
+  const configs = useGeneratorStore((state) => state.configs)
+  const isFullstack = config.projectType === "fullstack"
   const [fileIndex, setFileIndex] = useState(0)
-  const files = useMemo(() => buildSampleFiles(config), [config])
-  const tree = useMemo(() => buildTree(getProjectFiles(config)), [config])
-  const markdown = useMemo(() => buildOutputMarkdown(config, format), [config, format])
-  const { fileName } = getOutputFile(format, config.skillName)
+  const files = useMemo(() => (isFullstack ? buildFullstackSampleFiles(config) : [...buildSampleFiles(config), ...buildDeployFiles(config)]), [config, isFullstack])
+  const tree = useMemo(() => buildTree(isFullstack ? getFullstackFiles(config, configs) : [...getProjectFiles(config), ...buildDeployFiles(config).map((file) => ({ path: file.path }))]), [config, configs, isFullstack])
+  const output = useMemo(() => buildOutputFiles(config, format, configs)[0], [config, format, configs])
+  const markdown = output.content
+  const fileName = output.path.split("/").pop() ?? output.path
   const activeFile = files[Math.min(fileIndex, files.length - 1)]
 
   const items = [

@@ -47,3 +47,20 @@
     position: static;
   }
 }
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--enchase-space-sm);
+  min-inline-size: 0;
+}
