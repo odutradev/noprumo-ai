@@ -2,17 +2,25 @@ import { Flex } from "enchase"
 
 import { dataFetchingOptions, formValidationOptions, frontendFrameworkOptions, stateOptions, stylingOptions, uiLibraryOptions } from "@assets/data/generator/frontendOptions"
 import { databaseOptions, frameworkOptions, languageOptions } from "@assets/data/generator/options"
+import { goDatabaseOptions, goFrameworkOptions } from "@assets/data/generator/go"
+import { forLanguage } from "@utils/functions/generator/language"
 import useCustomField from "@hooks/useCustomField"
 import ChoiceCards from "@components/choiceCards"
 import useGeneratorStore from "@stores/generator"
 import StepHeader from "@components/stepHeader"
+
+import type { ChoiceOption } from "@utils/types/generator"
 
 const LanguageStep = () => {
   const custom = useCustomField()
   const config = useGeneratorStore((state) => state.config)
   const update = useGeneratorStore((state) => state.update)
   const updateFrontend = useGeneratorStore((state) => state.updateFrontend)
+  const setLanguage = useGeneratorStore((state) => state.setLanguage)
+  const updateGo = useGeneratorStore((state) => state.updateGo)
   const { frontend } = config
+  const localize = <T extends string>(options: ChoiceOption<T>[]) => forLanguage(options, config.language)
+  const languages = languageOptions.filter((option) => config.projectType === "backend" || option.value === "typescript" || option.value === "javascript")
 
   return (
     <Flex direction="column" gap="var(--enchase-space-xl)">
@@ -20,9 +28,9 @@ const LanguageStep = () => {
       <ChoiceCards
         legend="Linguagem"
         description="A linguagem principal do código."
-        options={languageOptions}
+        options={languages}
         value={config.language}
-        onChange={(value) => update("language", value)}
+        onChange={(value) => setLanguage(value)}
         {...custom("language")}
       />
       {config.projectType === "frontend" ? (
@@ -30,7 +38,7 @@ const LanguageStep = () => {
           <ChoiceCards
             legend="Framework"
             description="Base da aplicação e do roteamento."
-            options={frontendFrameworkOptions}
+            options={localize(frontendFrameworkOptions)}
             value={frontend.framework}
             onChange={(value) => updateFrontend("framework", value)}
             {...custom("frontend.framework")}
@@ -47,7 +55,7 @@ const LanguageStep = () => {
           <ChoiceCards
             legend="Estilização"
             description="Onde e como os estilos dos componentes são escritos."
-            options={stylingOptions}
+            options={localize(stylingOptions)}
             value={frontend.styling}
             onChange={(value) => updateFrontend("styling", value)}
             {...custom("frontend.styling")}
@@ -55,7 +63,7 @@ const LanguageStep = () => {
           <ChoiceCards
             legend="Estado global"
             description="Onde fica o estado compartilhado entre páginas."
-            options={stateOptions}
+            options={localize(stateOptions)}
             value={frontend.state}
             onChange={(value) => updateFrontend("state", value)}
             {...custom("frontend.state")}
@@ -72,11 +80,30 @@ const LanguageStep = () => {
           />
           <ChoiceCards
             legend="Validação de formulários"
-            options={formValidationOptions}
+            options={localize(formValidationOptions)}
             value={frontend.formValidation}
             onChange={(value) => updateFrontend("formValidation", value)}
             {...custom("frontend.formValidation")}
            
+          />
+        </>
+      ) : config.language === "go" ? (
+        <>
+          <ChoiceCards
+            legend="Framework HTTP"
+            description="Define como as rotas e os handlers são declarados."
+            options={goFrameworkOptions}
+            value={config.go.framework}
+            onChange={(value) => updateGo("framework", value)}
+            {...custom("go.framework")}
+          />
+          <ChoiceCards
+            legend="Banco de dados"
+            description="Define como os repositórios acessam os dados."
+            options={goDatabaseOptions}
+            value={config.go.database}
+            onChange={(value) => updateGo("database", value)}
+            {...custom("go.database")}
           />
         </>
       ) : (
@@ -84,7 +111,7 @@ const LanguageStep = () => {
           <ChoiceCards
             legend="Framework HTTP"
             description="Define como os endpoints são declarados."
-            options={frameworkOptions}
+            options={localize(frameworkOptions)}
             value={config.framework}
             onChange={(value) => update("framework", value)}
             {...custom("framework")}
@@ -92,7 +119,7 @@ const LanguageStep = () => {
           <ChoiceCards
             legend="Banco de dados"
             description="Define como os repositórios acessam os dados."
-            options={databaseOptions}
+            options={localize(databaseOptions)}
             value={config.database}
             onChange={(value) => update("database", value)}
             {...custom("database")}

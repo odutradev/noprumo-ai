@@ -1,4 +1,4 @@
-import type { EnabledProjectType, Principle } from "@utils/types/generator"
+import type { EnabledProjectType, Language, Principle } from "@utils/types/generator"
 
 export interface ArchitectureInfo {
   label: string
@@ -11,6 +11,7 @@ export interface ArchitectureInfo {
 export interface PrincipleInfo {
   value: Principle
   scope: EnabledProjectType[]
+  languages?: Language[]
   label: string
   description: string
   good: string

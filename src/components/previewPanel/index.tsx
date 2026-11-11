@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { Badge, Tabs } from "enchase"
 
-import { buildFullstackSampleFiles, getFullstackFiles } from "@utils/functions/generator/fullstack"
+import { buildFullstackSampleFiles, getFullstackFiles, withApiLanguage } from "@utils/functions/generator/fullstack"
 import { buildTree, getProjectFiles } from "@utils/functions/generator/architecture"
 import { buildOutputFiles } from "@utils/functions/generator/outputFormat"
 import { buildSampleFiles } from "@utils/functions/generator/codeSample"
@@ -19,8 +19,8 @@ const PreviewPanel = ({ hasHeader = true }: PreviewPanelProps) => {
   const configs = useGeneratorStore((state) => state.configs)
   const isFullstack = config.projectType === "fullstack"
   const [fileIndex, setFileIndex] = useState(0)
-  const files = useMemo(() => (isFullstack ? buildFullstackSampleFiles(config) : [...buildSampleFiles(config), ...buildDeployFiles(config)]), [config, isFullstack])
-  const tree = useMemo(() => buildTree(isFullstack ? getFullstackFiles(config, configs) : [...getProjectFiles(config), ...buildDeployFiles(config).map((file) => ({ path: file.path }))]), [config, configs, isFullstack])
+  const files = useMemo(() => (isFullstack ? buildFullstackSampleFiles(withApiLanguage(config, configs)) : [...buildSampleFiles(config), ...buildDeployFiles(config)]), [config, configs, isFullstack])
+  const tree = useMemo(() => buildTree(isFullstack ? getFullstackFiles(withApiLanguage(config, configs), configs) : [...getProjectFiles(config), ...buildDeployFiles(config).map((file) => ({ path: file.path }))]), [config, configs, isFullstack])
   const output = useMemo(() => buildOutputFiles(config, format, configs)[0], [config, format, configs])
   const markdown = output.content
   const fileName = output.path.split("/").pop() ?? output.path

@@ -1,5 +1,7 @@
+import { isGo, isJavaScript, toJsPath } from "@utils/functions/generator/language"
 import { getFrontendLayout } from "@utils/functions/generator/frontend"
 import { createNamer } from "@utils/functions/generator/namer"
+import { getGoLayout } from "@utils/functions/generator/go"
 
 import type { BackendArchitecture, GeneratorConfig, TreeNode } from "@utils/types/generator"
 import type { ArchitectureLayout, ProjectFile } from "@utils/types/architecture"
@@ -189,10 +191,14 @@ const insert = (nodes: TreeNode[], segments: string[], file: ProjectFile): TreeN
 
 export const buildTree = (files: ProjectFile[]): TreeNode[] => sortTree(files.reduce<TreeNode[]>((nodes, file) => insert(nodes, file.path.split("/"), file), []))
 
-export const getArchitectureLayout = (config: GeneratorConfig) => {
+const forJavaScript = (files: ProjectFile[]) => files.filter((file) => !file.path.endsWith("/types.ts")).map((file) => ({ ...file, path: toJsPath(file.path), note: file.note === "schemas Zod" ? "schemas" : file.note }))
+
+export const getArchitectureLayout = (config: GeneratorConfig): ArchitectureLayout => {
   const namer = createNamer(config.naming)
   const layout = buildLayout(config.architecture as BackendArchitecture, namer)
-  return { ...layout, files: withTests(layout, config, namer) }
+  const files = withTests(layout, config, namer)
+  if (!isJavaScript(config)) return { ...layout, files }
+  return { ...layout, typesPath: undefined, files: forJavaScript(files) }
 }
 
 export const renderTree = (nodes: TreeNode[], prefix = ""): string[] =>
@@ -202,4 +208,8 @@ export const renderTree = (nodes: TreeNode[], prefix = ""): string[] =>
     return node.children ? [label, ...renderTree(node.children, `${prefix}${isLast ? "    " : "│   "}`)] : [label]
   })
 
-export const getProjectFiles = (config: GeneratorConfig): ProjectFile[] => (config.projectType === "frontend" ? getFrontendLayout(config).files : getArchitectureLayout(config).files)
+export const getProjectFiles = (config: GeneratorConfig): ProjectFile[] => {
+  if (config.projectType === "frontend") return getFrontendLayout(config).files
+  if (isGo(config)) return getGoLayout(config).files
+  return getArchitectureLayout(config).files
+}

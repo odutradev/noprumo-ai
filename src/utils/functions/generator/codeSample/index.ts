@@ -1,6 +1,8 @@
-import { comment, createImporter, statementEnd, exportMain, finalize, fnDeclaration } from "@utils/functions/generator/codeFormat"
+import { comment, createImporter, statementEnd, exportMain, finalize, fnDeclaration, isUntyped, returns, typed } from "@utils/functions/generator/codeFormat"
 import { getArchitectureLayout } from "@utils/functions/generator/architecture"
 import { buildFrontendSampleFiles } from "@utils/functions/generator/frontend"
+import { isGo, toJsPath } from "@utils/functions/generator/language"
+import { buildGoSampleFiles } from "@utils/functions/generator/go"
 import { createNamer } from "@utils/functions/generator/namer"
 
 import type { ImportLine, SampleFile } from "@utils/types/codeSample"
@@ -28,17 +30,17 @@ const buildSchemaFile = (config: GeneratorConfig, n: Namer, layout: Architecture
   const responseType = n.type("userResponse")
   const isActive = n.boolean("isActive")
   const imports: ImportLine[] = []
-  const blocks: string[] = [
-    `export const ${constant} = 120${statementEnd}`,
-    `export enum ${statusEnum} {\n  ${active} = '${n.errorCode("active")}',\n  ${inactive} = '${n.errorCode("inactive")}'\n}`
-  ]
-  const hasOwnTypes = !layout.typesPath
+  const enumBlock = isUntyped(config)
+    ? `export const ${statusEnum} = Object.freeze({\n  ${active}: '${n.errorCode("active")}',\n  ${inactive}: '${n.errorCode("inactive")}'\n})${statementEnd}`
+    : `export enum ${statusEnum} {\n  ${active} = '${n.errorCode("active")}',\n  ${inactive} = '${n.errorCode("inactive")}'\n}`
+  const blocks: string[] = [`export const ${constant} = 120${statementEnd}`, enumBlock]
+  const hasOwnTypes = !layout.typesPath && !isUntyped(config)
 
   switch (config.conventions.validation) {
     case "zod":
       imports.push({ kind: "external", from: "zod", line: "import { z } from 'zod'" })
       blocks.push(`export const ${n.variable("getUserByIdParamsSchema")} = z.object({\n  id: z.string().min(1)\n})${statementEnd}`)
-      blocks.push(`export const ${n.variable("userResponseSchema")} = z.object({\n  id: z.string(),\n  ${n.column("userName")}: z.string().max(${constant}),\n  status: z.nativeEnum(${statusEnum}),\n  ${isActive}: z.boolean()\n})${statementEnd}`)
+      blocks.push(`export const ${n.variable("userResponseSchema")} = z.object({\n  id: z.string(),\n  ${n.column("userName")}: z.string().max(${constant}),\n  status: ${isUntyped(config) ? `z.enum(Object.values(${statusEnum}))` : `z.nativeEnum(${statusEnum})`},\n  ${isActive}: z.boolean()\n})${statementEnd}`)
       if (hasOwnTypes) blocks.push(`export type ${responseType} = z.infer<typeof ${n.variable("userResponseSchema")}>${statementEnd}`)
       break
     case "classValidator":
@@ -59,7 +61,7 @@ const buildSchemaFile = (config: GeneratorConfig, n: Namer, layout: Architecture
 }
 
 const buildTypesFile = (config: GeneratorConfig, n: Namer, layout: ArchitectureLayout): SampleFile | undefined => {
-  if (!layout.typesPath) return undefined
+  if (!layout.typesPath || isUntyped(config)) return undefined
   const importer = createImporter(config, layout.typesPath)
   const isZod = config.conventions.validation === "zod"
   const imports: ImportLine[] = isZod
@@ -130,13 +132,13 @@ const buildRepositoryFile = (config: GeneratorConfig, n: Namer, layout: Architec
   if (config.conventions.paradigm === "classes") {
     const method =
       config.conventions.functionStyle === "arrow"
-        ? `  ${n.fn("findById")} = async (${id}: string): ${returnType} => ${call}${statementEnd}`
-        : `  async ${n.fn("findById")}(${id}: string): ${returnType} {\n    return ${call}${statementEnd}\n  }`
+        ? `  ${n.fn("findById")} = async (${typed(config, id, "string")})${returns(config, returnType)} => ${call}${statementEnd}`
+        : `  async ${n.fn("findById")}(${typed(config, id, "string")})${returns(config, returnType)} {\n    return ${call}${statementEnd}\n  }`
     const className = n.cls("userRepository")
     return { path: layout.repositoryPath, code: finalize(imports, exportMain(config, className, `class ${className} {\n${method}\n}`), config) }
   }
 
-  const findById = fnDeclaration(config, n.fn("findById"), `${id}: string`, returnType, `  return ${call}${statementEnd}`)
+  const findById = fnDeclaration(config, n.fn("findById"), typed(config, id, "string"), returnType, `  return ${call}${statementEnd}`)
   const object = `const ${repositoryName} = {\n  ${n.fn("findById")}\n}${statementEnd}`
   const body = config.conventions.exports === "named" ? `${findById}\n\nexport ${object}` : `${findById}\n\n${object}\n\nexport default ${repositoryName}${statementEnd}`
   return { path: layout.repositoryPath, code: finalize(imports, body, config) }
@@ -179,7 +181,7 @@ const buildActionFile = (config: GeneratorConfig, n: Namer, layout: Architecture
   const foundUser = n.variable("foundUser")
   const handlerParams = config.conventions.errorHandling === "errorCatalog" ? "{ params, manageError }" : "{ params }"
   const success = config.conventions.errorHandling === "result" ? `ok(${foundUser})` : foundUser
-  const declaration = `const ${actionName} = defineAction(\n  {\n    method: 'get',\n    path: '${path}',\n    summary: '${config.naming.language === "pt" ? "Busca um usuário pelo id" : "Finds a user by id"}',\n    tags: ['${n.cls("users")}']${schema}${docs}\n  },\n  async (${handlerParams}) => {\n    const { id } = params as ${n.type("getUserByIdParams")}${statementEnd}\n    const ${foundUser} = await ${repositoryCall}${statementEnd}\n\n    if (!${foundUser}) ${errorStatement(config, n, "action", "id")}\n\n    return ${success}${statementEnd}\n  }\n)${statementEnd}`
+  const declaration = `const ${actionName} = defineAction(\n  {\n    method: 'get',\n    path: '${path}',\n    summary: '${config.naming.language === "pt" ? "Busca um usuário pelo id" : "Finds a user by id"}',\n    tags: ['${n.cls("users")}']${schema}${docs}\n  },\n  async (${handlerParams}) => {\n    const { id } = params${isUntyped(config) ? "" : ` as ${n.type("getUserByIdParams")}`}${statementEnd}\n    const ${foundUser} = await ${repositoryCall}${statementEnd}\n\n    if (!${foundUser}) ${errorStatement(config, n, "action", "id")}\n\n    return ${success}${statementEnd}\n  }\n)${statementEnd}`
   const doc = comment(config, "Endpoint que busca um usuário pelo id.", "Endpoint that finds a user by id.")
   const body = config.conventions.exports === "default" ? `${doc}${declaration}\n\nexport default ${actionName}${statementEnd}` : `${doc}export ${declaration}`
   return { path: layout.mainPath, code: finalize(imports, body, config) }
@@ -208,16 +210,17 @@ const buildServiceFile = (config: GeneratorConfig, n: Namer, layout: Architectur
     const lines = (indent: string) => `${indent}const ${foundUser} = await this.${repo}.${n.fn("findById")}(${idVar})${statementEnd}\n\n${indent}if (!${foundUser}) ${errorStatement(config, n, layout.kind, idVar)}\n\n${indent}return ${success}${statementEnd}`
     const method =
       config.conventions.functionStyle === "arrow"
-        ? `${doc}  ${methodName} = async (${idVar}: string): ${returnType} => {\n${lines("    ")}\n  }${statementEnd}`
-        : `${doc}  async ${methodName}(${idVar}: string): ${returnType} {\n${lines("    ")}\n  }`
+        ? `${doc}  ${methodName} = async (${typed(config, idVar, "string")})${returns(config, returnType)} => {\n${lines("    ")}\n  }${statementEnd}`
+        : `${doc}  async ${methodName}(${typed(config, idVar, "string")})${returns(config, returnType)} {\n${lines("    ")}\n  }`
     const className = n.cls(unitName[layout.kind])
-    const declaration = `class ${className} {\n  constructor(private readonly ${repo}: ${n.cls("userRepository")}) {}\n\n${method}\n}`
+    const constructor = isUntyped(config) ? `  constructor(${repo}) {\n    this.${repo} = ${repo}${statementEnd}\n  }` : `  constructor(private readonly ${repo}: ${n.cls("userRepository")}) {}`
+    const declaration = `class ${className} {\n${constructor}\n\n${method}\n}`
     return { path: layout.mainPath, code: finalize(imports, exportMain(config, className, declaration), config) }
   }
 
   const repoCall = `${n.variable("userRepository")}.${n.fn("findById")}(${idVar})`
   const fnBody = `  const ${foundUser} = await ${repoCall}${statementEnd}\n\n  if (!${foundUser}) ${errorStatement(config, n, layout.kind, idVar)}\n\n  return ${success}${statementEnd}`
-  const fn = `${doc}${fnDeclaration(config, methodName, `${idVar}: string`, returnType, fnBody)}`
+  const fn = `${doc}${fnDeclaration(config, methodName, typed(config, idVar, "string"), returnType, fnBody)}`
 
   if (layout.kind !== "service") {
     const body = config.conventions.exports === "named" ? `export ${fn}` : `${fn}\n\nexport default ${methodName}${statementEnd}`
@@ -230,11 +233,14 @@ const buildServiceFile = (config: GeneratorConfig, n: Namer, layout: Architectur
   return { path: layout.mainPath, code: finalize(imports, body, config) }
 }
 
+const withLanguagePaths = (config: GeneratorConfig, files: SampleFile[]) => (isUntyped(config) ? files.map((file) => ({ ...file, path: toJsPath(file.path) })) : files)
+
 export const buildSampleFiles = (config: GeneratorConfig): SampleFile[] => {
-  if (config.projectType === "frontend") return buildFrontendSampleFiles(config)
+  if (isGo(config)) return buildGoSampleFiles(config)
+  if (config.projectType === "frontend") return withLanguagePaths(config, buildFrontendSampleFiles(config))
   const n = createNamer(config.naming)
   const layout = getArchitectureLayout(config)
   const main = layout.kind === "action" ? buildActionFile(config, n, layout) : buildServiceFile(config, n, layout)
   const types = buildTypesFile(config, n, layout)
-  return [main, buildSchemaFile(config, n, layout), ...(types ? [types] : []), buildRepositoryFile(config, n, layout)]
+  return withLanguagePaths(config, [main, buildSchemaFile(config, n, layout), ...(types ? [types] : []), buildRepositoryFile(config, n, layout)])
 }

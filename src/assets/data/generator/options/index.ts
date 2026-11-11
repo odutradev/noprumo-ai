@@ -10,9 +10,9 @@ export const projectTypeOptions: ChoiceOption<ProjectType>[] = [
 
 export const languageOptions: ChoiceOption<Language>[] = [
   { value: "typescript", label: "TypeScript", description: "Tipagem estática, strict mode e tipos inferidos dos schemas.", example: "const total: number = sum(values)" },
-  { value: "javascript", label: "JavaScript", description: "ESM puro, sem etapa de compilação.", badge: "Em breve", isDisabled: true },
+  { value: "javascript", label: "JavaScript", description: "ESM puro, sem tipos e sem etapa de compilação.", example: "const total = sum(values)" },
   { value: "python", label: "Python", description: "FastAPI, Django ou Flask.", badge: "Em breve", isDisabled: true },
-  { value: "go", label: "Go", description: "Serviços compilados e concorrentes.", badge: "Em breve", isDisabled: true }
+  { value: "go", label: "Go", description: "Serviços compilados e concorrentes, com a biblioteca padrão e gofmt.", example: "func (s *Service) FindByID(ctx context.Context, id string) (*User, error)" }
 ]
 
 export const frameworkOptions: ChoiceOption<Framework>[] = [
@@ -252,7 +252,7 @@ export const commentsOptions: ChoiceOption<CommentsPolicy>[] = [
 export const principleOptions: PrincipleInfo[] = [
   { value: "earlyReturn", scope: ["backend", "frontend"], label: "Retornos antecipados", description: "Valide e saia cedo, sem `if/else` aninhado.", good: "if (!user) return manageError({ code: 'not_found' })\nreturn user", bad: "if (user) {\n  return user\n} else {\n  return error\n}" },
   { value: "immutability", scope: ["backend", "frontend"], label: "Imutabilidade", description: "Sem `let`, `for` e `while`. Use `map`, `filter`, `reduce` e spread.", good: "const names = users.map((user) => user.name)", bad: "let names = []\nfor (const user of users) names.push(user.name)" },
-  { value: "noAny", scope: ["backend", "frontend"], label: "Tipagem estrita", description: "`any` é proibido. Tipos vêm dos schemas e de interfaces.", good: "type User = z.infer<typeof userSchema>", bad: "const user: any = req.body" },
+  { value: "noAny", scope: ["backend", "frontend"], languages: ["typescript"], label: "Tipagem estrita", description: "`any` é proibido. Tipos vêm dos schemas e de interfaces.", good: "type User = z.infer<typeof userSchema>", bad: "const user: any = req.body" },
   { value: "noConsoleLog", scope: ["backend", "frontend"], label: "Logger em vez de console.log", description: "Nada de `console.log` em produção. Use o logger do projeto.", good: "const logger = createLocalLogger('users')\nlogger.error(error)", bad: "console.log(error)" },
   { value: "parallelAsync", scope: ["backend", "frontend"], label: "Assincronismo paralelo", description: "`Promise.all` para chamadas sem dependência entre si.", good: "const [user, plans] = await Promise.all([findUser(id), listPlans()])", bad: "const user = await findUser(id)\nconst plans = await listPlans()" },
   { value: "leanResponses", scope: ["backend"], label: "Respostas enxutas", description: "Sem mensagens redundantes nem eco do payload. O status HTTP já informa o resultado.", good: "return { id: newUser.id }", bad: "return { message: 'Criado com sucesso', ...data }" },

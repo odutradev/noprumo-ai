@@ -3,7 +3,15 @@ import type { GeneratorConfig } from "@utils/types/generator"
 
 export const statementEnd = "§"
 
-export const stripExtension = (path: string) => path.replace(/\.tsx?$/, "").replace(/\/index$/, "")
+export const stripExtension = (path: string) => path.replace(/\.[jt]sx?$/, "").replace(/\/index$/, "")
+
+export const isUntyped = (config: GeneratorConfig) => config.language === "javascript"
+
+export const typed = (config: GeneratorConfig, name: string, type: string) => (isUntyped(config) ? name : `${name}: ${type}`)
+
+export const returns = (config: GeneratorConfig, type: string) => (isUntyped(config) || !type ? "" : `: ${type}`)
+
+export const generic = (config: GeneratorConfig, type: string) => (isUntyped(config) ? "" : `<${type}>`)
 
 export const relativePath = (fromFile: string, toFile: string) => {
   const fromDir = fromFile.split("/").slice(0, -1)
@@ -36,8 +44,9 @@ export const formatImports = (imports: ImportLine[], config: GeneratorConfig) =>
 }
 
 export const finalize = (imports: ImportLine[], body: string, config: GeneratorConfig) => {
+  const kept = isUntyped(config) ? imports.filter((item) => item.kind !== "type").map((item) => ({ ...item, line: item.line.replace(/,\s*type \w+/g, "") })) : imports
   const header = formatImports(
-    imports.map((item) => ({ ...item, line: `${item.line}${statementEnd}` })),
+    kept.map((item) => ({ ...item, line: `${item.line}${statementEnd}` })),
     config
   )
   const code = [header, body].filter(Boolean).join("\n\n")
@@ -61,6 +70,6 @@ export const exportMain = (config: GeneratorConfig, name: string, declaration: s
 
 export const fnDeclaration = (config: GeneratorConfig, name: string, params: string, returnType: string, body: string, isAsync = true) => {
   const asyncWord = isAsync ? "async " : ""
-  if (config.conventions.functionStyle === "arrow") return `const ${name} = ${asyncWord}(${params}): ${returnType} => {\n${body}\n}`
-  return `${asyncWord}function ${name}(${params}): ${returnType} {\n${body}\n}`
+  if (config.conventions.functionStyle === "arrow") return `const ${name} = ${asyncWord}(${params})${returns(config, returnType)} => {\n${body}\n}`
+  return `${asyncWord}function ${name}(${params})${returns(config, returnType)} {\n${body}\n}`
 }

@@ -1,4 +1,5 @@
 import { deployDefaults, workspaceDefaults } from "@assets/data/generator/deployOptions"
+import { goDefaults } from "@assets/data/generator/go"
 
 import type { EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, PublishingConfig } from "@utils/types/generator"
 
@@ -93,6 +94,7 @@ export const codeGuidePreset: GeneratorConfig = {
   publishing: { ...publishingDefaults, actions: ["bumpPackage", "push"] },
   deploy: { ...deployDefaults, hasDocker: true },
   workspace: workspaceDefaults,
+  go: goDefaults,
   custom: {},
   outputLanguage: "pt"
 }

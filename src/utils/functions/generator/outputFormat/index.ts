@@ -1,4 +1,4 @@
-import { buildFullstackMarkdown, getFolders, toWorkspaceApp } from "@utils/functions/generator/fullstack"
+import { buildFullstackMarkdown, getFolders, toWorkspaceApp, withApiLanguage } from "@utils/functions/generator/fullstack"
 import { buildGuideMarkdown, frontmatter, slugify } from "@utils/functions/generator/skillMarkdown"
 
 import type { GeneratorConfig, OutputFile, OutputFormat, WorkspaceApps } from "@utils/types/generator"
@@ -19,7 +19,7 @@ export const buildOutputFiles = (config: GeneratorConfig, format: OutputFormat, 
   if (config.projectType !== "fullstack") return [fileOf(isSkill ? `${getSkillFolder(config)}/SKILL.md` : "CLAUDE.md", withFrontmatter(buildGuideMarkdown(config)))]
 
   const { api, web } = getFolders(config)
-  const root = withFrontmatter(buildFullstackMarkdown(config, format))
+  const root = withFrontmatter(buildFullstackMarkdown(withApiLanguage(config, apps), format))
   const apiGuide = buildGuideMarkdown(toWorkspaceApp(apps.backend, config), true)
   const webGuide = buildGuideMarkdown(toWorkspaceApp(apps.frontend, config), true)
 

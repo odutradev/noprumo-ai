@@ -1,5 +1,6 @@
 import { aiAttributionOptions, branchNamingOptions, commitBodyOptions, commitFormatOptions, commitGranularityOptions, commitLanguageOptions, commitScopeOptions, commitTimingOptions } from "@assets/data/generator/commitOptions"
 import { buildCommitExamples, renderCommitLog } from "@utils/functions/generator/commits"
+import { isJavaScript, toJsSnippet } from "@utils/functions/generator/language"
 import { buildSampleFiles } from "@utils/functions/generator/codeSample"
 import { principleOptions } from "@assets/data/generator/options"
 import { sentence } from "@utils/functions/generator/mdContext"
@@ -8,6 +9,17 @@ import type { ChoiceOption, EnabledProjectType, GeneratorConfig } from "@utils/t
 import type { MdContext } from "@utils/types/markdown"
 
 export const pick = <T extends string>(options: ChoiceOption<T>[], value: T) => options.find((option) => option.value === value) ?? options[0]
+
+const fences: [RegExp, string][] = [
+  [/\.s?css$/, "css"],
+  [/\.tsx$/, "tsx"],
+  [/\.jsx$/, "jsx"],
+  [/\.js$/, "javascript"],
+  [/\.go$/, "go"],
+  [/\.(mod|sql)$/, "text"]
+]
+
+export const fenceFor = (path: string) => fences.find(([pattern]) => pattern.test(path))?.[1] ?? "typescript"
 
 export const code = (content: string, language = "typescript") => `\`\`\`${language}\n${content}\n\`\`\``
 
@@ -20,7 +32,7 @@ export const slugify = (value: string) =>
     .replace(/^-+|-+$/g, "") || "skill"
 
 export const selectedPrinciples = (config: GeneratorConfig) =>
-  principleOptions.filter((principle) => principle.scope.includes(config.projectType as EnabledProjectType) && config.conventions.principles.includes(principle.value))
+  principleOptions.filter((principle) => principle.scope.includes(config.projectType as EnabledProjectType) && (!principle.languages || principle.languages.includes(config.language)) && config.conventions.principles.includes(principle.value))
 
 export const extraPrinciples = (config: GeneratorConfig) =>
   config.conventions.extraPrinciples
@@ -33,8 +45,9 @@ export const principlesSection = (ctx: MdContext) => {
   const principles = selectedPrinciples(config)
   const extras = extraPrinciples(config)
   if (!principles.length && !extras.length) return byLanguage("Nenhum princípio adicional obrigatório.", "No additional required principles.")
+  const localize = (snippet: string) => (isJavaScript(config) ? toJsSnippet(snippet) : snippet)
   const listed = principles.map((principle) => {
-    const examples = [`✅ ${byLanguage("Certo", "Do")}:\n${code(principle.good)}`, principle.bad ? `❌ ${byLanguage("Errado", "Don't")}:\n${code(principle.bad)}` : ""].filter(Boolean).join("\n\n")
+    const examples = [`✅ ${byLanguage("Certo", "Do")}:\n${code(localize(principle.good))}`, principle.bad ? `❌ ${byLanguage("Errado", "Don't")}:\n${code(localize(principle.bad))}` : ""].filter(Boolean).join("\n\n")
     return `### ${tr(principle.label)}\n\n${tr(principle.description)}\n\n${examples}`
   })
   const extra = extras.length ? [`### ${byLanguage("Outros princípios", "Other principles")}\n\n${extras.map((line) => `- ${line}`).join("\n")}`] : []
@@ -69,7 +82,9 @@ export const gitSection = (ctx: MdContext) => {
     `- **${byLanguage("Mensagem", "Message")}:** ${sentence(body.label, body.description)}`,
     `- **${byLanguage("Quando commitar", "When to commit")}:** ${sentence(timing.label, timing.description)}`,
     `- **${byLanguage("Coautoria de IA", "AI co-authorship")}:** ${sentence(attribution.label, attribution.description)}`,
-    byLanguage("- Nunca commitar arquivos de ambiente (`.env`), segredos, builds ou `node_modules`.", "- Never commit environment files (`.env`), secrets, builds or `node_modules`."),
+    config.language === "go" && config.projectType === "backend"
+      ? byLanguage("- Nunca commitar arquivos de ambiente (`.env`), segredos, binários (`bin/`) ou relatórios de cobertura.", "- Never commit environment files (`.env`), secrets, binaries (`bin/`) or coverage reports.")
+      : byLanguage("- Nunca commitar arquivos de ambiente (`.env`), segredos, builds ou `node_modules`.", "- Never commit environment files (`.env`), secrets, builds or `node_modules`."),
     branch.isCustom || conventions.branchNaming === "typeSlash" ? `- **Branches:** ${sentence(branch.label, branch.description)}` : byLanguage("- **Branches:** sem padrão obrigatório.", "- **Branches:** no required pattern.")
   ].filter(Boolean)
 
@@ -98,7 +113,7 @@ export const samplesSection = (ctx: MdContext) => {
       )}`
     : ""
   const files = buildSampleFiles(config)
-    .map((file) => `### \`${file.path}\`\n\n${code(file.code, file.path.endsWith(".css") || file.path.endsWith(".scss") ? "css" : file.path.endsWith(".tsx") ? "tsx" : "typescript")}`)
+    .map((file) => `### \`${file.path}\`\n\n${code(file.code, fenceFor(file.path))}`)
     .join("\n\n")
   return `${byLanguage("Use estes arquivos como modelo. Eles seguem todas as regras acima.", "Use these files as a template. They follow every rule above.")}${note}\n\n${files}`
 }

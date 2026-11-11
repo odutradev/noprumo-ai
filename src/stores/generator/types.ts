@@ -1,8 +1,8 @@
-import type { AppProjectType, ContainerService, ConventionsConfig, DeployConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, OutputFormat, Principle, PublishAction, PublishingConfig, WorkspaceConfig } from "@utils/types/generator"
+import type { AppProjectType, ContainerService, ConventionsConfig, DeployConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, GoConfig, GoPrinciple, Language, NamingConfig, OutputFormat, Principle, PublishAction, PublishingConfig, WorkspaceConfig } from "@utils/types/generator"
 
 export type GeneratorStep = "project" | "language" | "architecture" | "naming" | "conventions" | "commits" | "workspace" | "deploy" | "publish" | "result"
 
-export type LegacyConfig = Omit<GeneratorConfig, "deploy" | "workspace"> & Partial<Pick<GeneratorConfig, "deploy" | "workspace">>
+export type LegacyConfig = Omit<GeneratorConfig, "deploy" | "workspace" | "go"> & Partial<Pick<GeneratorConfig, "deploy" | "workspace" | "go">>
 
 export interface LegacyState {
   config: LegacyConfig
@@ -32,4 +32,7 @@ export interface GeneratorState {
   setCustom: (key: string, text: string | undefined) => void
   togglePrinciple: (principle: Principle) => void
   applyPreset: (preset: GeneratorConfig) => void
+  setLanguage: (language: Language) => void
+  updateGo: <K extends keyof GoConfig>(key: K, value: GoConfig[K]) => void
+  toggleGoPrinciple: (principle: GoPrinciple) => void
 }

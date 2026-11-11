@@ -19,7 +19,8 @@ const NamingStep = () => {
   const isFrontend = useGeneratorStore((state) => state.config.projectType === "frontend")
   const updateNaming = useGeneratorStore((state) => state.updateNaming)
   const namerWith = (patch: Partial<NamingConfig>) => createNamer({ ...naming, ...patch })
-  const groups = isFrontend ? frontendNamingGroups : namingGroups
+  const isUntyped = useGeneratorStore((state) => state.config.language === "javascript")
+  const groups = (isFrontend ? frontendNamingGroups : namingGroups).map((group) => ({ ...group, categories: group.categories.filter((category) => !isUntyped || category.key !== "types") }))
 
   const typePrefixRow = (
     <OptionChips
@@ -70,7 +71,7 @@ const NamingStep = () => {
               onChange={(value) => updateNaming("handlerPrefix", value)}
               {...custom("naming.handlerPrefix")}
             />
-            {typePrefixRow}
+            {!isUntyped && typePrefixRow}
             {booleanRow}
           </>
         ),
@@ -79,7 +80,7 @@ const NamingStep = () => {
     : {
         Código: (
           <>
-            {typePrefixRow}
+            {!isUntyped && typePrefixRow}
             {booleanRow}
           </>
         ),

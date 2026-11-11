@@ -4,6 +4,7 @@ import { commentsOptions, exportOptions, importAliasOptions, importOrderOptions,
 import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { architectureBlock, namingRow } from "@utils/functions/generator/skillMarkdown"
 import { createMdContext, sentence } from "@utils/functions/generator/mdContext"
+import { isJavaScript, toJsMarkdown } from "@utils/functions/generator/language"
 import { buildTree, renderTree } from "@utils/functions/generator/architecture"
 import { publishingSection } from "@utils/functions/generator/publishing"
 import { getFrontendLayout } from "@utils/functions/generator/frontend"
@@ -22,16 +23,17 @@ export const buildFrontendMarkdown = (config: GeneratorConfig, isWorkspaceApp = 
   const language = field("naming.language", identifierLanguageOptions, naming.language)
   const onSaved = createNamer({ ...naming, handlerPrefix: "on" }).handler("saved")
 
-  const namingRows = frontendNamingGroups.flatMap((group) => group.categories.map((category) => namingRow(ctx, category.key, category.label, caseStyleLabels[naming[category.key]], category.example(n))))
+  const isUntyped = isJavaScript(config)
+  const namingRows = frontendNamingGroups.flatMap((group) => group.categories.filter((category) => !isUntyped || category.key !== "types").map((category) => namingRow(ctx, category.key, category.label, caseStyleLabels[naming[category.key]], category.example(n))))
   const extraRows = [
     `| Hooks | ${byLanguage("prefixo", "prefix")} \`use\` + ${caseStyleLabels[naming.functions]} | \`${n.fn("useUserStore")}\` |`,
     namingRow(ctx, "handlerPrefix", "Handlers de evento", tr(handlerPrefixOptions.find((option) => option.value === naming.handlerPrefix)?.label ?? ""), n.handler("save")),
     `| ${byLanguage("Props de callback", "Callback props")} | ${byLanguage("prefixo", "prefix")} \`on\` | \`${onSaved}\` |`,
-    namingRow(ctx, "typePrefix", "Prefixo de tipos", tr(typePrefixOptions.find((option) => option.value === naming.typePrefix)?.label ?? ""), n.type("userCardProps")),
+    isUntyped ? "" : namingRow(ctx, "typePrefix", "Prefixo de tipos", tr(typePrefixOptions.find((option) => option.value === naming.typePrefix)?.label ?? ""), n.type("userCardProps")),
     namingRow(ctx, "booleanPrefix", "Booleanos", tr(booleanPrefixOptions.find((option) => option.value === naming.booleanPrefix)?.label ?? ""), n.boolean("isActive")),
     namingRow(ctx, "fileOrganization", "Organização de utilitários", tr(fileOrganizationOptions.find((option) => option.value === naming.fileOrganization)?.label ?? ""), n.file("user", "service")),
     `| ${byLanguage("Variáveis de ambiente", "Environment variables")} | ${byLanguage("SCREAMING_SNAKE com prefixo do bundler", "SCREAMING_SNAKE with the bundler prefix")} | \`VITE_BASEURL\` |`
-  ]
+  ].filter(Boolean)
 
   const declaration = field("frontend.componentDeclaration", componentDeclarationOptions, frontend.componentDeclaration)
   const structure = field("frontend.componentStructure", componentStructureOptions, frontend.componentStructure)
@@ -91,7 +93,7 @@ export const buildFrontendMarkdown = (config: GeneratorConfig, isWorkspaceApp = 
 
   const propsWhere = !structure.isCustom && frontend.componentStructure === "singleFile" ? byLanguage(" no próprio arquivo", " in the same file") : byLanguage(" no arquivo de tipos do componente", " in the component's types file")
 
-  return `# ${byLanguage("Guia de padrões do frontend", "Frontend standards guide")}
+  const markdown = `# ${byLanguage("Guia de padrões do frontend", "Frontend standards guide")}
 
 ${byLanguage("Este guia define as regras de arquitetura, componentes, estado e código deste frontend. Seguir este guia é **obrigatório**.", "This guide defines this frontend's architecture, component, state and code rules. Following it is **mandatory**.")}
 
@@ -105,7 +107,7 @@ ${byLanguage("Este guia define as regras de arquitetura, componentes, estado e c
 | Item | ${byLanguage("Escolha", "Choice")} |
 | :--- | :--- |
 | Framework | ${field("frontend.framework", frontendFrameworkOptions, frontend.framework).label} |
-| ${byLanguage("Linguagem", "Language")} | ${field("language", languageOptions, config.language).label} (${byLanguage("100% tipado", "100% typed")}) |
+| ${byLanguage("Linguagem", "Language")} | ${field("language", languageOptions, config.language).label} (${isUntyped ? "ESM" : byLanguage("100% tipado", "100% typed")}) |
 | ${byLanguage("Componentes base", "Base components")} | ${ui.label} |
 | ${byLanguage("Estilização", "Styling")} | ${styling.label} |
 | ${byLanguage("Estado global", "Global state")} | ${state.label} |
@@ -128,7 +130,7 @@ ${[...namingRows, ...extraRows].join("\n")}
 - **${byLanguage("Declaração", "Declaration")}:** ${sentence(declaration.label, declaration.description)}
 - **${byLanguage("Estrutura", "Structure")}:** ${sentence(structure.label, structure.description)}
 - **Exports:** ${sentence(exportsStyle.label, exportsDescription)} ${byLanguage("Um componente por arquivo.", "One component per file.")}
-- **Props:** ${byLanguage("sempre tipadas", "always typed")}${propsWhere}.
+- **Props:** ${isUntyped ? byLanguage("desestruturadas na assinatura do componente, com valores padrão para as opcionais", "destructured in the component signature, with defaults for optional ones") : `${byLanguage("sempre tipadas", "always typed")}${propsWhere}`}.
 - **${byLanguage("Componentes base", "Base components")}:** ${sentence(ui.label, ui.description)}
 - **${byLanguage("Estilos", "Styles")}:** ${sentence(styling.label, styling.description)}
 
@@ -189,4 +191,5 @@ ${samplesSection(ctx)}
 
 ${checklist.map((item) => `- [ ] ${item}`).join("\n")}
 `.replace(/\n{3,}/g, "\n\n")
+  return isUntyped ? toJsMarkdown(markdown) : markdown
 }

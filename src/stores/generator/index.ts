@@ -3,8 +3,10 @@ import { create } from "zustand"
 
 import { bonfirePreset, codeGuidePreset, fullstackPreset } from "@assets/data/generator/presets"
 import { deployDefaults, workspaceDefaults } from "@assets/data/generator/deployOptions"
+import { normalizeForLanguage } from "@utils/functions/generator/language"
+import { goDefaults } from "@assets/data/generator/go"
 
-import type { ContainerService, ConventionsConfig, DeployConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, Principle, PublishAction, PublishingConfig, WorkspaceConfig } from "@utils/types/generator"
+import type { ContainerService, ConventionsConfig, DeployConfig, EnabledProjectType, FrontendConfig, GeneratorConfig, GoConfig, GoPrinciple, NamingConfig, Principle, PublishAction, PublishingConfig, WorkspaceConfig } from "@utils/types/generator"
 import type { GeneratorState, GeneratorStep, LegacyConfig, LegacyState } from "./types"
 
 export const stepsByType: Record<EnabledProjectType, GeneratorStep[]> = {
@@ -17,7 +19,7 @@ export const getSteps = (config: GeneratorConfig) => stepsByType[config.projectT
 
 const initialConfigs: Record<EnabledProjectType, GeneratorConfig> = { backend: codeGuidePreset, frontend: bonfirePreset, fullstack: fullstackPreset }
 
-const withDefaults = (config: LegacyConfig): GeneratorConfig => ({ deploy: deployDefaults, workspace: workspaceDefaults, ...config })
+const withDefaults = (config: LegacyConfig): GeneratorConfig => ({ deploy: deployDefaults, workspace: workspaceDefaults, ...config, go: { ...goDefaults, ...config.go } })
 
 const withConfig = (state: GeneratorState, config: GeneratorConfig) => ({
   config,
@@ -28,10 +30,11 @@ const clampStep = (config: GeneratorConfig, step: number) => Math.min(Math.max(s
 
 const migrate = (persisted: unknown, version: number) => {
   const initial = { config: codeGuidePreset, configs: initialConfigs, step: 0, format: "skill" }
-  if (version !== 6) return initial as GeneratorState
+  if (version !== 6 && version !== 7) return initial as GeneratorState
   const state = persisted as LegacyState
   const config = withDefaults(state.config)
-  const configs = { backend: withDefaults(state.configs.backend), frontend: withDefaults(state.configs.frontend), fullstack: fullstackPreset }
+  const legacyConfigs = state.configs as Record<string, LegacyConfig | undefined>
+  const configs = { backend: withDefaults(state.configs.backend), frontend: withDefaults(state.configs.frontend), fullstack: legacyConfigs.fullstack ? withDefaults(legacyConfigs.fullstack) : fullstackPreset }
   return { ...state, config, configs, step: clampStep(config, state.step), format: state.format ?? "skill" } as GeneratorState
 }
 
@@ -96,9 +99,17 @@ const useGeneratorStore = create<GeneratorState>()(
           const next = principles.includes(principle) ? principles.filter((item) => item !== principle) : [...principles, principle]
           return withConfig(state, { ...state.config, conventions: { ...state.config.conventions, principles: next } })
         }),
-      applyPreset: (preset) => set((state) => withConfig(state, preset))
+      applyPreset: (preset) => set((state) => withConfig(state, preset)),
+      setLanguage: (language) => set((state) => withConfig(state, normalizeForLanguage({ ...state.config, language }))),
+      updateGo: <K extends keyof GoConfig>(key: K, value: GoConfig[K]) => set((state) => withConfig(state, { ...state.config, go: { ...state.config.go, [key]: value } })),
+      toggleGoPrinciple: (principle: GoPrinciple) =>
+        set((state) => {
+          const { principles } = state.config.go
+          const next = principles.includes(principle) ? principles.filter((item) => item !== principle) : [...principles, principle]
+          return withConfig(state, { ...state.config, go: { ...state.config.go, principles: next } })
+        })
     }),
-    { name: storageKey, version: 7, migrate }
+    { name: storageKey, version: 8, migrate }
   )
 )
 

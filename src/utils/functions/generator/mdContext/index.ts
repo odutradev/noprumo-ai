@@ -1,3 +1,4 @@
+import { toJsSnippet } from "@utils/functions/generator/language"
 import { en } from "@assets/data/generator/i18n/en"
 
 import type { GeneratorConfig } from "@utils/types/generator"
@@ -22,7 +23,8 @@ export const createMdContext = (config: GeneratorConfig, isWorkspaceApp = false)
       const custom = customText(key)
       if (custom) return { label: custom, description: "", isCustom: true }
       const option = options.find((item) => item.value === value) ?? options[0]
-      return { label: tr(option.label), description: tr(option.description ?? ""), example: option.example, isCustom: false }
+      const example = option.example && config.language === "javascript" ? toJsSnippet(option.example) : option.example
+      return { label: tr(option.label), description: tr(option.description ?? ""), example, isCustom: false }
     }
   }
 }

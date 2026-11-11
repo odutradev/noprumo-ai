@@ -13,25 +13,29 @@ export const getFolders = (config: GeneratorConfig) => ({ api: config.workspace.
 
 export const toWorkspaceApp = (app: GeneratorConfig, fullstack: GeneratorConfig): GeneratorConfig => ({ ...app, outputLanguage: fullstack.outputLanguage })
 
+export const withApiLanguage = (config: GeneratorConfig, apps: WorkspaceApps): GeneratorConfig => ({ ...config, language: apps.backend.language, go: apps.backend.go })
+
 const rootPackageJson = (config: GeneratorConfig) => {
   const { api, web } = getFolders(config)
   const isWorkspaces = config.workspace.devRunner === "npmWorkspaces"
+  const isGoApi = config.language === "go"
   const run = (folder: string, script: string) => (isWorkspaces ? `npm run ${script} -w ${folder}` : `npm --prefix ${folder} run ${script}`)
+  const runApi = (script: "dev" | "build") => (isGoApi ? (script === "dev" ? `cd ${api} && go run ./cmd/api` : `cd ${api} && go build -o bin/api ./cmd/api`) : run(api, script))
   const hasServices = config.deploy.hasCompose && config.deploy.services.length > 0
   const quote = (text: string) => `\\"${text}\\"`
   const names = [hasServices ? "services" : "", "api", "web"].filter(Boolean)
   const scripts = [
     ["dev", `concurrently -n ${quote(names.join(","))} ${names.map((name) => quote(`npm run dev:${name}`)).join(" ")}`],
     hasServices ? ["dev:services", `docker compose up ${config.deploy.services.join(" ")}`] : [],
-    ["dev:api", run(api, "dev")],
+    ["dev:api", runApi("dev")],
     ["dev:web", run(web, "dev")],
     ["build", "npm run build:api && npm run build:web"],
-    ["build:api", run(api, "build")],
+    ["build:api", runApi("build")],
     ["build:web", run(web, "build")],
     ["lint", run(web, "lint")],
     config.deploy.hasDocker && config.deploy.hasCompose ? ["up", "docker compose up -d --build"] : []
   ].filter((entry) => entry.length)
-  const workspaces = isWorkspaces ? `\n  "workspaces": ["${api}", "${web}"],` : ""
+  const workspaces = isWorkspaces ? `\n  "workspaces": [${isGoApi ? `"${web}"` : `"${api}", "${web}"`}],` : ""
   return `{
   "name": "monorepo",
   "private": true,${workspaces}
@@ -104,7 +108,7 @@ export const buildFullstackMarkdown = (config: GeneratorConfig, format: OutputFo
       buildTree([
         ...rootFiles.map((file) => ({ path: file.path })),
         { path: `${api}/src`, note: byLanguage("código da API", "API code") },
-        { path: `${api}/package.json` },
+        { path: config.language === "go" ? `${api}/go.mod` : `${api}/package.json` },
         ...(format === "claudeMd" ? [{ path: `${api}/CLAUDE.md`, note: byLanguage("guia da API", "API guide") }] : []),
         { path: `${web}/src`, note: byLanguage("código do frontend", "frontend code") },
         { path: `${web}/package.json` },
@@ -121,7 +125,7 @@ export const buildFullstackMarkdown = (config: GeneratorConfig, format: OutputFo
     byLanguage("Nenhum import cruza os apps. O frontend fala com a API só por HTTP.", "No import crosses apps. The frontend talks to the API over HTTP only."),
     byLanguage("Tipos de resposta da API alterados foram espelhados no frontend.", "Changed API response types were mirrored in the frontend."),
     deployChecklistItem(ctx),
-    deploy.hasDocker ? byLanguage("Dependência nova foi instalada no `package.json` do app certo, nunca na raiz.", "New dependencies were installed in the right app's `package.json`, never at the root.") : "",
+    deploy.hasDocker ? (config.language === "go" ? byLanguage("Dependência nova entrou no `go.mod` da API ou no `package.json` do frontend, nunca na raiz.", "New dependencies went into the API's `go.mod` or the frontend's `package.json`, never at the root.") : byLanguage("Dependência nova foi instalada no `package.json` do app certo, nunca na raiz.", "New dependencies were installed in the right app's `package.json`, never at the root.")) : "",
     publishChecklistItem(ctx)
   ].filter(Boolean)
 
@@ -141,7 +145,7 @@ ${byLanguage(
 
 ${code(tree, "text")}
 
-- ${byLanguage("Cada app é independente: tem seu próprio `package.json`, `tsconfig`, lint e build. Dependências são instaladas na pasta do app.", "Each app is independent: it has its own `package.json`, `tsconfig`, lint and build. Dependencies are installed in the app's folder.")}
+- ${config.language === "go" ? byLanguage(`Cada app é independente: a API em Go tem seu \`go.mod\` e o frontend, seu \`package.json\`. Dependências são instaladas na pasta do app (\`go get\` em \`${api}/\`, \`npm install\` em \`${web}/\`).`, `Each app is independent: the Go API has its own \`go.mod\` and the frontend its own \`package.json\`. Dependencies are installed in the app's folder (\`go get\` in \`${api}/\`, \`npm install\` in \`${web}/\`).`) : byLanguage("Cada app é independente: tem seu próprio `package.json`, `tsconfig`, lint e build. Dependências são instaladas na pasta do app.", "Each app is independent: it has its own `package.json`, `tsconfig`, lint and build. Dependencies are installed in the app's folder.")}
 - ${byLanguage("O `package.json` da raiz só orquestra os apps. Ele não tem código nem dependências de runtime.", "The root `package.json` only orchestrates the apps. It has no code and no runtime dependencies.")}
 - ${byLanguage("Nenhum import cruza os apps. O frontend fala com a API só por HTTP, pela camada de actions.", "No import crosses apps. The frontend talks to the API over HTTP only, through its actions layer.")}
 - ${byLanguage("Quando um contrato da API muda, os tipos de resposta são espelhados no frontend no mesmo trabalho.", "When an API contract changes, the response types are mirrored in the frontend in the same work.")}

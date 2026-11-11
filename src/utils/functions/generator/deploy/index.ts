@@ -57,6 +57,35 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 80
 CMD ["node", "dist/server.js"]`
 
+const goApiDockerfile = (image: string) => `FROM ${image} AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/api ./cmd/api
+
+FROM gcr.io/distroless/static-debian12 AS runner
+WORKDIR /app
+ENV PORT=80
+COPY --from=builder /out/api /app/api
+EXPOSE 80
+USER nonroot:nonroot
+ENTRYPOINT ["/app/api"]`
+
+const goDockerignore = `bin
+coverage.out
+.git
+.gitignore
+.env
+.env.*
+*.local
+CLAUDE.md
+README.md`
+
+export const isGoApi = (config: GeneratorConfig) => config.language === "go" && config.projectType !== "frontend"
+
+const goImage = (config: GeneratorConfig) => config.go.image.trim() || "golang:1.23-alpine"
+
 const webDockerfile = (image: string, hasNginx: boolean) => {
   const builder = `FROM ${image} AS builder
 WORKDIR /app
@@ -178,7 +207,7 @@ const composeFile = (config: GeneratorConfig) => {
         isApiHidden ? "    expose:\n      - \"80\"" : "    ports:\n      - \"${PORT:-5000}:80\"",
         "    environment:",
         "      - PORT=80",
-        "      - NODE_ENV=production",
+        isGoApi(config) ? "      - APP_ENV=production" : "      - NODE_ENV=production",
         ...services.map(({ spec }) => `      - ${spec.envKey}=${spec.url}`),
         services.length ? `    depends_on:\n${services.map(({ service }) => `      - ${service}`).join("\n")}` : "",
         "    networks:",
@@ -236,8 +265,8 @@ export const buildDeployFiles = (config: GeneratorConfig): SampleFile[] => {
 
   const dockerFiles = deploy.hasDocker
     ? apps.flatMap((app) => [
-        { path: joinPath(app.folder, "Dockerfile"), code: app.kind === "api" ? apiDockerfile(image) : webDockerfile(image, mode === "spa" || mode === "gateway") },
-        { path: joinPath(app.folder, ".dockerignore"), code: dockerignore }
+        { path: joinPath(app.folder, "Dockerfile"), code: app.kind === "api" ? (isGoApi(config) ? goApiDockerfile(goImage(config)) : apiDockerfile(image)) : webDockerfile(image, mode === "spa" || mode === "gateway") },
+        { path: joinPath(app.folder, ".dockerignore"), code: app.kind === "api" && isGoApi(config) ? goDockerignore : dockerignore }
       ])
     : []
   const compose = deploy.hasCompose ? composeFile(config) : ""
@@ -272,11 +301,17 @@ export const deploySection = (ctx: MdContext) => {
         "### Docker",
         "",
         byLanguage(
-          `- ${isFullstack ? "Cada app tem" : "O app tem"} um \`Dockerfile\` multi-stage na própria pasta: estágio \`builder\` (\`npm ci\` e build) e estágio \`runner\` só com o necessário para rodar.`,
-          `- ${isFullstack ? "Each app has" : "The app has"} a multi-stage \`Dockerfile\` in its own folder: a \`builder\` stage (\`npm ci\` and build) and a \`runner\` stage with only what is needed to run.`
+          `- ${isFullstack ? "Cada app tem" : "O app tem"} um \`Dockerfile\` multi-stage na própria pasta: estágio \`builder\` (${isGoApi(config) && !hasWeb ? "`go mod download` e `go build`" : "`npm ci` e build"}) e estágio \`runner\` só com o necessário para rodar.`,
+          `- ${isFullstack ? "Each app has" : "The app has"} a multi-stage \`Dockerfile\` in its own folder: a \`builder\` stage (${isGoApi(config) && !hasWeb ? "`go mod download` and `go build`" : "`npm ci` and build"}) and a \`runner\` stage with only what is needed to run.`
         ),
-        byLanguage(`- Imagem base dos estágios Node: \`${image}\`. Não troque de versão sem pedido.`, `- Base image for Node stages: \`${image}\`. Do not change the version unless asked.`),
-        hasApi
+        hasWeb || !isGoApi(config) ? byLanguage(`- Imagem base dos estágios Node: \`${image}\`. Não troque de versão sem pedido.`, `- Base image for Node stages: \`${image}\`. Do not change the version unless asked.`) : "",
+        hasApi && isGoApi(config)
+          ? byLanguage(
+              `- API em Go: o builder usa \`${goImage(config)}\`, baixa os módulos antes de copiar o código (cache de camadas) e compila um binário estático com \`CGO_ENABLED=0 go build -trimpath -ldflags="-s -w"\`. O runner é \`gcr.io/distroless/static-debian12\`, só com o binário, rodando como \`nonroot\`.`,
+              `- Go API: the builder uses \`${goImage(config)}\`, downloads modules before copying the code (layer cache) and builds a static binary with \`CGO_ENABLED=0 go build -trimpath -ldflags="-s -w"\`. The runner is \`gcr.io/distroless/static-debian12\`, with only the binary, running as \`nonroot\`.`
+            )
+          : "",
+        hasApi && !isGoApi(config)
           ? byLanguage(
               "- API: o runner instala só dependências de produção (`npm ci --omit=dev && npm cache clean --force`), copia o `dist` do builder, define `NODE_ENV=production` e `PORT=80` e roda `node dist/server.js`.",
               "- API: the runner installs production dependencies only (`npm ci --omit=dev && npm cache clean --force`), copies `dist` from the builder, sets `NODE_ENV=production` and `PORT=80` and runs `node dist/server.js`."
@@ -295,8 +330,8 @@ export const deploySection = (ctx: MdContext) => {
           : "",
         byLanguage("- Todo container escuta na porta 80. A porta externa é definida no compose ou no deploy.", "- Every container listens on port 80. The external port is set in compose or in the deploy."),
         byLanguage(
-          "- Cada pasta com `Dockerfile` tem um `.dockerignore` que ignora `node_modules`, `dist`, `.git`, `.env`, `.env.*` e docs. Nunca copie `.env` para a imagem: configuração entra por variável de ambiente.",
-          "- Every folder with a `Dockerfile` has a `.dockerignore` that ignores `node_modules`, `dist`, `.git`, `.env`, `.env.*` and docs. Never copy `.env` into the image: configuration comes from environment variables."
+          `- Cada pasta com \`Dockerfile\` tem um \`.dockerignore\` que ignora ${isGoApi(config) && !hasWeb ? "`bin`, `coverage.out`" : "`node_modules`, `dist`"}, \`.git\`, \`.env\`, \`.env.*\` e docs. Nunca copie \`.env\` para a imagem: configuração entra por variável de ambiente.`,
+          `- Every folder with a \`Dockerfile\` has a \`.dockerignore\` that ignores ${isGoApi(config) && !hasWeb ? "`bin`, `coverage.out`" : "`node_modules`, `dist`"}, \`.git\`, \`.env\`, \`.env.*\` and docs. Never copy \`.env\` into the image: configuration comes from environment variables.`
         )
       ]
     : []

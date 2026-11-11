@@ -147,7 +147,20 @@ export const vocabulary = {
   tests: { en: ["tests"], pt: ["testes"] },
   main: { en: ["main"], pt: ["main"] },
   server: { en: ["server"], pt: ["servidor"] },
-  result: { en: ["result"], pt: ["result"] }
+  result: { en: ["result"], pt: ["result"] },
+  postgresRepository: { en: ["postgres", "repository"], pt: ["repositorio", "postgres"] },
+  gormRepository: { en: ["gorm", "repository"], pt: ["repositorio", "gorm"] },
+  mongoRepository: { en: ["mongo", "repository"], pt: ["repositorio", "mongo"] },
+  memoryRepository: { en: ["memory", "repository"], pt: ["repositorio", "memoria"] },
+  sqlcRepository: { en: ["sqlc", "repository"], pt: ["repositorio", "sqlc"] },
+  stubRepository: { en: ["stub", "repository"], pt: ["repositorio", "stub"] },
+  notFoundError: { en: ["not", "found", "error"], pt: ["erro", "nao", "encontrado"] },
+  userHandler: { en: ["user", "handler"], pt: ["usuario", "handler"] },
+  getUserByIdTest: { en: ["get", "user", "by", "id"], pt: ["buscar", "usuario", "por", "id"] },
+  register: { en: ["register"], pt: ["registrar"] },
+  resource: { en: ["resource"], pt: ["recurso"] },
+  queries: { en: ["queries"], pt: ["queries"] },
+  collection: { en: ["collection"], pt: ["colecao"] }
 } satisfies Record<string, Term>
 
 export const words = (key: VocabularyKey, language: IdentifierLanguage): string[] => vocabulary[key][language]

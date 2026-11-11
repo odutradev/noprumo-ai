@@ -2,9 +2,11 @@ import { apiDocsOptions, architectureInfo, commentsOptions, databaseOptions, err
 import { code, deployChecklistItem, extraPrinciples, gitSection, principlesSection, publishChecklistItem, rootGuidePointer, samplesSection, selectedPrinciples, slugify } from "@utils/functions/generator/markdownHelpers"
 import { booleanPrefixOptions, fileOrganizationOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { buildTree, getArchitectureLayout, renderTree } from "@utils/functions/generator/architecture"
+import { isGo, isJavaScript, toJsMarkdown } from "@utils/functions/generator/language"
 import { buildFrontendMarkdown } from "@utils/functions/generator/frontendMarkdown"
 import { createMdContext, sentence } from "@utils/functions/generator/mdContext"
 import { publishingSection } from "@utils/functions/generator/publishing"
+import { buildGoMarkdown } from "@utils/functions/generator/goMarkdown"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
 import { deploySection } from "@utils/functions/generator/deploy"
 import { createNamer } from "@utils/functions/generator/namer"
@@ -44,6 +46,7 @@ description: ${createMdContext(config).tr(config.skillDescription.trim()).replac
 
 export const buildGuideMarkdown = (config: GeneratorConfig, isWorkspaceApp = false): string => {
   if (config.projectType === "frontend") return buildFrontendMarkdown(config, isWorkspaceApp)
+  if (isGo(config)) return buildGoMarkdown(config, isWorkspaceApp)
 
   const ctx = createMdContext(config, isWorkspaceApp)
   const { byLanguage, tr, field } = ctx
@@ -53,14 +56,15 @@ export const buildGuideMarkdown = (config: GeneratorConfig, isWorkspaceApp = fal
   const language = field("naming.language", identifierLanguageOptions, naming.language)
   const isPt = !language.isCustom && naming.language === "pt"
 
-  const namingRows = namingGroups.flatMap((group) => group.categories.map((category) => namingRow(ctx, category.key, category.label, caseStyleLabels[naming[category.key]], category.example(n))))
+  const isUntyped = isJavaScript(config)
+  const namingRows = namingGroups.flatMap((group) => group.categories.filter((category) => !isUntyped || category.key !== "types").map((category) => namingRow(ctx, category.key, category.label, caseStyleLabels[naming[category.key]], category.example(n))))
   const extraRows = [
-    namingRow(ctx, "typePrefix", "Prefixo de tipos", tr(typePrefixOptions.find((option) => option.value === naming.typePrefix)?.label ?? ""), n.type("userResponse")),
+    isUntyped ? "" : namingRow(ctx, "typePrefix", "Prefixo de tipos", tr(typePrefixOptions.find((option) => option.value === naming.typePrefix)?.label ?? ""), n.type("userResponse")),
     namingRow(ctx, "booleanPrefix", "Booleanos", tr(booleanPrefixOptions.find((option) => option.value === naming.booleanPrefix)?.label ?? ""), n.boolean("isActive")),
     namingRow(ctx, "fileOrganization", "Organização", tr(fileOrganizationOptions.find((option) => option.value === naming.fileOrganization)?.label ?? ""), n.file("user", "repository")),
     namingRow(ctx, "tableNumber", "Número das tabelas", tr(tableNumberOptions.find((option) => option.value === naming.tableNumber)?.label ?? ""), n.table()),
     `| ${byLanguage("Variáveis de ambiente", "Environment variables")} | SCREAMING_SNAKE | \`DATABASE_URL\` |`
-  ]
+  ].filter(Boolean)
 
   const paradigm = field("conventions.paradigm", paradigmOptions, conventions.paradigm)
   const functionStyle = field("conventions.functionStyle", functionStyleOptions, conventions.functionStyle)
@@ -105,7 +109,7 @@ export const buildGuideMarkdown = (config: GeneratorConfig, isWorkspaceApp = fal
     publishChecklistItem(ctx)
   ].filter(Boolean)
 
-  return `# ${byLanguage("Guia de padrões do projeto", "Project standards guide")}
+  const markdown = `# ${byLanguage("Guia de padrões do projeto", "Project standards guide")}
 
 ${byLanguage("Este guia define as regras de arquitetura, estrutura e código deste projeto. Seguir este guia é **obrigatório**.", "This guide defines this project's architecture, structure and code rules. Following it is **mandatory**.")}
 
@@ -119,7 +123,7 @@ ${byLanguage("Este guia define as regras de arquitetura, estrutura e código des
 | Item | ${byLanguage("Escolha", "Choice")} |
 | :--- | :--- |
 | ${byLanguage("Tipo de projeto", "Project type")} | ${field("projectType", projectTypeOptions, config.projectType).label} |
-| ${byLanguage("Linguagem", "Language")} | ${field("language", languageOptions, config.language).label} (strict) |
+| ${byLanguage("Linguagem", "Language")} | ${field("language", languageOptions, config.language).label} (${isUntyped ? "ESM" : "strict"}) |
 | ${byLanguage("Framework HTTP", "HTTP framework")} | ${field("framework", frameworkOptions, config.framework).label} |
 | ${byLanguage("Banco de dados", "Database")} | ${field("database", databaseOptions, config.database).label} |
 | ${byLanguage("Validação", "Validation")} | ${validation.label} |
@@ -203,4 +207,5 @@ ${samplesSection(ctx)}
 
 ${checklist.map((item) => `- [ ] ${item}`).join("\n")}
 `.replace(/\n{3,}/g, "\n\n")
+  return isUntyped ? toJsMarkdown(markdown) : markdown
 }

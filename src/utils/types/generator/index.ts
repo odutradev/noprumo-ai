@@ -33,6 +33,29 @@ export type FullstackNginx = "spaOnly" | "gateway"
 export type DevRunner = "prefixScripts" | "npmWorkspaces"
 export type EnvLocation = "root" | "perApp"
 
+export type GoFramework = "nethttp" | "chi" | "gin" | "echo" | "fiber"
+export type GoDatabase = "pgx" | "sqlc" | "gorm" | "mongo" | "none"
+export type GoArchitecture = "goStandard" | "goLayered" | "goClean" | "goHexagonal"
+export type GoErrorHandling = "wrapped" | "sentinel" | "typed"
+export type GoValidation = "validator" | "ozzo" | "manual"
+export type GoTesting = "stdlib" | "testify" | "none"
+export type GoLogger = "slog" | "zap" | "zerolog"
+export type GoFileCase = "snake" | "flat"
+export type GoPrinciple = "earlyReturn" | "wrapErrors" | "contextFirst" | "noPanic" | "acceptInterfaces" | "noGlobalState" | "closeResources" | "structuredLogs" | "tableTests" | "leanResponses"
+
+export interface GoConfig {
+  framework: GoFramework
+  database: GoDatabase
+  architecture: GoArchitecture
+  errorHandling: GoErrorHandling
+  validation: GoValidation
+  testing: GoTesting
+  logger: GoLogger
+  fileCase: GoFileCase
+  image: string
+  principles: GoPrinciple[]
+}
+
 export type CaseStyle = "camel" | "pascal" | "snake" | "screamingSnake" | "kebab"
 export type IdentifierLanguage = "en" | "pt"
 export type TypePrefix = "none" | "i" | "t"
@@ -190,6 +213,7 @@ export interface GeneratorConfig {
   publishing: PublishingConfig
   deploy: DeployConfig
   workspace: WorkspaceConfig
+  go: GoConfig
   custom: Record<string, string>
   outputLanguage: IdentifierLanguage
 }

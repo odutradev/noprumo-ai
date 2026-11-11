@@ -2,6 +2,7 @@ import { Badge, Flex, Grid, Textarea } from "enchase"
 
 import { apiDocsOptions, commentsOptions, errorHandlingOptions, exportOptions, functionStyleOptions, importAliasOptions, importOrderOptions, paradigmOptions, principleOptions, quoteOptions, routeStyleOptions, semicolonOptions, testLocationOptions, testSuffixOptions, testingOptions, validationOptions } from "@assets/data/generator/options"
 import { apiLayerOptions, asyncActionsOptions, componentDeclarationOptions, componentStructureOptions, e2eOptions } from "@assets/data/generator/frontendOptions"
+import { forLanguage, isJavaScript, toJsSnippet } from "@utils/functions/generator/language"
 import StepSections from "@components/stepSections"
 import useCustomField from "@hooks/useCustomField"
 import ChoiceCards from "@components/choiceCards"
@@ -11,7 +12,7 @@ import CheckCard from "@components/checkCard"
 import CodeBlock from "@components/codeBlock"
 import styles from "./styles.module.css"
 
-import type { EnabledProjectType } from "@utils/types/generator"
+import type { ChoiceOption, EnabledProjectType } from "@utils/types/generator"
 
 const languageChoices = [
   { value: "en" as const, label: "Inglês", description: "Escritos em inglês." },
@@ -26,7 +27,9 @@ const ConventionsStep = () => {
   const togglePrinciple = useGeneratorStore((state) => state.togglePrinciple)
   const { conventions, frontend } = config
   const isFrontend = config.projectType === "frontend"
-  const principles = principleOptions.filter((principle) => principle.scope.includes(config.projectType as EnabledProjectType))
+  const principles = principleOptions.filter((principle) => principle.scope.includes(config.projectType as EnabledProjectType) && (!principle.languages || principle.languages.includes(config.language)))
+  const localize = <T extends string>(options: ChoiceOption<T>[]) => forLanguage(options, config.language)
+  const snippet = (code: string) => (isJavaScript(config) ? toJsSnippet(code) : code)
   const activeCount = principles.filter((principle) => conventions.principles.includes(principle.value)).length
 
   const frontendSections = [
@@ -35,9 +38,9 @@ const ConventionsStep = () => {
       label: "Componentes",
       content: (
         <>
-          <ChoiceCards legend="Declaração" options={componentDeclarationOptions} value={frontend.componentDeclaration} onChange={(value) => setFrontend("componentDeclaration", value)} {...custom("frontend.componentDeclaration")} />
-          <ChoiceCards legend="Estrutura de arquivos" options={componentStructureOptions} value={frontend.componentStructure} onChange={(value) => setFrontend("componentStructure", value)} {...custom("frontend.componentStructure")} />
-          <ChoiceCards legend="Exports" options={exportOptions} value={conventions.exports} onChange={(value) => set("exports", value)} {...custom("conventions.exports")} />
+          <ChoiceCards legend="Declaração" options={localize(componentDeclarationOptions)} value={frontend.componentDeclaration} onChange={(value) => setFrontend("componentDeclaration", value)} {...custom("frontend.componentDeclaration")} />
+          <ChoiceCards legend="Estrutura de arquivos" options={localize(componentStructureOptions)} value={frontend.componentStructure} onChange={(value) => setFrontend("componentStructure", value)} {...custom("frontend.componentStructure")} />
+          <ChoiceCards legend="Exports" options={localize(exportOptions)} value={conventions.exports} onChange={(value) => set("exports", value)} {...custom("conventions.exports")} />
         </>
       )
     },
@@ -47,7 +50,7 @@ const ConventionsStep = () => {
       content: (
         <>
           <ChoiceCards legend="Camada de API" options={apiLayerOptions} value={frontend.apiLayer} onChange={(value) => setFrontend("apiLayer", value)} {...custom("frontend.apiLayer")} />
-          <ChoiceCards legend="Ações assíncronas" options={asyncActionsOptions} value={frontend.asyncActions} onChange={(value) => setFrontend("asyncActions", value)} {...custom("frontend.asyncActions")} />
+          <ChoiceCards legend="Ações assíncronas" options={localize(asyncActionsOptions)} value={frontend.asyncActions} onChange={(value) => setFrontend("asyncActions", value)} {...custom("frontend.asyncActions")} />
         </>
       )
     }
@@ -59,9 +62,9 @@ const ConventionsStep = () => {
       label: "Estrutura",
       content: (
         <>
-          <ChoiceCards legend="Paradigma" options={paradigmOptions} value={conventions.paradigm} onChange={(value) => set("paradigm", value)} {...custom("conventions.paradigm")} />
-          <ChoiceCards legend="Declaração de funções" options={functionStyleOptions} value={conventions.functionStyle} onChange={(value) => set("functionStyle", value)} {...custom("conventions.functionStyle")} />
-          <ChoiceCards legend="Exports" options={exportOptions} value={conventions.exports} onChange={(value) => set("exports", value)} {...custom("conventions.exports")} />
+          <ChoiceCards legend="Paradigma" options={localize(paradigmOptions)} value={conventions.paradigm} onChange={(value) => set("paradigm", value)} {...custom("conventions.paradigm")} />
+          <ChoiceCards legend="Declaração de funções" options={localize(functionStyleOptions)} value={conventions.functionStyle} onChange={(value) => set("functionStyle", value)} {...custom("conventions.functionStyle")} />
+          <ChoiceCards legend="Exports" options={localize(exportOptions)} value={conventions.exports} onChange={(value) => set("exports", value)} {...custom("conventions.exports")} />
         </>
       )
     },
@@ -70,8 +73,8 @@ const ConventionsStep = () => {
       label: "Erros",
       content: (
         <>
-          <ChoiceCards legend="Tratamento de erros" options={errorHandlingOptions} value={conventions.errorHandling} onChange={(value) => set("errorHandling", value)} {...custom("conventions.errorHandling")} />
-          <ChoiceCards legend="Validação de entrada" options={validationOptions} value={conventions.validation} onChange={(value) => set("validation", value)} {...custom("conventions.validation")} />
+          <ChoiceCards legend="Tratamento de erros" options={localize(errorHandlingOptions)} value={conventions.errorHandling} onChange={(value) => set("errorHandling", value)} {...custom("conventions.errorHandling")} />
+          <ChoiceCards legend="Validação de entrada" options={localize(validationOptions)} value={conventions.validation} onChange={(value) => set("validation", value)} {...custom("conventions.validation")} />
         </>
       )
     },
@@ -94,7 +97,7 @@ const ConventionsStep = () => {
       content: (
         <>
           <ChoiceCards legend="Caminhos" options={importAliasOptions} value={conventions.importAlias} onChange={(value) => set("importAlias", value)} {...custom("conventions.importAlias")} />
-          <ChoiceCards legend="Organização" options={importOrderOptions} value={conventions.importOrder} onChange={(value) => set("importOrder", value)} {...custom("conventions.importOrder")} />
+          <ChoiceCards legend="Organização" options={localize(importOrderOptions)} value={conventions.importOrder} onChange={(value) => set("importOrder", value)} {...custom("conventions.importOrder")} />
         </>
       )
     },
@@ -104,8 +107,8 @@ const ConventionsStep = () => {
       content: (
         <>
           <ChoiceCards legend={isFrontend ? "Testes unitários" : "Framework"} options={testingOptions} value={conventions.testing} onChange={(value) => set("testing", value)} {...custom("conventions.testing")} />
-          {conventions.testing !== "none" && !isFrontend && <ChoiceCards legend="Localização" options={testLocationOptions} value={conventions.testLocation} onChange={(value) => set("testLocation", value)} {...custom("conventions.testLocation")} />}
-          {conventions.testing !== "none" && <ChoiceCards legend="Sufixo" options={testSuffixOptions} value={conventions.testSuffix} onChange={(value) => set("testSuffix", value)} {...custom("conventions.testSuffix")} />}
+          {conventions.testing !== "none" && !isFrontend && <ChoiceCards legend="Localização" options={localize(testLocationOptions)} value={conventions.testLocation} onChange={(value) => set("testLocation", value)} {...custom("conventions.testLocation")} />}
+          {conventions.testing !== "none" && <ChoiceCards legend="Sufixo" options={localize(testSuffixOptions)} value={conventions.testSuffix} onChange={(value) => set("testSuffix", value)} {...custom("conventions.testSuffix")} />}
           {isFrontend && <ChoiceCards legend="Testes E2E" options={e2eOptions} value={frontend.e2e} onChange={(value) => setFrontend("e2e", value)} {...custom("frontend.e2e")} />}
         </>
       )
@@ -144,13 +147,13 @@ const ConventionsStep = () => {
                     <span className={styles.exampleTag} data-kind="good">
                       Certo
                     </span>
-                    <CodeBlock code={principle.good} isCompact />
+                    <CodeBlock code={snippet(principle.good)} isCompact />
                     {principle.bad && (
                       <>
                         <span className={styles.exampleTag} data-kind="bad">
                           Errado
                         </span>
-                        <CodeBlock code={principle.bad} isCompact />
+                        <CodeBlock code={snippet(principle.bad)} isCompact />
                       </>
                     )}
                   </span>

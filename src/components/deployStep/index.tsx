@@ -3,6 +3,7 @@ import { useMemo } from "react"
 
 import { containerServiceOptions, fullstackNginxOptions } from "@assets/data/generator/deployOptions"
 import { buildDeployFiles, getNginxMode } from "@utils/functions/generator/deploy"
+import { isGo } from "@utils/functions/generator/language"
 import useCustomField from "@hooks/useCustomField"
 import ChoiceCards from "@components/choiceCards"
 import useGeneratorStore from "@stores/generator"
@@ -23,6 +24,8 @@ const DeployStep = () => {
   const config = useGeneratorStore((state) => state.config)
   const set = useGeneratorStore((state) => state.updateDeploy)
   const toggleService = useGeneratorStore((state) => state.toggleService)
+  const updateGo = useGeneratorStore((state) => state.updateGo)
+  const isGoBackend = isGo(config)
   const { deploy } = config
   const isFullstack = config.projectType === "fullstack"
   const files = useMemo(() => buildDeployFiles(config), [config])
@@ -35,7 +38,8 @@ const DeployStep = () => {
 
       <div className={styles.switchRow}>
         <Switch label="Dockerfile" checked={deploy.hasDocker} onChange={(event) => set("hasDocker", event.target.checked)} helperText={isFullstack ? "Um Dockerfile multi-stage por app, com builder e runner." : "Dockerfile multi-stage com builder e runner."} />
-        {deploy.hasDocker && <Input label="Imagem base do Node" value={deploy.nodeImage} onChange={(event) => set("nodeImage", event.target.value)} helperText="Usada nos estágios Node. Padrão: node:22-alpine" fullWidth />}
+        {deploy.hasDocker && isGoBackend && <Input label="Imagem base do Go" value={config.go.image} onChange={(event) => updateGo("image", event.target.value)} helperText="Usada no estágio de build. O runner é distroless. Padrão: golang:1.23-alpine" fullWidth />}
+        {deploy.hasDocker && !isGoBackend && <Input label="Imagem base do Node" value={deploy.nodeImage} onChange={(event) => set("nodeImage", event.target.value)} helperText="Usada nos estágios Node. Padrão: node:22-alpine" fullWidth />}
       </div>
 
       <div className={styles.switchRow}>
