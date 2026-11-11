@@ -15,6 +15,7 @@ import BrandStage from "@components/brandStage"
 import NavbarSlot from "@components/navbarSlot"
 import { toolPath } from "@assets/data/landing"
 import BrandLogo from "@components/brandLogo"
+import useNoIndex from "@hooks/useNoIndex"
 import CtaLink from "@components/ctaLink"
 import styles from "./styles.module.css"
 import appConfig from "@assets/config"
@@ -24,6 +25,7 @@ import type { PageMetadata } from "@utils/types/page"
 export const metadata: PageMetadata = { title: "Identidade visual" }
 
 const BrandPage = () => {
+  useNoIndex()
   const [sampleText, setSampleText] = useState("Defina uma vez. A IA constrói do seu jeito.")
   const [sampleWeight, setSampleWeight] = useState("650")
   const [sampleFamily, setSampleFamily] = useState("sans")
