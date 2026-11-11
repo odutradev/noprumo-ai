@@ -16,7 +16,7 @@ const AlignWall = ({ children }: AlignWallProps) => {
   const ref = useScrollProgress<HTMLDivElement>({
     anchor: wallAnchor,
     isPinned: true,
-    smoothing: 0.12,
+    smoothing: 0.22,
     onProgress: (progress) => setIsAligned(progress >= alignedThreshold)
   })
 

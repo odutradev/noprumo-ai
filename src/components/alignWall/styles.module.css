@@ -3,7 +3,7 @@
   --align: clamp(0, (var(--progress) - 0.12) / 0.62, 1);
 
   position: relative;
-  block-size: 230vh;
+  block-size: 180vh;
 }
 
 .wall {
@@ -150,7 +150,7 @@
 
 @media (max-width: 700px) {
   .track {
-    block-size: 180vh;
+    block-size: 150vh;
   }
 
   .row {
