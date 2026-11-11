@@ -2,27 +2,6 @@
   --enchase-button-gap: 0.55em;
 }
 
-.plumb {
-  flex: none;
-  inline-size: 0.8em;
-  block-size: 1.4em;
-  margin-block: -0.2em;
-  overflow: visible;
-  transform-origin: 50% 0;
-  transition: transform 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
-}
-
-.string {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-}
-
-.bob {
-  fill: currentColor;
-}
-
 .arrow {
   flex: none;
   inline-size: 1.05em;
@@ -35,44 +14,12 @@
   transition: transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
 }
 
-.cta:hover .plumb,
-.cta:focus-visible .plumb {
-  animation: swing 0.9s ease-in-out;
-}
-
 .cta:hover .arrow,
 .cta:focus-visible .arrow {
   transform: translateX(0.2em);
 }
 
-@keyframes swing {
-  0% {
-    transform: rotate(0);
-  }
-
-  25% {
-    transform: rotate(14deg);
-  }
-
-  50% {
-    transform: rotate(-9deg);
-  }
-
-  75% {
-    transform: rotate(4deg);
-  }
-
-  100% {
-    transform: rotate(0);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .cta:hover .plumb,
-  .cta:focus-visible .plumb {
-    animation: none;
-  }
-
   .arrow {
     transition: none;
   }
