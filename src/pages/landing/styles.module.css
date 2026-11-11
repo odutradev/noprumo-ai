@@ -11,11 +11,6 @@
   padding-inline: 0;
 }
 
-.navbar[data-layout="compact"] [data-slot="navbar-menu-button"],
-.navbar:not([data-layout="compact"]) .mobileCta {
-  display: none;
-}
-
 .logo {
   block-size: 1.625rem;
 }

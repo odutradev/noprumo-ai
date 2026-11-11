@@ -12,8 +12,10 @@ import BrandSection from "@components/brandSection"
 import ColorSwatch from "@components/colorSwatch"
 import MisuseCard from "@components/misuseCard"
 import BrandStage from "@components/brandStage"
+import NavbarSlot from "@components/navbarSlot"
 import { toolPath } from "@assets/data/landing"
 import BrandLogo from "@components/brandLogo"
+import CtaLink from "@components/ctaLink"
 import styles from "./styles.module.css"
 import appConfig from "@assets/config"
 
@@ -55,11 +57,16 @@ const BrandPage = () => {
         sections={[]}
         logo={<BrandLogo label={appConfig.name} className={styles.logo} />}
         actions={
-          <ButtonLink href={toolPath} size="sm">
+          <CtaLink href={toolPath} size="sm">
             Abrir o gerador
-          </ButtonLink>
+          </CtaLink>
         }
       />
+      <NavbarSlot navbarClassName={styles.navbar}>
+        <CtaLink href={toolPath} size="sm" isIconOnly>
+          Abrir o gerador
+        </CtaLink>
+      </NavbarSlot>
 
       <main className={styles.page}>
         <header className={styles.hero}>

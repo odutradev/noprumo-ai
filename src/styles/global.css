@@ -1,3 +1,8 @@
+[data-slot="navbar"][data-layout="compact"] [data-slot="navbar-menu-button"],
+[data-slot="navbar"]:not([data-layout="compact"]) [data-navbar-mobile] {
+  display: none;
+}
+
 html:root {
   --enchase-button-font-weight: 600;
   --enchase-button-font-size-lg: var(--enchase-font-size-md);

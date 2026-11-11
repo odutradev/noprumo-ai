@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 
+import styles from "./styles.module.css"
+
 import type { NavbarSlotProps } from "./types"
 
 const NavbarSlot = ({ navbarClassName, children }: NavbarSlotProps) => {
@@ -20,7 +22,12 @@ const NavbarSlot = ({ navbarClassName, children }: NavbarSlotProps) => {
   }, [navbarClassName])
 
   if (!target) return null
-  return createPortal(children, target)
+  return createPortal(
+    <div className={styles.slot} data-navbar-mobile="">
+      {children}
+    </div>,
+    target
+  )
 }
 
 export default NavbarSlot

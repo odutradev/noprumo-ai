@@ -37,7 +37,7 @@ const LandingPage = () => {
         }
       />
       <NavbarSlot navbarClassName={styles.navbar}>
-        <CtaLink href={toolPath} size="sm" isIconOnly className={styles.mobileCta}>
+        <CtaLink href={toolPath} size="sm" isIconOnly>
           Abrir o gerador
         </CtaLink>
       </NavbarSlot>
