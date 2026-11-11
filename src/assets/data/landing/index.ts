@@ -26,7 +26,7 @@ export const landingSteps: LandingStep[] = [
   { title: "Responda", description: "Projeto, stack, arquitetura, nomenclatura, convenções, commits e deploy. Poucas etapas, com presets e campo livre para qualquer regra." },
   { title: "Veja ao vivo", description: "A cada escolha, a prévia mostra o código de exemplo, a árvore de pastas e o arquivo final do jeito que a IA vai ler." },
   { title: "Baixe e use", description: "Um SKILL.md ou CLAUDE.md, em português ou inglês. No fullstack, um guia para a raiz e um para cada app." },
-  { title: "Construa no prumo", description: "O agente lê o guia e passa a seguir o padrão do time. Você para de corrigir a IA e volta a revisar o que importa." }
+  { title: "Construa no prumo", description: "O agente lê o guia e passa a seguir o seu padrão. Você para de corrigir a IA e volta a revisar o que importa." }
 ]
 
 export const stackRows = [

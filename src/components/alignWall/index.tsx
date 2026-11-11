@@ -39,7 +39,7 @@ const AlignWall = ({ children }: AlignWallProps) => {
         {children}
         <div className={styles.toolbar}>
           <SegmentedControl ariaLabel="Comparar com e sem o guia" items={wallModes} value={isAligned ? "aligned" : "crooked"} onValueChange={(value: string) => handleModeChange(value)} size="sm" />
-          <span className={styles.status}>{isAligned ? "Tudo no padrão do time" : "Cada sessão, um padrão diferente"}</span>
+          <span className={styles.status}>{isAligned ? "Tudo no seu padrão" : "Cada sessão, um padrão diferente"}</span>
           <span className={styles.hint} aria-hidden="true">
             Role para alinhar
           </span>

@@ -92,7 +92,7 @@ const LandingPage = () => {
           <Reveal className={styles.sectionHeader}>
             <span className={styles.eyebrow}>Como funciona</span>
             <h2 id="how-title" className={styles.sectionTitle}>
-              Do padrão do time
+              Do seu padrão
               <br />
               ao guia da IA.
             </h2>
@@ -112,7 +112,7 @@ const LandingPage = () => {
             <h2 id="stack-title" className={styles.sectionTitle}>
               Backend, frontend ou fullstack.
             </h2>
-            <p className={styles.sectionLead}>TypeScript, JavaScript ou Go, com os frameworks, bancos e bibliotecas que o seu time já usa. O guia cobre do projeto à publicação.</p>
+            <p className={styles.sectionLead}>TypeScript, JavaScript ou Go, com os frameworks, bancos e bibliotecas que você ou o seu time já usam. O guia cobre do projeto à publicação.</p>
           </Reveal>
           <StackMarquee />
           <Reveal delay={150}>
@@ -133,7 +133,7 @@ const LandingPage = () => {
             <h2 id="final-title" className={styles.finalTitle}>
               Sua IA <span className={styles.light}>no</span> prumo.
             </h2>
-            <p className={styles.sectionLead}>Monte o guia do seu time agora. É totalmente gratuito e não pede cadastro.</p>
+            <p className={styles.sectionLead}>Monte o seu guia agora, sozinho ou com o time. É totalmente gratuito e não pede cadastro.</p>
             <CtaLink href={toolPath} size="lg">
               Abrir o gerador
             </CtaLink>
