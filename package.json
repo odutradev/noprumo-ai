@@ -3,7 +3,15 @@
   "version": "1.2.8",
   "private": true,
   "type": "module",
-  "description": "noprumo: transforma os padrões do seu time em instruções que agentes de IA seguem",
+  "description": "noprumo: transforma os seus padrões, ou os do seu time, em um guia que agentes de IA leem e seguem",
+  "homepage": "https://noprumo.odutra.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odutradev/noprumo-ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/odutradev/noprumo-ai/issues"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,8 +20,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "keywords": [],
-  "author": "odutradev",
+  "keywords": ["claude-code", "claude-md", "ai", "ai-agents", "coding-standards", "developer-tools", "skill-generator", "prompt"],
+  "author": "odutradev (https://odutra.com)",
   "license": "MIT",
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",
