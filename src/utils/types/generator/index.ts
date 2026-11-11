@@ -28,6 +28,10 @@ export type AiAttribution = "never" | "coAuthor"
 export type PublishAction = "bumpPackage" | "bumpManifest" | "build" | "buildZip" | "clean" | "push" | "npmPublish"
 export type PublisherInvocation = "npx" | "global" | "script"
 export type PublishPrompt = "everyTask" | "onRequest"
+export type ContainerService = "redis" | "mongo" | "postgres"
+export type FullstackNginx = "spaOnly" | "gateway"
+export type DevRunner = "prefixScripts" | "npmWorkspaces"
+export type EnvLocation = "root" | "perApp"
 
 export type CaseStyle = "camel" | "pascal" | "snake" | "screamingSnake" | "kebab"
 export type IdentifierLanguage = "en" | "pt"
@@ -148,12 +152,28 @@ export interface PublishingConfig {
   extraFlags: string
 }
 
+export interface DeployConfig {
+  hasDocker: boolean
+  nodeImage: string
+  hasCompose: boolean
+  services: ContainerService[]
+  hasNginx: boolean
+  fullstackNginx: FullstackNginx
+}
+
+export interface WorkspaceConfig {
+  backendFolder: string
+  frontendFolder: string
+  devRunner: DevRunner
+  envLocation: EnvLocation
+}
+
 export type OutputFormat = "skill" | "claudeMd"
 
 export interface OutputFile {
+  path: string
   fileName: string
-  installPath: string
-  globalPath: string
+  content: string
 }
 
 export interface GeneratorConfig {
@@ -168,11 +188,19 @@ export interface GeneratorConfig {
   conventions: ConventionsConfig
   frontend: FrontendConfig
   publishing: PublishingConfig
+  deploy: DeployConfig
+  workspace: WorkspaceConfig
   custom: Record<string, string>
   outputLanguage: IdentifierLanguage
 }
 
-export type EnabledProjectType = Extract<ProjectType, "backend" | "frontend">
+export type AppProjectType = Extract<ProjectType, "backend" | "frontend">
+export type EnabledProjectType = Extract<ProjectType, "backend" | "frontend" | "fullstack">
+
+export interface WorkspaceApps {
+  backend: GeneratorConfig
+  frontend: GeneratorConfig
+}
 
 export interface ChoiceOption<T extends string> {
   value: T

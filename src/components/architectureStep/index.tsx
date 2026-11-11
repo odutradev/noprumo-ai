@@ -10,7 +10,7 @@ import StepHeader from "@components/stepHeader"
 import FileTree from "@components/fileTree"
 import styles from "./styles.module.css"
 
-import type { Architecture, ChoiceOption, EnabledProjectType } from "@utils/types/generator"
+import type { AppProjectType, Architecture, ChoiceOption } from "@utils/types/generator"
 
 const ArchitectureStep = () => {
   const custom = useCustomField()
@@ -20,7 +20,7 @@ const ArchitectureStep = () => {
   const customField = custom("architecture")
   const isCustom = customField.customText !== undefined
 
-  const options: ChoiceOption<Architecture>[] = architectureOrder[config.projectType as EnabledProjectType].map((value) => ({
+  const options: ChoiceOption<Architecture>[] = architectureOrder[config.projectType as AppProjectType].map((value) => ({
     value,
     label: architectureInfo[value].label,
     description: architectureInfo[value].summary.replaceAll("`", ""),

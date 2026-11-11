@@ -1,11 +1,11 @@
-import type { ApiDocs, Architecture, ChoiceOption, CommentsPolicy, Database, EnabledProjectType, ErrorHandling, ExportStyle, Framework, FunctionStyle, ImportAlias, ImportOrder, Language, Paradigm, ProjectType, Quotes, RouteStyle, Semicolons, TestLocation, TestSuffix, Testing, Validation } from "@utils/types/generator"
+import type { ApiDocs, AppProjectType, Architecture, ChoiceOption, CommentsPolicy, Database, ErrorHandling, ExportStyle, Framework, FunctionStyle, ImportAlias, ImportOrder, Language, Paradigm, ProjectType, Quotes, RouteStyle, Semicolons, TestLocation, TestSuffix, Testing, Validation } from "@utils/types/generator"
 import type { ArchitectureInfo, PrincipleInfo } from "@utils/types/options"
 
 export const projectTypeOptions: ChoiceOption<ProjectType>[] = [
   { value: "backend", label: "Backend", description: "APIs, serviços, workers e integrações rodando no servidor.", example: "POST /users/create\n→ 201 { id }" },
   { value: "frontend", label: "Frontend", description: "Aplicações web, dashboards, componentes e design system.", example: "<UserCard name=\"Ana\" />" },
   { value: "mobile", label: "Mobile", description: "Apps React Native, Expo ou nativos.", badge: "Em breve", isDisabled: true },
-  { value: "fullstack", label: "Fullstack", description: "Monorepo com front e back compartilhando tipos.", badge: "Em breve", isDisabled: true }
+  { value: "fullstack", label: "Fullstack", description: "Monorepo com API e frontend, Docker, docker-compose e nginx.", example: "api/ · frontend/\ndocker compose up" }
 ]
 
 export const languageOptions: ChoiceOption<Language>[] = [
@@ -160,7 +160,7 @@ export const architectureInfo: Record<Architecture, ArchitectureInfo> = {
   }
 }
 
-export const architectureOrder: Record<EnabledProjectType, Architecture[]> = {
+export const architectureOrder: Record<AppProjectType, Architecture[]> = {
   backend: ["domainActions", "layered", "clean", "hexagonal", "modular", "ddd", "verticalSlice"],
   frontend: ["typeFolders", "featureFolders", "atomic", "featureSliced"]
 }

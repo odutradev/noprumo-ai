@@ -1,3 +1,5 @@
+import { deployDefaults, workspaceDefaults } from "@assets/data/generator/deployOptions"
+
 import type { EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, PublishingConfig } from "@utils/types/generator"
 
 const frontendDefaults: FrontendConfig = {
@@ -89,6 +91,8 @@ export const codeGuidePreset: GeneratorConfig = {
   },
   frontend: frontendDefaults,
   publishing: { ...publishingDefaults, actions: ["bumpPackage", "push"] },
+  deploy: { ...deployDefaults, hasDocker: true },
+  workspace: workspaceDefaults,
   custom: {},
   outputLanguage: "pt"
 }
@@ -122,7 +126,8 @@ export const blankPreset: GeneratorConfig = {
     branchNaming: "free",
     principles: ["earlyReturn", "noAny", "noConsoleLog"]
   },
-  publishing: { ...publishingDefaults, isEnabled: false }
+  publishing: { ...publishingDefaults, isEnabled: false },
+  deploy: deployDefaults
 }
 
 export const bonfirePreset: GeneratorConfig = {
@@ -151,7 +156,8 @@ export const bonfirePreset: GeneratorConfig = {
     principles: ["routeGuard", "permissionCheck", "lazyRoutes", "mobileFirst", "accessibility", "themeTokens", "persistedStores", "noAny"]
   },
   frontend: frontendDefaults,
-  publishing: publishingDefaults
+  publishing: publishingDefaults,
+  deploy: deployDefaults
 }
 
 export const blankFrontendPreset: GeneratorConfig = {
@@ -189,7 +195,28 @@ export const blankFrontendPreset: GeneratorConfig = {
   publishing: { ...publishingDefaults, isEnabled: false }
 }
 
+export const fullstackPreset: GeneratorConfig = {
+  ...codeGuidePreset,
+  skillName: "fullstack-code-guide",
+  skillDescription: "Padrões do monorepo fullstack: estrutura, scripts, variáveis de ambiente, Docker, docker-compose e nginx. Use ao mexer na raiz do repositório, nos Dockerfiles, no compose, no nginx ou ao integrar a API com o frontend.",
+  projectType: "fullstack",
+  publishing: { ...publishingDefaults, actions: ["bumpPackage", "push"] },
+  deploy: { ...deployDefaults, hasDocker: true, hasCompose: true, services: ["redis"], hasNginx: true, fullstackNginx: "spaOnly" },
+  workspace: workspaceDefaults
+}
+
+export const blankFullstackPreset: GeneratorConfig = {
+  ...fullstackPreset,
+  skillName: "fullstack-standards",
+  skillDescription: "Padrões do monorepo fullstack. Use ao mexer na raiz, nos containers ou na integração entre API e frontend.",
+  conventions: { ...fullstackPreset.conventions, branchNaming: "free" },
+  publishing: { ...publishingDefaults, isEnabled: false },
+  deploy: { ...deployDefaults, hasDocker: true, hasCompose: true, hasNginx: true, fullstackNginx: "gateway" },
+  workspace: { ...workspaceDefaults, devRunner: "npmWorkspaces", envLocation: "perApp" }
+}
+
 export const presets: Record<EnabledProjectType, { mine: GeneratorConfig; neutral: GeneratorConfig }> = {
   backend: { mine: codeGuidePreset, neutral: blankPreset },
-  frontend: { mine: bonfirePreset, neutral: blankFrontendPreset }
+  frontend: { mine: bonfirePreset, neutral: blankFrontendPreset },
+  fullstack: { mine: fullstackPreset, neutral: blankFullstackPreset }
 }
