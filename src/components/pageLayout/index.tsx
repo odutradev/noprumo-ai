@@ -4,10 +4,10 @@ import appConfig from "@assets/config"
 
 import type { PageLayoutProps } from "./types"
 
-const PageLayout = ({ metadata, children }: PageLayoutProps) => {
+const PageLayout = ({ children }: PageLayoutProps) => {
   useEffect(() => {
-    document.title = `${metadata.title} · ${appConfig.name}`
-  }, [metadata.title])
+    document.title = appConfig.title
+  }, [])
 
   return children
 }
