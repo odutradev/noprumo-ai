@@ -1,5 +1,6 @@
+import "@fontsource-variable/geist-mono"
 import ReactDOM from "react-dom/client"
-import "@fontsource-variable/figtree"
+import "@fontsource-variable/geist"
 import { StrictMode } from "react"
 import "enchase/styles.css"
 

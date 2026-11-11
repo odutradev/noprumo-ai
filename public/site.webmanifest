@@ -1,0 +1,13 @@
+{
+  "name": "noprumo",
+  "short_name": "noprumo",
+  "description": "Transforma os padrões do seu time em instruções que agentes de IA seguem",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F1012",
+  "theme_color": "#0F1012",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
