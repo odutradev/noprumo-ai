@@ -96,7 +96,7 @@ export const codeGuidePreset: GeneratorConfig = {
   workspace: workspaceDefaults,
   go: goDefaults,
   custom: {},
-  outputLanguage: "pt"
+  outputLanguage: "en"
 }
 
 export const blankPreset: GeneratorConfig = {

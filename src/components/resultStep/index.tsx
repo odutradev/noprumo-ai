@@ -19,6 +19,11 @@ const formatHints: Record<OutputFormat, string> = {
   claudeMd: "Carrega em toda sessão do Claude Code. Bom para regras que valem sempre, como as deste guia."
 }
 
+const languageHints: Record<IdentifierLanguage, string> = {
+  en: "Os modelos de IA seguem instruções em inglês com mais precisão. O guia já pede que o agente responda sempre em português.",
+  pt: "O guia fica todo em português. Funciona, mas os modelos tendem a seguir instruções em inglês com mais precisão."
+}
+
 const ResultStep = () => {
   const config = useGeneratorStore((state) => state.config)
   const configs = useGeneratorStore((state) => state.configs)
@@ -60,23 +65,26 @@ const ResultStep = () => {
             <SegmentedControl
               label="Formato"
               items={[
-                { value: "skill", label: "Skill (SKILL.md)" },
-                { value: "claudeMd", label: "CLAUDE.md" }
+                { value: "claudeMd", label: "CLAUDE.md" },
+                { value: "skill", label: "Skill (SKILL.md)" }
               ]}
               value={format}
               onValueChange={(value: string) => setFormat(value as OutputFormat)}
             />
             <p className={styles.hint}>{formatHints[format]}</p>
           </div>
-          <SegmentedControl
-            label="Idioma do prompt"
-            items={[
-              { value: "pt", label: "Português" },
-              { value: "en", label: "English" }
-            ]}
-            value={config.outputLanguage}
-            onValueChange={(value: string) => update("outputLanguage", value as IdentifierLanguage)}
-          />
+          <div className={styles.field}>
+            <SegmentedControl
+              label="Idioma do prompt"
+              items={[
+                { value: "en", label: "English (recomendado)" },
+                { value: "pt", label: "Português" }
+              ]}
+              value={config.outputLanguage}
+              onValueChange={(value: string) => update("outputLanguage", value as IdentifierLanguage)}
+            />
+            <p className={styles.hint}>{languageHints[config.outputLanguage]}</p>
+          </div>
           {isSkill && (
             <>
               <Input label="Nome da skill" value={config.skillName} onChange={(event) => update("skillName", event.target.value)} helperText={`Identificador: ${slug}`} error={errors.skillName?.[0]} fullWidth />

@@ -29,13 +29,13 @@ const withConfig = (state: GeneratorState, config: GeneratorConfig) => ({
 const clampStep = (config: GeneratorConfig, step: number) => Math.min(Math.max(step, 0), getSteps(config).length - 1)
 
 const migrate = (persisted: unknown, version: number) => {
-  const initial = { config: codeGuidePreset, configs: initialConfigs, step: 0, format: "skill" }
-  if (version !== 6 && version !== 7) return initial as GeneratorState
+  const initial = { config: codeGuidePreset, configs: initialConfigs, step: 0, format: "claudeMd" }
+  if (version < 6 || version > 8) return initial as GeneratorState
   const state = persisted as LegacyState
   const config = withDefaults(state.config)
   const legacyConfigs = state.configs as Record<string, LegacyConfig | undefined>
   const configs = { backend: withDefaults(state.configs.backend), frontend: withDefaults(state.configs.frontend), fullstack: legacyConfigs.fullstack ? withDefaults(legacyConfigs.fullstack) : fullstackPreset }
-  return { ...state, config, configs, step: clampStep(config, state.step), format: state.format ?? "skill" } as GeneratorState
+  return { ...state, config, configs, step: clampStep(config, state.step), format: "claudeMd" } as GeneratorState
 }
 
 const storageKey = "noprumo-generator"
@@ -61,7 +61,7 @@ const useGeneratorStore = create<GeneratorState>()(
       config: codeGuidePreset,
       configs: initialConfigs,
       step: 0,
-      format: "skill",
+      format: "claudeMd",
       setFormat: (format) => set({ format }),
       setStep: (step) => set((state) => ({ step: clampStep(state.config, step) })),
       setProjectType: (projectType) => set((state) => ({ config: state.configs[projectType], step: clampStep(state.configs[projectType], state.step) })),
@@ -109,7 +109,7 @@ const useGeneratorStore = create<GeneratorState>()(
           return withConfig(state, { ...state.config, go: { ...state.config.go, principles: next } })
         })
     }),
-    { name: storageKey, version: 8, migrate }
+    { name: storageKey, version: 9, migrate }
   )
 )
 
