@@ -1,6 +1,6 @@
 {
   "name": "noprumo",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "private": true,
   "type": "module",
   "description": "noprumo: transforma os seus padrões, ou os do seu time, em um guia que agentes de IA leem e seguem",
@@ -20,7 +20,16 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "keywords": ["claude-code", "claude-md", "ai", "ai-agents", "coding-standards", "developer-tools", "skill-generator", "prompt"],
+  "keywords": [
+    "claude-code",
+    "claude-md",
+    "ai",
+    "ai-agents",
+    "coding-standards",
+    "developer-tools",
+    "skill-generator",
+    "prompt"
+  ],
   "author": "odutradev (https://odutra.com)",
   "license": "MIT",
   "dependencies": {
