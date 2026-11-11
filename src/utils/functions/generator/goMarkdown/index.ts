@@ -1,5 +1,5 @@
 import { goArchitectureInfo, goCommentsOptions, goDatabaseOptions, goErrorHandlingOptions, goFileCaseOptions, goFrameworkOptions, goIdioms, goLoggerOptions, goPrincipleOptions, goTestingOptions, goValidationOptions } from "@assets/data/generator/go"
-import { code, deployChecklistItem, extraPrinciples, gitSection, publishChecklistItem, rootGuidePointer, samplesSection } from "@utils/functions/generator/markdownHelpers"
+import { code, deployChecklistItem, extraPrinciples, gitSection, publishChecklistItem, replyLanguageRule, rootGuidePointer, samplesSection } from "@utils/functions/generator/markdownHelpers"
 import { createGoNamer, getGoLayout, goInterfaceHomeLabel } from "@utils/functions/generator/go"
 import { projectTypeOptions, routeStyleOptions } from "@assets/data/generator/options"
 import { createMdContext, sentence } from "@utils/functions/generator/mdContext"
@@ -116,7 +116,7 @@ ${byLanguage("Este guia define as regras de arquitetura, pacotes, nomenclatura e
 **${byLanguage("Diretriz", "Directive")}:** ${byLanguage(
     "antes de criar ou refatorar qualquer código, leia este guia e reproduza exatamente a estrutura e os padrões descritos aqui. Na dúvida, siga o Effective Go e o exemplo de referência no final do documento.",
     "before creating or refactoring any code, read this guide and follow exactly the structure and standards described here. When in doubt, follow Effective Go and the reference example at the end of this document."
-  )}
+  )}${replyLanguageRule(ctx)}
 
 ## 1. Stack
 

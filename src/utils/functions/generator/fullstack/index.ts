@@ -1,4 +1,4 @@
-import { code, deployChecklistItem, gitSection, publishChecklistItem } from "@utils/functions/generator/markdownHelpers"
+import { code, deployChecklistItem, gitSection, publishChecklistItem, replyLanguageRule } from "@utils/functions/generator/markdownHelpers"
 import { buildTree, getProjectFiles, renderTree } from "@utils/functions/generator/architecture"
 import { devRunnerOptions, envLocationOptions } from "@assets/data/generator/deployOptions"
 import { buildDeployFiles, deploySection } from "@utils/functions/generator/deploy"
@@ -139,7 +139,7 @@ ${byLanguage(
 **${byLanguage("Diretriz", "Directive")}:** ${byLanguage(
     `antes de mexer em um app, leia o guia dele: \`${guides.api}\` para a API e \`${guides.web}\` para o frontend. As regras de código, arquitetura e nomenclatura de cada app estão lá.`,
     `before changing an app, read its guide: \`${guides.api}\` for the API and \`${guides.web}\` for the frontend. Each app's code, architecture and naming rules live there.`
-  )}
+  )}${replyLanguageRule(ctx)}
 
 ## 1. ${byLanguage("Estrutura do repositório", "Repository structure")}
 

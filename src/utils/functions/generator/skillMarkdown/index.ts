@@ -1,5 +1,5 @@
 import { apiDocsOptions, architectureInfo, commentsOptions, databaseOptions, errorHandlingOptions, exportOptions, frameworkOptions, functionStyleOptions, importAliasOptions, importOrderOptions, languageOptions, paradigmOptions, projectTypeOptions, quoteOptions, routeStyleOptions, semicolonOptions, testLocationOptions, testSuffixOptions, testingOptions, validationOptions } from "@assets/data/generator/options"
-import { code, deployChecklistItem, extraPrinciples, gitSection, principlesSection, publishChecklistItem, rootGuidePointer, samplesSection, selectedPrinciples, slugify } from "@utils/functions/generator/markdownHelpers"
+import { code, deployChecklistItem, extraPrinciples, gitSection, principlesSection, publishChecklistItem, replyLanguageRule, rootGuidePointer, samplesSection, selectedPrinciples, slugify } from "@utils/functions/generator/markdownHelpers"
 import { booleanPrefixOptions, fileOrganizationOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { buildTree, getArchitectureLayout, renderTree } from "@utils/functions/generator/architecture"
 import { isGo, isJavaScript, toJsMarkdown } from "@utils/functions/generator/language"
@@ -116,7 +116,7 @@ ${byLanguage("Este guia define as regras de arquitetura, estrutura e código des
 **${byLanguage("Diretriz", "Directive")}:** ${byLanguage(
     "antes de criar ou refatorar qualquer código, leia este guia e reproduza exatamente a estrutura e os padrões descritos aqui. Quando um padrão não estiver coberto, siga o exemplo de referência mais próximo no final do documento.",
     "before creating or refactoring any code, read this guide and follow exactly the structure and standards described here. When a standard is not covered, follow the closest reference example at the end of this document."
-  )}
+  )}${replyLanguageRule(ctx)}
 
 ## 1. Stack
 

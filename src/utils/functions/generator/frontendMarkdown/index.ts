@@ -1,5 +1,5 @@
 import { apiLayerOptions, asyncActionsOptions, componentDeclarationOptions, componentStructureOptions, dataFetchingOptions, e2eOptions, formValidationOptions, frontendFrameworkOptions, stateOptions, stylingOptions, uiLibraryOptions } from "@assets/data/generator/frontendOptions"
-import { code, deployChecklistItem, extraPrinciples, gitSection, principlesSection, publishChecklistItem, rootGuidePointer, samplesSection, selectedPrinciples } from "@utils/functions/generator/markdownHelpers"
+import { code, deployChecklistItem, extraPrinciples, gitSection, principlesSection, publishChecklistItem, replyLanguageRule, rootGuidePointer, samplesSection, selectedPrinciples } from "@utils/functions/generator/markdownHelpers"
 import { commentsOptions, exportOptions, importAliasOptions, importOrderOptions, languageOptions, quoteOptions, semicolonOptions, testSuffixOptions, testingOptions } from "@assets/data/generator/options"
 import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, typePrefixOptions } from "@assets/data/generator/naming"
 import { architectureBlock, namingRow } from "@utils/functions/generator/skillMarkdown"
@@ -100,7 +100,7 @@ ${byLanguage("Este guia define as regras de arquitetura, componentes, estado e c
 **${byLanguage("Diretriz", "Directive")}:** ${byLanguage(
     "antes de criar ou refatorar páginas, componentes, hooks ou stores, leia este guia e reproduza exatamente a estrutura e os padrões descritos aqui. Antes de criar um componente ou hook, procure um equivalente que já exista no projeto.",
     "before creating or refactoring pages, components, hooks or stores, read this guide and follow exactly the structure and standards described here. Before creating a component or hook, look for an existing equivalent in the project."
-  )}
+  )}${replyLanguageRule(ctx)}
 
 ## 1. Stack
 

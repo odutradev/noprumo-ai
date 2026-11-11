@@ -82,6 +82,10 @@ export const gitSection = (ctx: MdContext) => {
     `- **${byLanguage("Mensagem", "Message")}:** ${sentence(body.label, body.description)}`,
     `- **${byLanguage("Quando commitar", "When to commit")}:** ${sentence(timing.label, timing.description)}`,
     `- **${byLanguage("Coautoria de IA", "AI co-authorship")}:** ${sentence(attribution.label, attribution.description)}`,
+    byLanguage(
+      "- **Ao finalizar:** depois do último commit, liste todos os commits feitos na tarefa, um por linha, no formato `{hash} {mensagem}`, com o hash curto.",
+      "- **When finished:** after the last commit, list every commit made in the task, one per line, as `{hash} {message}`, using the short hash."
+    ),
     config.language === "go" && config.projectType === "backend"
       ? byLanguage("- Nunca commitar arquivos de ambiente (`.env`), segredos, binários (`bin/`) ou relatórios de cobertura.", "- Never commit environment files (`.env`), secrets, binaries (`bin/`) or coverage reports.")
       : byLanguage("- Nunca commitar arquivos de ambiente (`.env`), segredos, builds ou `node_modules`.", "- Never commit environment files (`.env`), secrets, builds or `node_modules`."),
@@ -93,6 +97,11 @@ export const gitSection = (ctx: MdContext) => {
   const branchExample = !branch.isCustom && conventions.branchNaming === "typeSlash" ? `\n\n${code(pick(branchNamingOptions, "typeSlash").example ?? "", "text")}` : ""
   return `${rules.join("\n")}${example}${branchExample}`
 }
+
+export const replyLanguageRule = (ctx: MdContext) =>
+  ctx.isEn && !ctx.isWorkspaceApp
+    ? "\n\n**Reply language:** always talk to the user in Brazilian Portuguese (pt-BR): answers, explanations, questions, plans and summaries. This guide is written in English only because AI models follow English instructions more reliably. Code, identifiers and commit messages follow the rules below."
+    : ""
 
 export const rootGuidePointer = (ctx: MdContext) => ctx.byLanguage("Definido no guia do monorepo, na raiz do repositório. Siga as regras de lá.", "Defined in the monorepo guide at the repository root. Follow the rules there.")
 
