@@ -32,16 +32,7 @@
     <meta name="twitter:description" content="Transforme os seus padrões, ou os do seu time, em um guia que agentes de IA leem e seguem. Gratuito e sem cadastro." />
     <meta name="twitter:image" content="https://noprumo.odutra.com/og-image.png" />
     <meta name="twitter:image:alt" content="Logo do noprumo e a frase Sua IA no prumo, com um fio de prumo laranja." />
-    <script>
-      (function () {
-        try {
-          var saved = localStorage.getItem('enchase-color-mode');
-          var mode = saved === 'light' || saved === 'dark' ? saved : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-          document.documentElement.setAttribute('data-theme', mode);
-          document.documentElement.style.colorScheme = mode;
-        } catch (e) {}
-      })();
-    </script>
+    <script src="/theme.js"></script>
   </head>
   <body>
     <div id="root"></div>
