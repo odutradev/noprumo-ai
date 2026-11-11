@@ -300,13 +300,18 @@
   }
 
   .hero {
-    grid-template-columns: minmax(0, 1fr) 5rem;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--enchase-space-md);
+    min-block-size: auto;
+    padding-block-start: 0;
   }
 
   .heroPlumb {
-    --plumb-bob: 3rem;
-    --plumb-length: 55%;
+    --plumb-bob: 2.75rem;
+    --plumb-length: 62%;
+
+    grid-row: 1;
+    block-size: 10rem;
   }
 
   .howGrid,
