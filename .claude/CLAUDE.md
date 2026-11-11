@@ -45,6 +45,8 @@ A raiz de `src` separa o código pelo papel: actions de API, componentes, hooks,
     │       └── index.ts  # chamadas à API
     ├── assets/
     │   ├── config/
+    │   │   ├── analytics/
+    │   │   │   └── index.ts  # configuração do Umami
     │   │   └── index.ts
     │   └── data/
     │       └── index.ts  # dados estáticos
@@ -54,8 +56,10 @@ A raiz de `src` separa o código pelo papel: actions de API, componentes, hooks,
     │       ├── styles.module.css  # estilos (CSS Module)
     │       └── types.ts  # props
     ├── hooks/
-    │   └── useAction/
-    │       └── index.ts  # hook
+    │   ├── useAction/
+    │   │   └── index.ts  # hook
+    │   └── useAnalytics/
+    │       └── index.ts  # eventos de acesso
     ├── pages/
     │   └── users/
     │       └── index.tsx  # página
@@ -139,6 +143,24 @@ useAction({
   toastMessages: { pending: 'Salvando...', success: 'Salvo', error: 'Erro ao salvar' },
   callback: () => navigate('/users')
 })
+```
+
+### Monitoramento de acesso (Umami)
+
+O site mede acessos com um Umami self-hosted, sem cookies. Visitas de página são contadas sozinhas; eventos de ação são registrados à mão.
+
+- **Hook único:** eventos só pelo `useAnalytics` (`src/hooks/useAnalytics`). Nunca chame `window.umami` direto nem injete outro script de análise.
+- **Configuração em um lugar:** tudo fica em `src/assets/config/analytics` (ID, caminho `/pulse`, domínios, "Do Not Track", prazo de guarda). Não espalhe esses valores pelo código.
+- **Eventos tipados:** todo evento novo é declarado em `AnalyticsEvents`, em `src/utils/types/analytics`, com nome em kebab-case e o formato dos dados.
+- **Sem dado pessoal:** os dados de um evento são só valores técnicos (formato, tipo de projeto, linguagem, quantidade). Nunca envie nome, e-mail, texto digitado pela pessoa, conteúdo do guia gerado nem identificadores. Não use `identify`.
+- **Privacidade em dia:** ao criar um evento ou coletar um dado novo, atualize o texto em `src/assets/data/privacy` e a data `privacyUpdatedAt`.
+- **Momento do registro:** registre depois que a ação deu certo, no `callback` do `useAction` ou logo após a ação síncrona.
+- Em desenvolvimento nada é enviado: os eventos saem no console, pelo logger.
+
+```typescript
+const { track } = useAnalytics()
+
+track("guide-download", { format, projectType, language, outputLanguage, files: 1 })
 ```
 
 ## 7. Formulários
@@ -330,6 +352,24 @@ npx project-publisher --bump-package --build --push
 - O push vai para a branch `master`.
 - O bump sobe só o patch. Para mudar minor ou major, edite a versão no `package.json` à mão antes de rodar.
 
+### Deploy (Dokploy)
+
+O deploy roda no Dokploy como um serviço **Compose**, a partir do `docker-compose.yml` da raiz.
+
+| Serviço | O que faz |
+| :--- | :--- |
+| `app` | Build do site com o `Dockerfile` e nginx servindo os arquivos. |
+| `noprumo-analytics` | Umami (painel e coleta), porta 3000. |
+| `noprumo-analytics-db` | Postgres do Umami, com o volume `noprumo-analytics-data`. |
+| `noprumo-analytics-retention` | Roda `deploy/umami/retention.sql` uma vez por dia e apaga os dados mais antigos que o prazo. |
+
+- **Nomes dos serviços:** serviços novos usam o prefixo `noprumo-`. A rede do Dokploy é compartilhada entre projetos, e um nome genérico pode colidir.
+- **Sem portas publicadas:** use `expose`. Os domínios são ligados no painel do Dokploy.
+- **Proxy `/pulse`:** o script e os eventos do Umami passam pelo `nginx.conf` em `/pulse/script.js` e `/pulse/api/send`, apontando para `noprumo-analytics:3000`. O CSP continua com `'self'`. Não libere domínios externos no CSP para análise.
+- **Variáveis:** segredos ficam só no Environment do Dokploy, nunca no repositório. O compose lê `UMAMI_WEBSITE_ID` e `UMAMI_RETENTION_MONTHS` e repassa para o build como `VITE_UMAMI_WEBSITE_ID` e `VITE_ANALYTICS_RETENTION_MONTHS`. No Environment, os nomes são sem o prefixo `VITE_`.
+- **Valores de build:** variável nova do frontend precisa de `ARG` e `ENV` no `Dockerfile`, de `args` no serviço `app`, do tipo em `src/vite-env.d.ts` e de uma linha no `.env.example`.
+- **Rotas novas:** toda página nova precisa entrar no `location` de rotas do `nginx.conf`, ou responde 404 em produção, e no `public/sitemap.xml` se for pública.
+
 ### Pergunta obrigatória ao final de cada tarefa
 
 Ao terminar **toda** tarefa que alterou arquivos, depois de commitar seguindo a seção de commits e com typecheck, lint e build passando, a última ação é perguntar se a pessoa quer publicar. Use a ferramenta de pergunta interativa (`AskUserQuestion`), que mostra uma caixa com botões:
@@ -470,4 +510,6 @@ export default useUserStore
 - [ ] Princípio "Não reinventar utilitários" aplicado.
 - [ ] Princípio "Cores e espaços do tema" aplicado.
 - [ ] Princípio "Stores persistidas" aplicado.
+- [ ] Eventos de acesso passam pelo `useAnalytics`, estão tipados e não levam dado pessoal; a página de privacidade foi atualizada se algo novo é coletado.
+- [ ] Página nova entrou no `nginx.conf` e no `sitemap.xml`; variável de build nova entrou no `Dockerfile`, no compose, no `vite-env.d.ts` e no `.env.example`.
 - [ ] Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.
