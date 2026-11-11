@@ -7,7 +7,6 @@ import LandingFooter from "@components/landingFooter"
 import StackMarquee from "@components/stackMarquee"
 import StepTimeline from "@components/stepTimeline"
 import PlumbCursor from "@components/plumbCursor"
-import ComboStats from "@components/comboStats"
 import HeroPlumb from "@components/heroPlumb"
 import AlignWall from "@components/alignWall"
 import BrandLogo from "@components/brandLogo"
@@ -118,19 +117,6 @@ const LandingPage = () => {
               ))}
             </ol>
           </Reveal>
-        </section>
-
-        <section className={styles.section} aria-labelledby="combos-title">
-          <Reveal className={styles.sectionHeader}>
-            <span className={styles.eyebrow}>Conferido à exaustão</span>
-            <h2 id="combos-title" className={styles.sectionTitle}>
-              Toda combinação
-              <br />
-              sai no prumo.
-            </h2>
-            <p className={styles.sectionLead}>Geramos o código de exemplo de cada combinação de escolhas em JavaScript e Go e conferimos uma por uma. Nenhuma saiu torta.</p>
-          </Reveal>
-          <ComboStats />
         </section>
 
         <section className={styles.final} aria-labelledby="final-title">

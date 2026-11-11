@@ -9,9 +9,3 @@ export interface LandingStep {
   title: string
   description: string
 }
-
-export interface LandingStat {
-  value: number
-  label: string
-  description: string
-}
