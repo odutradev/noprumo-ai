@@ -102,6 +102,34 @@ docker build -t noprumo .
 docker run -p 8080:80 noprumo
 ```
 
+### Deploy com Dokploy e análise de acesso (Umami)
+
+O `docker-compose.yml` sobe o site e um [Umami](https://umami.is) self-hosted com Postgres. O Umami não usa cookies e não guarda dados pessoais. O script e os eventos passam pelo nginx do site em `/pulse`, então o CSP continua só com `'self'` e os bloqueadores de anúncio barram menos.
+
+1. No Dokploy, crie um serviço **Compose** apontando para este repositório, com o arquivo `docker-compose.yml`.
+2. Em **Environment**, defina as variáveis. Use valores em hex, sem caracteres especiais, gerados com `openssl rand -hex 32`:
+
+   | Variável | Para quê |
+   | :--- | :--- |
+   | `UMAMI_DB_PASSWORD` | Senha do Postgres do Umami. |
+   | `UMAMI_APP_SECRET` | Segredo dos tokens de login do Umami. |
+   | `UMAMI_TWO_FACTOR_KEY` | Chave de 64 caracteres hex para o 2FA. |
+   | `UMAMI_WEBSITE_ID` | ID do site no Umami. Fica vazio no primeiro deploy. |
+
+3. Em **Domains**, ligue o domínio do site ao serviço `app` na porta `80` e um domínio para o painel (por exemplo, `umami.seudominio.com`) ao serviço `noprumo-analytics` na porta `3000`.
+4. Faça o deploy, entre no painel com `admin` / `umami` e **troque a senha na hora**.
+5. Cadastre o site no Umami, copie o ID para `UMAMI_WEBSITE_ID` e faça o deploy de novo. O ID entra no build, então sem ele o site funciona normalmente, só que sem registrar acessos.
+
+Toda a configuração fica em [`src/assets/config/analytics`](src/assets/config/analytics/index.ts) e os eventos são tipados em [`src/utils/types/analytics`](src/utils/types/analytics/index.ts). Nos componentes, use o hook `useAnalytics`:
+
+```tsx
+const { track } = useAnalytics()
+
+track("guide-download", { format, projectType, language, outputLanguage, files: 1 })
+```
+
+Em desenvolvimento nada é enviado: os eventos aparecem só no console, pelo logger.
+
 ## Stack do projeto
 
 - [React 19](https://react.dev) e [React Router 7](https://reactrouter.com)
