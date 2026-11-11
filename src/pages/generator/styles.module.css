@@ -8,8 +8,7 @@
 }
 
 .logo {
-  font-weight: var(--enchase-font-weight-semibold);
-  letter-spacing: -0.01em;
+  block-size: 1.625rem;
 }
 
 .presets {

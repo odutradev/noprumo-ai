@@ -1,4 +1,4 @@
-import { Button, ConfirmModal, Drawer, Navbar } from "enchase"
+import { Button, ButtonLink, ConfirmModal, Drawer, Navbar } from "enchase"
 import { useEffect, useRef, useState } from "react"
 
 import { architectureInfo, frameworkOptions, languageOptions, projectTypeOptions } from "@assets/data/generator/options"
@@ -19,6 +19,7 @@ import ProjectStep from "@components/projectStep"
 import DeployStep from "@components/deployStep"
 import NamingStep from "@components/namingStep"
 import ResultStep from "@components/resultStep"
+import BrandLogo from "@components/brandLogo"
 import Stepper from "@components/stepper"
 import styles from "./styles.module.css"
 import appConfig from "@assets/config"
@@ -98,7 +99,7 @@ const GeneratorPage = () => {
       <Navbar
         className={styles.navbar}
         sections={[]}
-        logo={<span className={styles.logo}>{appConfig.name}</span>}
+        logo={<BrandLogo label={appConfig.name} className={styles.logo} />}
         actions={
           <div className={styles.presets}>
             <Button variant="ghost" size="sm" onClick={() => setPendingPreset(typePresets.mine)}>
@@ -107,6 +108,9 @@ const GeneratorPage = () => {
             <Button variant="ghost" size="sm" onClick={() => setPendingPreset(typePresets.neutral)}>
               Padrão neutro
             </Button>
+            <ButtonLink href="/id" variant="ghost" size="sm">
+              Identidade visual
+            </ButtonLink>
           </div>
         }
       />
