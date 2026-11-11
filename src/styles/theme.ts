@@ -11,9 +11,9 @@ export const theme: ThemeInput = {
   },
   light: {
     colors: {
-      primary: "#B4501B",
-      onPrimary: "#FFFFFF",
-      primaryHover: "#8A3C14",
+      primary: "#E0652A",
+      onPrimary: "#16181B",
+      primaryHover: "#C9561F",
       primaryContainer: "#FFF3EC",
       onPrimaryContainer: "#5E2A0F",
       secondary: "#3358D4",
