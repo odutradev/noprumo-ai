@@ -1,4 +1,4 @@
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { TreeNode } from "@utils/types/generator"
 import type { FileTreeProps } from "./types"

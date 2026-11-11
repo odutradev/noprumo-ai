@@ -7,7 +7,7 @@ import { buildSampleFiles } from "@utils/functions/generator/codeSample"
 import useGeneratorStore from "@stores/generator"
 import CodeBlock from "@components/codeBlock"
 import FileTree from "@components/fileTree"
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { PreviewPanelProps } from "./types"
 

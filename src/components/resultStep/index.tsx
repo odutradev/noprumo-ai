@@ -8,7 +8,7 @@ import useGeneratorStore from "@stores/generator"
 import StepHeader from "@components/stepHeader"
 import CodeBlock from "@components/codeBlock"
 import useAction from "@hooks/useAction"
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { IdentifierLanguage } from "@utils/types/generator"
 

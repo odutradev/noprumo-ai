@@ -1,6 +1,6 @@
 import { CheckIcon } from "enchase/icons"
 
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { StepperProps } from "./types"
 

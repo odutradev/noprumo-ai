@@ -9,7 +9,7 @@ import useGeneratorStore from "@stores/generator"
 import StepHeader from "@components/stepHeader"
 import CheckCard from "@components/checkCard"
 import CodeBlock from "@components/codeBlock"
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { EnabledProjectType } from "@utils/types/generator"
 

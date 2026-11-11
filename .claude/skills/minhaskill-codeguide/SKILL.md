@@ -51,7 +51,7 @@ A raiz de `src` separa o código pelo papel: actions de API, componentes, hooks,
     ├── components/
     │   └── userCard/
     │       ├── index.tsx  # componente
-    │       ├── styles.ts  # estilos
+    │       ├── styles.module.css  # estilos (CSS Module)
     │       └── types.ts  # props
     ├── hooks/
     │   └── useAction/
@@ -105,16 +105,16 @@ A raiz de `src` separa o código pelo papel: actions de API, componentes, hooks,
 ## 4. Componentes
 
 - **Declaração:** Arrow com props tipadas. Arrow function com o tipo nas props.
-- **Estrutura:** Pasta com index, styles e types. Um componente por pasta com `index.tsx`, `styles.ts` e `types.ts`.
+- **Estrutura:** Pasta com index, styles e types. Um componente por pasta com `index.tsx`, `styles.module.css` e `types.ts`. O componente importa o CSS Module direto (`import styles from "./styles.module.css"`); não crie um `styles.ts` só para reexportar o CSS.
 - **Exports:** Misto. Default para o componente, hook ou store principal do arquivo e named para tipos e funções de API. Um componente por arquivo.
 - **Props:** sempre tipadas no arquivo de tipos do componente.
 - **Componentes base:** https://www.npmjs.com/package/enchase.
-- **Estilos:** https://www.npmjs.com/package/enchase   de acordo com essa biblioteca.
+- **Estilos:** CSS Modules em `styles.module.css`, com os tokens do tema do enchase (`var(--enchase-*)`), sem cores fixas. Sem styled-components, Tailwind ou outro framework de CSS. Para ajustar um componente do enchase, use `className` ou os ganchos `--enchase-<slot>-<propriedade>`.
 
 ```text
 userCard/
 ├── index.tsx
-├── styles.ts
+├── styles.module.css
 └── types.ts
 ```
 
@@ -356,11 +356,11 @@ Use estes arquivos como modelo. Eles seguem todas as regras acima.
 ### `src/components/userCard/index.tsx`
 
 ```tsx
-import { Button, Typography } from "@mui/material"
+import { Button } from "enchase"
 
 import { updateUser } from "@actions/user"
 import useAction from "@hooks/useAction"
-import { Container } from "./styles"
+import styles from "./styles.module.css"
 
 import type { UserCardProps } from "./types"
 
@@ -377,29 +377,31 @@ const UserCard = ({ userId, name, onSaved }: UserCardProps) => {
     })
 
   return (
-    <Container>
-      <Typography variant="h6">{name}</Typography>
-      <Button variant="contained" onClick={handleSave}>Salvar</Button>
-    </Container>
+    <div className={styles.container}>
+      <h3 className={styles.name}>{name}</h3>
+      <Button onClick={handleSave}>Salvar</Button>
+    </div>
   )
 }
 
 export default UserCard
 ```
 
-### `src/components/userCard/styles.ts`
+### `src/components/userCard/styles.module.css`
 
-```typescript
-import styled from "styled-components"
-
-export const Container = styled.div`
+```css
+.container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-radius: ${({ theme }) => theme.shape.borderRadius}px;
-`
+  gap: var(--enchase-space-md);
+  padding: var(--enchase-space-md);
+  border-radius: var(--enchase-radius-md);
+}
+
+.name {
+  color: var(--enchase-color-text-primary);
+}
 ```
 
 ### `src/components/userCard/types.ts`
@@ -458,7 +460,7 @@ export default useUserStore
 - [ ] Componentes seguem "Pasta com index, styles e types" e "Arrow com props tipadas".
 - [ ] Props e estado estão tipados, sem `any`.
 - [ ] Chamadas à API passam por "Pasta actions/" e usam "Hook useAction".
-- [ ] Estilos usam https://www.npmjs.com/package/enchase   de acordo com essa biblioteca com os tokens do tema.
+- [ ] Estilos ficam em `styles.module.css`, importado direto pelo componente, e usam os tokens do tema do enchase.
 - [ ] Imports seguem "Alias por pasta".
 - [ ] Princípio "Retornos antecipados" aplicado.
 - [ ] Princípio "Imutabilidade" aplicado.

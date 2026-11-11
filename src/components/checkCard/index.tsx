@@ -1,7 +1,7 @@
 import { Button, Popover } from "enchase"
 import { CheckIcon } from "enchase/icons"
 
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { CheckCardProps } from "./types"
 

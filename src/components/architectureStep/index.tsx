@@ -8,7 +8,7 @@ import ChoiceCards from "@components/choiceCards"
 import useGeneratorStore from "@stores/generator"
 import StepHeader from "@components/stepHeader"
 import FileTree from "@components/fileTree"
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { Architecture, ChoiceOption, EnabledProjectType } from "@utils/types/generator"
 

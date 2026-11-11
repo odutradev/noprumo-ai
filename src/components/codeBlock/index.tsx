@@ -2,7 +2,7 @@ import { Button } from "enchase"
 
 import { tokenize } from "@utils/functions/highlight"
 import useAction from "@hooks/useAction"
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { CodeBlockProps } from "./types"
 

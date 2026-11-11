@@ -1,7 +1,7 @@
 import { Input } from "enchase"
 import { useId } from "react"
 
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { OptionChipsProps } from "./types"
 

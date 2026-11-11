@@ -2,7 +2,7 @@ import { Badge, Input } from "enchase"
 import { useId } from "react"
 
 import CodeBlock from "@components/codeBlock"
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { ChoiceCardsProps } from "./types"
 

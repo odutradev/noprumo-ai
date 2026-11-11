@@ -8,7 +8,7 @@ import useCustomField from "@hooks/useCustomField"
 import OptionChips from "@components/optionChips"
 import useGeneratorStore from "@stores/generator"
 import StepHeader from "@components/stepHeader"
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { NamingConfig } from "@utils/types/generator"
 import type { ReactElement } from "react"

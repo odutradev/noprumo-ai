@@ -1,6 +1,6 @@
 import { Tabs } from "enchase"
 
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { StepSectionsProps } from "./types"
 

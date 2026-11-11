@@ -18,7 +18,7 @@ import ProjectStep from "@components/projectStep"
 import NamingStep from "@components/namingStep"
 import ResultStep from "@components/resultStep"
 import Stepper from "@components/stepper"
-import styles from "./styles"
+import styles from "./styles.module.css"
 
 import type { EnabledProjectType, GeneratorConfig } from "@utils/types/generator"
 import type { PageMetadata } from "@utils/types/page"
