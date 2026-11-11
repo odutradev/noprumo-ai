@@ -136,6 +136,57 @@ const buildLayout = (architecture: FrontendArchitecture, config: GeneratorConfig
   }
 }
 
+const dirOf = (path: string) => path.split("/").slice(0, -1).join("/")
+
+const localComponentPath = (config: GeneratorConfig, n: Namer, baseDir: string, key: Parameters<Namer["component"]>[0]) => {
+  switch (config.frontend.componentStructure) {
+    case "singleFile":
+      return join(baseDir, `${n.component(key)}.tsx`)
+    case "folderNamed":
+      return join(baseDir, n.componentFolder(key), `${n.component(key)}.tsx`)
+    case "folderTriad":
+      return join(baseDir, n.componentFolder(key), "index.tsx")
+  }
+}
+
+export const hasPageScope = (config: GeneratorConfig) => config.architecture !== "featureSliced"
+
+export const getScopePaths = (config: GeneratorConfig) => {
+  const n = createNamer(config.naming)
+  const layout = getFrontendLayout(config)
+  const prefix = config.frontend.framework === "next" ? "_" : ""
+  const local = (key: Parameters<Namer["folder"]>[0]) => `${prefix}${n.folder(key)}`
+  return {
+    components: config.architecture === "featureFolders" ? join("src", n.folder("shared"), n.folder("components")) : join("src", n.folder("components")),
+    hooks: layout.hook.split("/").slice(0, -(config.naming.fileOrganization === "folderIndex" ? 2 : 1)).join("/"),
+    page: dirOf(layout.page),
+    subcomponents: local("subcomponents"),
+    hook: local("hookFolder"),
+    tabs: local("tabs"),
+    sections: local("sections"),
+    pageHook: n.fn("useUsersPage")
+  }
+}
+
+const scopeFiles = (config: GeneratorConfig, n: Namer, layout: Omit<FrontendLayout, "files">): ProjectFile[] => {
+  if (!hasPageScope(config)) return []
+  const { frontend } = config
+  const prefix = frontend.framework === "next" ? "_" : ""
+  const page = dirOf(layout.page)
+  const local = (key: Parameters<Namer["folder"]>[0]) => join(page, `${prefix}${n.folder(key)}`)
+  const isLocalScope = frontend.scopeSeparation === "globalLocal"
+  const hasFolders = frontend.componentStructure !== "singleFile"
+  const componentDir = dirOf(layout.component.main)
+  const globalSubcomponents = isLocalScope && hasFolders ? [{ path: localComponentPath(config, n, join(componentDir, n.folder("subcomponents")), "userAvatar"), note: "subcomponente do componente" }] : []
+  const globalSkeleton = frontend.splitFiles.includes("skeleton") && hasFolders ? [{ path: join(componentDir, "skeleton.tsx"), note: "skeleton" }] : []
+  const pageHook =
+    frontend.pageStructure === "orchestratorHook" ? [{ path: join(local("hookFolder"), "index.ts"), note: "orquestrador da página" }, ...(isUntyped(config) ? [] : [{ path: join(local("hookFolder"), "types.ts") }])] : []
+  const subcomponents = isLocalScope ? [{ path: localComponentPath(config, n, local("subcomponents"), "userFilters"), note: "subcomponente local" }] : []
+  const divisions = frontend.hasPageDivisions ? [{ path: localComponentPath(config, n, local("tabs"), "details"), note: "aba" }, { path: localComponentPath(config, n, local("sections"), "summary"), note: "seção" }] : []
+  const splits = frontend.splitFiles.map((kind) => ({ path: join(page, `${kind}.tsx`), note: kind === "skeleton" ? "skeleton" : "tabela" }))
+  return [...globalSubcomponents, ...globalSkeleton, ...pageHook, ...subcomponents, ...divisions, ...splits]
+}
+
 const testFiles = (config: GeneratorConfig, layout: Omit<FrontendLayout, "files">): ProjectFile[] => {
   const unit = config.conventions.testing === "none" ? [] : [{ path: layout.component.main.replace(/\.tsx$/, `.${config.conventions.testSuffix}.tsx`), note: "teste" }]
   switch (config.frontend.e2e) {
@@ -162,6 +213,7 @@ export const getFrontendLayout = (config: GeneratorConfig): FrontendLayout => {
     ...(isUntyped(config) ? [] : [{ path: layout.userType, note: "tipos" }]),
     { path: layout.hook, note: "hook" },
     { path: layout.page, note: "página" },
+    ...scopeFiles(config, n, layout),
     ...extra,
     ...testFiles(config, layout)
   ]

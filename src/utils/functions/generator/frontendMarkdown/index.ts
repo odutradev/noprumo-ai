@@ -1,18 +1,81 @@
-import { apiLayerOptions, asyncActionsOptions, componentDeclarationOptions, componentStructureOptions, dataFetchingOptions, e2eOptions, formValidationOptions, frontendFrameworkOptions, stateOptions, stylingOptions, uiLibraryOptions } from "@assets/data/generator/frontendOptions"
+import { apiLayerOptions, asyncActionsOptions, componentDeclarationOptions, componentStructureOptions, dataFetchingOptions, e2eOptions, formValidationOptions, frontendFrameworkOptions, pageStructureOptions, scopeSeparationOptions, splitFileOptions, stateOptions, stylingOptions, uiLibraryOptions } from "@assets/data/generator/frontendOptions"
 import { code, deployChecklistItem, extraPrinciples, gitSection, principlesSection, publishChecklistItem, replyLanguageRule, rootGuidePointer, samplesSection, selectedPrinciples } from "@utils/functions/generator/markdownHelpers"
 import { commentsOptions, exportOptions, importAliasOptions, importOrderOptions, languageOptions, quoteOptions, semicolonOptions, testSuffixOptions, testingOptions } from "@assets/data/generator/options"
 import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, typePrefixOptions } from "@assets/data/generator/naming"
+import { getFrontendLayout, getScopePaths, hasPageScope } from "@utils/functions/generator/frontend"
 import { architectureBlock, namingRow } from "@utils/functions/generator/skillMarkdown"
 import { createMdContext, sentence } from "@utils/functions/generator/mdContext"
 import { isJavaScript, toJsMarkdown } from "@utils/functions/generator/language"
 import { buildTree, renderTree } from "@utils/functions/generator/architecture"
 import { publishingSection } from "@utils/functions/generator/publishing"
-import { getFrontendLayout } from "@utils/functions/generator/frontend"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
 import { deploySection } from "@utils/functions/generator/deploy"
 import { createNamer } from "@utils/functions/generator/namer"
 
 import type { GeneratorConfig } from "@utils/types/generator"
+import type { MdContext } from "@utils/types/markdown"
+
+const scopeBlock = (ctx: MdContext) => {
+  const { config, byLanguage, tr, field } = ctx
+  const { frontend } = config
+  if (!hasPageScope(config) || ctx.customText("architecture")) return ""
+  const paths = getScopePaths(config)
+  const scope = field("frontend.scopeSeparation", scopeSeparationOptions, frontend.scopeSeparation)
+  const page = field("frontend.pageStructure", pageStructureOptions, frontend.pageStructure)
+  const hookFiles = isJavaScript(config) ? "`index.ts`" : byLanguage("`index.ts` e `types.ts`", "`index.ts` and `types.ts`")
+
+  const scopeLines = scope.isCustom
+    ? [`- **${byLanguage("Escopo", "Scope")}:** ${scope.label}`]
+    : frontend.scopeSeparation === "globalLocal"
+      ? [
+          byLanguage(`- **Global:** componentes e hooks usados por mais de uma página ficam em \`${paths.components}\` e \`${paths.hooks}\`.`, `- **Global:** components and hooks used by more than one page live in \`${paths.components}\` and \`${paths.hooks}\`.`),
+          byLanguage(
+            `- **Local:** o que só uma página usa fica dentro da pasta dela, em \`${paths.subcomponents}/\`, com uma pasta por subcomponente.`,
+            `- **Local:** what only one page uses lives inside its folder, in \`${paths.subcomponents}/\`, with one folder per subcomponent.`
+          ),
+          byLanguage(`- Um componente global pode ter \`${paths.subcomponents}/\` próprios, usados só por ele.`, `- A global component can have its own \`${paths.subcomponents}/\`, used only by it.`),
+          byLanguage(
+            "- Nunca importe algo local de outra página. Quando passar a ser usado em mais de um lugar, mova para a pasta global.",
+            "- Never import something local from another page. Once it is used in more than one place, move it to the global folder."
+          )
+        ]
+      : [byLanguage(`- Todo componente e hook fica em \`${paths.components}\` e \`${paths.hooks}\`, mesmo quando só uma página usa.`, `- Every component and hook lives in \`${paths.components}\` and \`${paths.hooks}\`, even when only one page uses it.`)]
+
+  const pageLines = page.isCustom
+    ? [`- **${byLanguage("Páginas", "Pages")}:** ${page.label}`]
+    : frontend.pageStructure === "orchestratorHook"
+      ? [
+          byLanguage(
+            `- Cada página tem uma pasta \`${paths.hook}/\` com ${hookFiles}. O hook (\`${paths.pageHook}\`) orquestra a página: estado, chamadas à API, valores derivados e handlers.`,
+            `- Each page has a \`${paths.hook}/\` folder with ${hookFiles}. The hook (\`${paths.pageHook}\`) orchestrates the page: state, API calls, derived values and handlers.`
+          ),
+          byLanguage(
+            "- O index da página e os subcomponentes locais consomem esse hook em vez de receber estado por props em cadeia. Estado compartilhado entre eles fica num store ou contexto da página lido pelo hook, para que todos vejam o mesmo valor.",
+            "- The page index and its local subcomponents consume that hook instead of drilling state through props. State shared between them lives in a page store or context read by the hook, so all of them see the same value."
+          )
+        ]
+      : [`- ${page.description}`]
+
+  const divisionLines = frontend.hasPageDivisions
+    ? [
+        byLanguage(
+          `- Quando a página cresce, divida por necessidade em pastas como \`${paths.tabs}/\` e \`${paths.sections}/\` (ou \`steps/\`, \`modals/\`), uma pasta por parte, com a mesma estrutura de um componente. Não crie essas pastas antes de precisar.`,
+          `- When a page grows, split it as needed into folders such as \`${paths.tabs}/\` and \`${paths.sections}/\` (or \`steps/\`, \`modals/\`), one folder per part, with the same structure as a component. Don't create these folders before you need them.`
+        )
+      ]
+    : []
+
+  const splitLines = splitFileOptions.filter((option) => frontend.splitFiles.includes(option.value)).map((option) => `- ${tr(option.description)}`)
+  const example = !page.isCustom && frontend.pageStructure === "orchestratorHook" && page.example ? `\n\n${code(page.example, "tsx")}` : ""
+
+  return `**${byLanguage("Escopo global e local", "Global and local scope")}:**
+
+${scopeLines.join("\n")}
+
+**${byLanguage("Páginas", "Pages")}:**
+
+${[...pageLines, ...divisionLines, ...splitLines].join("\n")}${example}`
+}
 
 export const buildFrontendMarkdown = (config: GeneratorConfig, isWorkspaceApp = false): string => {
   const ctx = createMdContext(config, isWorkspaceApp)
@@ -75,6 +138,7 @@ export const buildFrontendMarkdown = (config: GeneratorConfig, isWorkspaceApp = 
   const checklist = [
     byLanguage(`Nomes seguem a tabela de nomenclatura e estão em ${language.label.toLowerCase()}.`, `Names follow the naming table and are in ${language.label}.`),
     byLanguage("Arquivos estão na pasta certa da arquitetura.", "Files are in the right folder for the architecture."),
+    hasPageScope(config) && !ctx.customText("architecture") ? byLanguage("O que é local fica dentro da página ou do componente, e o que é compartilhado fica nas pastas globais.", "Local code stays inside its page or component, and shared code lives in the global folders.") : "",
     byLanguage(`Componentes seguem "${structure.label}" e "${declaration.label}".`, `Components follow "${structure.label}" and "${declaration.label}".`),
     byLanguage("Props e estado estão tipados, sem `any`.", "Props and state are typed, with no `any`."),
     byLanguage(`Chamadas à API passam por "${apiLayer.label}" e usam "${asyncActions.label}".`, `API calls go through "${apiLayer.label}" and use "${asyncActions.label}".`),
@@ -116,6 +180,8 @@ ${byLanguage("Este guia define as regras de arquitetura, componentes, estado e c
 | ${byLanguage("Testes E2E", "E2E tests")} | ${e2e.label} |
 
 ${architectureBlock(ctx, tree)}
+
+${scopeBlock(ctx)}
 
 ## 3. ${byLanguage("Nomenclatura", "Naming")}
 
