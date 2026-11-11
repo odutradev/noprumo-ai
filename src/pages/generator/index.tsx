@@ -21,6 +21,7 @@ import NamingStep from "@components/namingStep"
 import ResultStep from "@components/resultStep"
 import Stepper from "@components/stepper"
 import styles from "./styles.module.css"
+import appConfig from "@assets/config"
 
 import type { EnabledProjectType, GeneratorConfig } from "@utils/types/generator"
 import type { GeneratorStep } from "@stores/generator/types"
@@ -97,7 +98,7 @@ const GeneratorPage = () => {
       <Navbar
         className={styles.navbar}
         sections={[]}
-        logo={<span className={styles.logo}>minhaskill</span>}
+        logo={<span className={styles.logo}>{appConfig.name}</span>}
         actions={
           <div className={styles.presets}>
             <Button variant="ghost" size="sm" onClick={() => setPendingPreset(typePresets.mine)}>

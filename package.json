@@ -1,9 +1,9 @@
 {
-  "name": "minhaskill",
+  "name": "prumo-ai",
   "version": "0.1.4",
   "private": true,
   "type": "module",
-  "description": "minhaskill frontend",
+  "description": "Prumo: transforma os padrões do seu time em instruções que agentes de IA seguem",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -1,6 +1,6 @@
-# minhaskill
+# prumo-ai
 
-Frontend do **minhaskill**, um gerador de skills para o Claude Code. A pessoa escolhe o tipo de projeto, a stack, a arquitetura, a nomenclatura e as convenções de código, vê o resultado ao vivo e baixa um `SKILL.md` pronto para instalar em `.claude/skills/`.
+Frontend do **Prumo**, que transforma os padrões do seu time em instruções que agentes de IA seguem. A pessoa escolhe o tipo de projeto (backend, frontend ou fullstack), a stack, a arquitetura, a nomenclatura, as convenções de código, commits, Docker e publicação, vê o resultado ao vivo e baixa um `SKILL.md` ou `CLAUDE.md` pronto para instalar.
 
 Construído com React + Vite + TypeScript.
 
@@ -16,7 +16,7 @@ Construído com React + Vite + TypeScript.
 
 ## Estrutura
 
-O projeto segue a skill `.claude/skills/minhaskill-codeguide/SKILL.md` (pastas por tipo).
+O projeto segue o guia `.claude/CLAUDE.md` (pastas por tipo).
 
 ```
 src/
@@ -64,6 +64,6 @@ O servidor sobe em `http://localhost:8080`.
 ## Docker
 
 ```bash
-docker build -t minhaskill .
-docker run -p 80:80 minhaskill
+docker build -t prumo-ai .
+docker run -p 80:80 prumo-ai
 ```

@@ -35,6 +35,22 @@ const migrate = (persisted: unknown, version: number) => {
   return { ...state, config, configs, step: clampStep(config, state.step), format: state.format ?? "skill" } as GeneratorState
 }
 
+const storageKey = "prumo-ai-generator"
+const legacyStorageKey = "minhaskill-generator"
+
+const moveLegacyStorage = () => {
+  try {
+    const legacy = localStorage.getItem(legacyStorageKey)
+    if (!legacy || localStorage.getItem(storageKey)) return
+    localStorage.setItem(storageKey, legacy)
+    localStorage.removeItem(legacyStorageKey)
+  } catch {
+    return
+  }
+}
+
+moveLegacyStorage()
+
 const useGeneratorStore = create<GeneratorState>()(
   persist(
     (set) => ({
@@ -81,7 +97,7 @@ const useGeneratorStore = create<GeneratorState>()(
         }),
       applyPreset: (preset) => set((state) => withConfig(state, preset))
     }),
-    { name: "minhaskill-generator", version: 7, migrate }
+    { name: storageKey, version: 7, migrate }
   )
 )
 

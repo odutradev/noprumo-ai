@@ -1,5 +1,5 @@
 ---
-name: minhaskill-codeguide
+name: prumo-ai-codeguide
 description: Padrões obrigatórios de arquitetura, componentes, nomenclatura e código do frontend. Use ao criar, refatorar ou revisar páginas, componentes, hooks, stores e chamadas à API deste projeto.
 ---
 

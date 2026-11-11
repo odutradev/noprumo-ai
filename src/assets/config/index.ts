@@ -1,6 +1,6 @@
 const appConfig = {
-  name: "minhaskill",
-  description: "Gerador de skills para o Claude Code"
+  name: "prumo-ai",
+  description: "Transforma os padrões do seu time em instruções que agentes de IA seguem"
 }
 
 export default appConfig
