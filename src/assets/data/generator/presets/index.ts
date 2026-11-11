@@ -3,7 +3,7 @@ import { goDefaults } from "@assets/data/generator/go"
 
 import type { EnabledProjectType, FrontendConfig, GeneratorConfig, NamingConfig, PublishingConfig } from "@utils/types/generator"
 
-const frontendDefaults: FrontendConfig = {
+export const frontendDefaults: FrontendConfig = {
   framework: "react",
   uiLibrary: "mui",
   styling: "styledComponents",
@@ -14,7 +14,11 @@ const frontendDefaults: FrontendConfig = {
   componentDeclaration: "arrowFC",
   componentStructure: "folderTriad",
   apiLayer: "actionsFolder",
-  asyncActions: "useAction"
+  asyncActions: "useAction",
+  scopeSeparation: "globalLocal",
+  pageStructure: "orchestratorHook",
+  hasPageDivisions: true,
+  splitFiles: ["skeleton", "table"]
 }
 
 const publishingDefaults: PublishingConfig = {

@@ -435,5 +435,19 @@ export const en: Record<string, string> = {
   "Handlers de evento": "Event handlers",
   "Prefixo de tipos": "Type prefix",
   Booleanos: "Booleans",
-  "Número das tabelas": "Table number"
+  "Número das tabelas": "Table number",
+  "Global e local": "Global and local",
+  "O que várias páginas usam fica nas pastas globais. O que só uma página usa fica dentro dela, e um componente global pode ter subcomponentes próprios.":
+    "What several pages use lives in the global folders. What only one page uses lives inside it, and a global component can have its own subcomponents.",
+  "Tudo global": "Everything global",
+  "Todo componente e hook fica nas pastas globais, mesmo quando só uma página usa.": "Every component and hook lives in the global folders, even when only one page uses it.",
+  "Hook orquestrador": "Orchestrator hook",
+  "Cada página tem uma pasta `hook` com `index.ts` e `types.ts` que concentra estado, dados e handlers. O index da página e os subcomponentes consomem esse hook.":
+    "Each page has a `hook` folder with `index.ts` and `types.ts` that holds state, data and handlers. The page index and its subcomponents consume that hook.",
+  "Página direta": "Direct page",
+  "A página concentra estado e handlers no próprio index e passa dados e callbacks aos subcomponentes por props.": "The page keeps state and handlers in its own index and passes data and callbacks to subcomponents through props.",
+  "Skeleton em arquivo próprio": "Skeleton in its own file",
+  "O estado de carregamento fica em `skeleton.tsx`, ao lado do index, e não dentro do componente.": "The loading state lives in `skeleton.tsx`, next to the index, not inside the component.",
+  "Tabela em arquivo próprio": "Table in its own file",
+  "Colunas, formatação e configuração de tabela ficam em `table.tsx`, ao lado do index.": "Columns, formatting and table setup live in `table.tsx`, next to the index."
 }

@@ -1,4 +1,4 @@
-import type { ApiLayer, AsyncActions, ChoiceOption, ComponentDeclaration, ComponentStructure, DataFetching, E2eTesting, FormValidation, FrontendFramework, StateManagement, Styling, UiLibrary } from "@utils/types/generator"
+import type { ApiLayer, AsyncActions, ChoiceOption, ComponentDeclaration, ComponentStructure, DataFetching, E2eTesting, FormValidation, FrontendFramework, PageStructure, ScopeSeparation, SplitFile, StateManagement, Styling, UiLibrary } from "@utils/types/generator"
 
 export const frontendFrameworkOptions: ChoiceOption<FrontendFramework>[] = [
   { value: "react", label: "React + Vite", description: "SPA com React Router, build rápido e code splitting por rota.", example: "createRoot(root).render(<App />)" },
@@ -69,4 +69,24 @@ export const asyncActionsOptions: ChoiceOption<AsyncActions>[] = [
   { value: "useAction", label: "Hook useAction", description: "Um hook único executa a ação com toasts de pending, success e error e um callback no fim.", example: "useAction({\n  action: async () => await updateUser(data),\n  toastMessages: { pending: 'Salvando...', success: 'Salvo', error: 'Erro ao salvar' },\n  callback: () => navigate('/users')\n})" },
   { value: "tryCatch", label: "try/catch local", description: "Cada handler trata loading e erro.", example: "try {\n  await updateUser(data)\n} catch (error) {\n  toast.error(error.message)\n}" },
   { value: "mutationHook", label: "Hooks de mutation", description: "Um hook por mutation, com estado da requisição.", example: "const { mutate, isPending } = useUpdateUser()" }
+]
+
+export const scopeSeparationOptions: ChoiceOption<ScopeSeparation>[] = [
+  { value: "globalLocal", label: "Global e local", description: "O que várias páginas usam fica nas pastas globais. O que só uma página usa fica dentro dela, e um componente global pode ter subcomponentes próprios." },
+  { value: "globalOnly", label: "Tudo global", description: "Todo componente e hook fica nas pastas globais, mesmo quando só uma página usa." }
+]
+
+export const pageStructureOptions: ChoiceOption<PageStructure>[] = [
+  {
+    value: "orchestratorHook",
+    label: "Hook orquestrador",
+    description: "Cada página tem uma pasta `hook` com `index.ts` e `types.ts` que concentra estado, dados e handlers. O index da página e os subcomponentes consomem esse hook.",
+    example: "const UsersPage = () => {\n  const { isLoading } = useUsersPage()\n  if (isLoading) return <UsersSkeleton />\n  return <UserFilters />\n}\n\nconst UserFilters = () => {\n  const { filters, handleSearch } = useUsersPage()\n  return <SearchInput value={filters.search} onChange={handleSearch} />\n}"
+  },
+  { value: "flat", label: "Página direta", description: "A página concentra estado e handlers no próprio index e passa dados e callbacks aos subcomponentes por props." }
+]
+
+export const splitFileOptions: { value: SplitFile; label: string; description: string; fileName: string }[] = [
+  { value: "skeleton", label: "Skeleton em arquivo próprio", description: "O estado de carregamento fica em `skeleton.tsx`, ao lado do index, e não dentro do componente.", fileName: "skeleton.tsx" },
+  { value: "table", label: "Tabela em arquivo próprio", description: "Colunas, formatação e configuração de tabela ficam em `table.tsx`, ao lado do index.", fileName: "table.tsx" }
 ]

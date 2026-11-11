@@ -160,7 +160,16 @@ export const vocabulary = {
   register: { en: ["register"], pt: ["registrar"] },
   resource: { en: ["resource"], pt: ["recurso"] },
   queries: { en: ["queries"], pt: ["queries"] },
-  collection: { en: ["collection"], pt: ["colecao"] }
+  collection: { en: ["collection"], pt: ["colecao"] },
+  subcomponents: { en: ["subcomponents"], pt: ["subcomponentes"] },
+  hookFolder: { en: ["hook"], pt: ["hook"] },
+  tabs: { en: ["tabs"], pt: ["abas"] },
+  sections: { en: ["sections"], pt: ["secoes"] },
+  details: { en: ["details"], pt: ["detalhes"] },
+  summary: { en: ["summary"], pt: ["resumo"] },
+  userAvatar: { en: ["user", "avatar"], pt: ["avatar", "usuario"] },
+  userFilters: { en: ["user", "filters"], pt: ["filtros", "usuarios"] },
+  useUsersPage: { en: ["use", "users", "page"], pt: ["use", "pagina", "usuarios"] }
 } satisfies Record<string, Term>
 
 export const words = (key: VocabularyKey, language: IdentifierLanguage): string[] => vocabulary[key][language]

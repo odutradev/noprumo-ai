@@ -2,7 +2,7 @@ import type { AppProjectType, ContainerService, ConventionsConfig, DeployConfig,
 
 export type GeneratorStep = "project" | "language" | "architecture" | "naming" | "conventions" | "commits" | "workspace" | "deploy" | "publish" | "result"
 
-export type LegacyConfig = Omit<GeneratorConfig, "deploy" | "workspace" | "go"> & Partial<Pick<GeneratorConfig, "deploy" | "workspace" | "go">>
+export type LegacyConfig = Omit<GeneratorConfig, "deploy" | "workspace" | "go" | "frontend"> & Partial<Pick<GeneratorConfig, "deploy" | "workspace" | "go">> & { frontend: Partial<FrontendConfig> }
 
 export interface LegacyState {
   config: LegacyConfig

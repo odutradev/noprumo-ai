@@ -1,7 +1,7 @@
 import { persist } from "zustand/middleware"
 import { create } from "zustand"
 
-import { bonfirePreset, codeGuidePreset, fullstackPreset } from "@assets/data/generator/presets"
+import { bonfirePreset, codeGuidePreset, frontendDefaults, fullstackPreset } from "@assets/data/generator/presets"
 import { deployDefaults, workspaceDefaults } from "@assets/data/generator/deployOptions"
 import { normalizeForLanguage } from "@utils/functions/generator/language"
 import { goDefaults } from "@assets/data/generator/go"
@@ -19,7 +19,7 @@ export const getSteps = (config: GeneratorConfig) => stepsByType[config.projectT
 
 const initialConfigs: Record<EnabledProjectType, GeneratorConfig> = { backend: codeGuidePreset, frontend: bonfirePreset, fullstack: fullstackPreset }
 
-const withDefaults = (config: LegacyConfig): GeneratorConfig => ({ deploy: deployDefaults, workspace: workspaceDefaults, ...config, go: { ...goDefaults, ...config.go } })
+const withDefaults = (config: LegacyConfig): GeneratorConfig => ({ deploy: deployDefaults, workspace: workspaceDefaults, ...config, frontend: { ...frontendDefaults, ...config.frontend }, go: { ...goDefaults, ...config.go } })
 
 const withConfig = (state: GeneratorState, config: GeneratorConfig) => ({
   config,
@@ -30,7 +30,7 @@ const clampStep = (config: GeneratorConfig, step: number) => Math.min(Math.max(s
 
 const migrate = (persisted: unknown, version: number) => {
   const initial = { config: codeGuidePreset, configs: initialConfigs, step: 0, format: "claudeMd" }
-  if (version < 6 || version > 8) return initial as GeneratorState
+  if (version < 6 || version > 9) return initial as GeneratorState
   const state = persisted as LegacyState
   const config = withDefaults(state.config)
   const legacyConfigs = state.configs as Record<string, LegacyConfig | undefined>
@@ -109,7 +109,7 @@ const useGeneratorStore = create<GeneratorState>()(
           return withConfig(state, { ...state.config, go: { ...state.config.go, principles: next } })
         })
     }),
-    { name: storageKey, version: 9, migrate }
+    { name: storageKey, version: 10, migrate }
   )
 )
 

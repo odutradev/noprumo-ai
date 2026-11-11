@@ -18,6 +18,9 @@ export type ComponentStructure = "folderTriad" | "folderNamed" | "singleFile"
 export type ApiLayer = "actionsFolder" | "servicesFolder" | "colocated"
 export type AsyncActions = "useAction" | "tryCatch" | "mutationHook"
 export type HandlerPrefix = "handle" | "on"
+export type ScopeSeparation = "globalLocal" | "globalOnly"
+export type PageStructure = "orchestratorHook" | "flat"
+export type SplitFile = "skeleton" | "table"
 export type CommitFormat = "conventional" | "free"
 export type BranchNaming = "typeSlash" | "free"
 export type CommitGranularity = "logical" | "perStep" | "single"
@@ -163,6 +166,10 @@ export interface FrontendConfig {
   componentStructure: ComponentStructure
   apiLayer: ApiLayer
   asyncActions: AsyncActions
+  scopeSeparation: ScopeSeparation
+  pageStructure: PageStructure
+  hasPageDivisions: boolean
+  splitFiles: SplitFile[]
 }
 
 export interface PublishingConfig {
