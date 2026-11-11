@@ -1,0 +1,201 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-lg);
+  min-inline-size: 0;
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  block-size: clamp(20rem, 44vw, 34rem);
+  padding-block-end: var(--enchase-space-xl);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-2xl);
+  background-color: var(--enchase-color-surface);
+  background-image: linear-gradient(to right, var(--enchase-color-border-light) var(--enchase-border-width), transparent var(--enchase-border-width));
+  background-size: 3rem 100%;
+  background-position: center;
+  overflow: hidden;
+}
+
+.anchor {
+  position: absolute;
+  inset-block-start: calc(var(--enchase-space-md) - 6px);
+  inset-inline-start: calc(50% - 6px);
+  z-index: 2;
+  inline-size: 12px;
+  block-size: 12px;
+  border-radius: var(--enchase-radius-full);
+  background: var(--enchase-color-text-primary);
+  animation: anchorPop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) 0.1s both;
+}
+
+.pendulum {
+  position: absolute;
+  inset-block: var(--enchase-space-md) 0;
+  inset-inline-start: calc(50% - 2.5rem);
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  inline-size: 5rem;
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+.line {
+  display: block;
+  inline-size: 2px;
+  block-size: 62%;
+  background: var(--enchase-color-text-primary);
+  transform-origin: 50% 0;
+  animation: lineDraw 1s cubic-bezier(0.65, 0, 0.2, 1) 0.2s both;
+}
+
+.bob {
+  inline-size: 3.5rem;
+  block-size: auto;
+  margin-block-start: -0.4rem;
+  fill: var(--enchase-color-primary);
+  overflow: visible;
+  animation: bobDrop 0.7s cubic-bezier(0.3, 1.5, 0.5, 1) 0.95s both;
+}
+
+.digits {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.04em;
+  font-size: clamp(7rem, 19vw, 15rem);
+  font-weight: 650;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+.digit {
+  display: inline-block;
+  transform: translateY(var(--shift)) rotate(var(--tilt));
+  transform-origin: 50% 100%;
+  transition: transform 0.9s cubic-bezier(0.3, 1.6, 0.45, 1) calc(var(--i) * 90ms);
+}
+
+.digitInner {
+  display: inline-block;
+  animation: digitFall 0.9s cubic-bezier(0.2, 0.9, 0.2, 1) calc(0.3s + var(--i) * 120ms) both;
+}
+
+.digit[data-light] {
+  font-weight: var(--enchase-font-weight-light);
+  color: var(--enchase-color-text-secondary);
+}
+
+.root[data-aligned] .digit {
+  transform: none;
+}
+
+.baseline {
+  position: absolute;
+  inset-inline: 12%;
+  inset-block-end: calc(var(--enchase-space-xl) - 1px);
+  block-size: 0;
+  border-block-end: 2px dashed var(--enchase-color-border-strong);
+  transition: border-color 0.4s ease 0.4s;
+}
+
+.root[data-aligned] .baseline {
+  border-block-end-style: solid;
+  border-block-end-color: var(--enchase-color-success);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--enchase-space-sm);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--enchase-space-sm);
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xs);
+  letter-spacing: 0.04em;
+  color: var(--enchase-color-text-secondary);
+}
+
+.dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: var(--enchase-radius-full);
+  background: var(--enchase-color-primary);
+  transition: background-color 0.3s ease;
+}
+
+.root[data-aligned] .dot {
+  background: var(--enchase-color-success);
+}
+
+@keyframes anchorPop {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes lineDraw {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes bobDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-2.5rem) scale(0.6);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes digitFall {
+  from {
+    opacity: 0;
+    transform: translateY(-60%) rotate(-18deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anchor,
+  .line,
+  .bob,
+  .digitInner {
+    animation: none;
+  }
+
+  .digit {
+    transition: none;
+  }
+}
