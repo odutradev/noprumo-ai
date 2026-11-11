@@ -1,3 +1,7 @@
+.root {
+  overflow-x: clip;
+}
+
 .navbar [data-slot="container"],
 .page {
   box-sizing: border-box;
@@ -37,11 +41,17 @@
   animation: guidesIn 1.6s ease both;
 }
 
+.hero {
+  --progress: 0;
+}
+
 .heroText {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--enchase-space-lg);
+  opacity: clamp(0, 1 - var(--progress) * 1.6, 1);
+  transform: translateY(calc(var(--progress) * -4rem));
 }
 
 .badge {
@@ -119,7 +129,7 @@
 }
 
 .heroPlumb {
-  --plumb-length: 62%;
+  --plumb-length: calc(62% + var(--progress) * 26%);
   --plumb-bob: 6rem;
 
   align-self: stretch;
@@ -131,6 +141,10 @@
   gap: var(--enchase-space-2xl);
   padding-block: var(--enchase-space-3xl);
   scroll-margin-block-start: var(--enchase-navbar-bar-height, 4rem);
+}
+
+.pinnedSection {
+  padding-block-start: var(--enchase-space-xl);
 }
 
 .sectionHeader {
@@ -308,7 +322,7 @@
 
   .heroPlumb {
     --plumb-bob: 2.75rem;
-    --plumb-length: 62%;
+    --plumb-length: calc(62% + var(--progress) * 20%);
 
     grid-row: 1;
     block-size: 10rem;
