@@ -5,6 +5,7 @@ import { architectureInfo, frameworkOptions, languageOptions, projectTypeOptions
 import { frontendFrameworkOptions } from "@assets/data/generator/frontendOptions"
 import { commitGranularityOptions } from "@assets/data/generator/commitOptions"
 import { selectedPrinciples } from "@utils/functions/generator/markdownHelpers"
+import { getOutputFile } from "@utils/functions/generator/outputFormat"
 import useGeneratorStore, { generatorSteps } from "@stores/generator"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
 import ArchitectureStep from "@components/architectureStep"
@@ -32,6 +33,7 @@ const labelOf = <T extends string>(options: { value: T; label: string }[], value
 const GeneratorPage = () => {
   const config = useGeneratorStore((state) => state.config)
   const step = useGeneratorStore((state) => state.step)
+  const format = useGeneratorStore((state) => state.format)
   const setStep = useGeneratorStore((state) => state.setStep)
   const applyPreset = useGeneratorStore((state) => state.applyPreset)
   const [pendingPreset, setPendingPreset] = useState<GeneratorConfig | null>(null)
@@ -57,7 +59,7 @@ const GeneratorPage = () => {
     { label: "Convenções", hint: `${selectedPrinciples(config).length} princípios` },
     { label: "Commits", hint: `${labelOf(commitGranularityOptions, config.conventions.commitGranularity)} · ${config.conventions.commitLanguage === "en" ? "Inglês" : "Português"}` },
     { label: "Publicação", hint: config.publishing.isEnabled ? "project-publisher" : "Desligada" },
-    { label: "Resultado", hint: "SKILL.md" }
+    { label: "Resultado", hint: getOutputFile(format, config.skillName).fileName }
   ]
 
   const CurrentStep = stepComponents[step]

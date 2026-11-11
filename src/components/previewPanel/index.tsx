@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react"
 import { Badge, Tabs } from "enchase"
 
+import { buildOutputMarkdown, getOutputFile } from "@utils/functions/generator/outputFormat"
 import { buildTree, getProjectFiles } from "@utils/functions/generator/architecture"
-import { buildSkillMarkdown } from "@utils/functions/generator/skillMarkdown"
 import { buildSampleFiles } from "@utils/functions/generator/codeSample"
 import useGeneratorStore from "@stores/generator"
 import CodeBlock from "@components/codeBlock"
@@ -13,10 +13,12 @@ import type { PreviewPanelProps } from "./types"
 
 const PreviewPanel = ({ hasHeader = true }: PreviewPanelProps) => {
   const config = useGeneratorStore((state) => state.config)
+  const format = useGeneratorStore((state) => state.format)
   const [fileIndex, setFileIndex] = useState(0)
   const files = useMemo(() => buildSampleFiles(config), [config])
   const tree = useMemo(() => buildTree(getProjectFiles(config)), [config])
-  const markdown = useMemo(() => buildSkillMarkdown(config), [config])
+  const markdown = useMemo(() => buildOutputMarkdown(config, format), [config, format])
+  const { fileName } = getOutputFile(format, config.skillName)
   const activeFile = files[Math.min(fileIndex, files.length - 1)]
 
   const items = [
@@ -49,12 +51,12 @@ const PreviewPanel = ({ hasHeader = true }: PreviewPanelProps) => {
       value: "skill",
       label: (
         <span className={styles.tabLabel}>
-          SKILL.md <Badge size="sm">{markdown.split("\n").length}</Badge>
+          {fileName} <Badge size="sm">{markdown.split("\n").length}</Badge>
         </span>
       ),
       content: (
         <div className={styles.tabBody}>
-          <CodeBlock code={markdown} title="SKILL.md" isPlain isCopyable />
+          <CodeBlock code={markdown} title={fileName} isPlain isCopyable />
         </div>
       )
     }
