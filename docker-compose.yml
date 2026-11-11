@@ -1,0 +1,48 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        VITE_UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
+    restart: unless-stopped
+    expose:
+      - "80"
+
+  noprumo-analytics:
+    image: ghcr.io/umami-software/umami:latest
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD:?defina UMAMI_DB_PASSWORD}@noprumo-analytics-db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET:?defina UMAMI_APP_SECRET}
+      TWO_FACTOR_ENCRYPTION_KEY: ${UMAMI_TWO_FACTOR_KEY:?defina UMAMI_TWO_FACTOR_KEY}
+      CLIENT_IP_HEADER: x-real-ip
+      DISABLE_TELEMETRY: "1"
+    depends_on:
+      noprumo-analytics-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:3000/api/heartbeat || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  noprumo-analytics-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD:?defina UMAMI_DB_PASSWORD}
+    volumes:
+      - noprumo-analytics-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami -d umami"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  noprumo-analytics-data:
