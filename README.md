@@ -115,10 +115,13 @@ O `docker-compose.yml` sobe o site e um [Umami](https://umami.is) self-hosted co
    | `UMAMI_APP_SECRET` | Segredo dos tokens de login do Umami. |
    | `UMAMI_TWO_FACTOR_KEY` | Chave de 64 caracteres hex para o 2FA. |
    | `UMAMI_WEBSITE_ID` | ID do site no Umami. Fica vazio no primeiro deploy. |
+   | `UMAMI_RETENTION_MONTHS` | Opcional. Por quantos meses os dados de acesso ficam guardados. O padrão é `24`. |
 
 3. Em **Domains**, ligue o domínio do site ao serviço `app` na porta `80` e um domínio para o painel (por exemplo, `umami.seudominio.com`) ao serviço `noprumo-analytics` na porta `3000`.
 4. Faça o deploy, entre no painel com `admin` / `umami` e **troque a senha na hora**.
 5. Cadastre o site no Umami, copie o ID para `UMAMI_WEBSITE_ID` e faça o deploy de novo. O ID entra no build, então sem ele o site funciona normalmente, só que sem registrar acessos.
+
+O serviço `noprumo-analytics-retention` roda uma vez por dia o [`deploy/umami/retention.sql`](deploy/umami/retention.sql) e apaga do banco os acessos e eventos mais antigos que `UMAMI_RETENTION_MONTHS`. O mesmo valor entra no build e aparece no texto da página [`/privacy`](https://noprumo.odutra.com/privacy), então a página e a limpeza sempre dizem o mesmo prazo. O resultado de cada limpeza fica nos logs desse serviço no Dokploy.
 
 Toda a configuração fica em [`src/assets/config/analytics`](src/assets/config/analytics/index.ts) e os eventos são tipados em [`src/utils/types/analytics`](src/utils/types/analytics/index.ts). Nos componentes, use o hook `useAnalytics`:
 
