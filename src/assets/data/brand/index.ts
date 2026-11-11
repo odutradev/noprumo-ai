@@ -221,8 +221,8 @@ export const colorScales: ColorScale[] = [
 ]
 
 export const keyColors: KeyColor[] = [
-  { name: "Laranja prumo", hex: "#FF8A4C", token: "--np-primary (escuro)", usage: "O peso do símbolo, a ação principal e o foco. Use pouco: é o que guia o olhar." },
-  { name: "Laranja símbolo", hex: "#E0652A", token: "--np-primary (claro)", usage: "O peso do símbolo e a ação principal no tema claro, com texto grafite por cima, como no tema escuro." },
+  { name: "Laranja prumo", hex: "#FF8A4C", token: "--np-primary", usage: "O peso do símbolo, a ação principal e o foco, nos dois temas. Use pouco: é o que guia o olhar." },
+  { name: "Laranja símbolo", hex: "#E0652A", token: "--np-mark (claro)", usage: "O peso do símbolo nos arquivos estáticos sobre fundo claro, como impressos e imagens." },
   { name: "Laranja texto", hex: "#B4501B", token: "Texto pequeno (claro)", usage: "Para texto corrido em laranja sobre branco, quando precisar de contraste de 4,9:1." },
   { name: "Azul giz", hex: "#7AA2FF", token: "--np-link (escuro)", usage: "Links, informação e seleção no tema escuro." },
   { name: "Grafite", hex: "#0F1012", token: "--np-bg (escuro)", usage: "Fundo do tema escuro, do ícone do app e das telas de apresentação." },
@@ -243,8 +243,8 @@ export const themeTokens: ThemeToken[] = [
   { name: "--np-border", dark: "#2C3036", light: "#D9DCE0" },
   { name: "--np-text", dark: "#F2F1EE", light: "#16181B" },
   { name: "--np-text-muted", dark: "#878D97", light: "#5E646E" },
-  { name: "--np-primary", dark: "#FF8A4C", light: "#E0652A" },
-  { name: "--np-on-primary", dark: "#0F1012", light: "#16181B" },
+  { name: "--np-primary", dark: "#FF8A4C", light: "#FF8A4C" },
+  { name: "--np-on-primary", dark: "#0F1012", light: "#0F1012" },
   { name: "--np-mark", dark: "#FF8A4C", light: "#E0652A" },
   { name: "--np-link", dark: "#7AA2FF", light: "#3358D4" }
 ]
