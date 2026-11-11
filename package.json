@@ -1,6 +1,6 @@
 {
   "name": "noprumo",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "private": true,
   "type": "module",
   "description": "noprumo: transforma os seus padrões, ou os do seu time, em um guia que agentes de IA leem e seguem",
