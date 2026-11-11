@@ -44,6 +44,21 @@ const plans: Record<EnabledProjectType, Record<"perStep" | "logical" | "single",
       draft("docs", "", "document user profile", "documenta o perfil do usuário", "Explain the page and its permissions.", "Explica a página e suas permissões.")
     ],
     single: [draft("feat", "users", "add user profile editing", "adiciona edição do perfil do usuário", "Types, actions, component, page, tests and docs for the user profile.", "Tipos, actions, componente, página, testes e docs do perfil do usuário.")]
+  },
+  fullstack: {
+    perStep: [
+      draft("feat", "api", "add user profile schemas and repository", "adiciona schemas e repositório do perfil", "Base types and data access for the profile endpoint.", "Tipos base e acesso a dados do endpoint de perfil."),
+      draft("feat", "api", "add update profile action", "adiciona action de atualização do perfil", "Validate the body and return the updated user.", "Valida o body e retorna o usuário atualizado."),
+      draft("feat", "frontend", "add profile types and actions", "adiciona tipos e actions do perfil", "Mirror the API response types in the frontend.", "Espelha os tipos de resposta da API no frontend."),
+      draft("feat", "frontend", "add profile page", "adiciona página de perfil", "Edit the profile with feedback toasts.", "Edita o perfil com toasts de feedback."),
+      draft("chore", "", "add profile env vars to compose", "adiciona variáveis do perfil ao compose", "Keep .env.example and docker-compose.yml in sync.", "Mantém .env.example e docker-compose.yml em sincronia.")
+    ],
+    logical: [
+      draft("feat", "api", "add update profile endpoint", "adiciona endpoint de atualização do perfil", "Schemas, repository and action for the profile.", "Schemas, repositório e action do perfil."),
+      draft("feat", "frontend", "add profile page", "adiciona página de perfil", "Types, actions and page wired to the new endpoint.", "Tipos, actions e página ligados ao novo endpoint."),
+      draft("chore", "", "add profile env vars to compose", "adiciona variáveis do perfil ao compose", "Keep .env.example and docker-compose.yml in sync.", "Mantém .env.example e docker-compose.yml em sincronia.")
+    ],
+    single: [draft("feat", "", "add user profile editing", "adiciona edição do perfil do usuário", "API endpoint, frontend page and compose variables for the profile.", "Endpoint na API, página no frontend e variáveis no compose do perfil.")]
   }
 }
 
