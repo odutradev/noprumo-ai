@@ -7,6 +7,7 @@ import { validateSkillMetadata } from "@utils/validations/skill"
 import { downloadText } from "@utils/functions/download"
 import useGeneratorStore from "@stores/generator"
 import StepHeader from "@components/stepHeader"
+import useAnalytics from "@hooks/useAnalytics"
 import CodeBlock from "@components/codeBlock"
 import StarCard from "@components/starCard"
 import useAction from "@hooks/useAction"
@@ -39,14 +40,24 @@ const ResultStep = () => {
   const errors = isSkill ? validateSkillMetadata({ skillName: config.skillName, skillDescription: config.skillDescription }) : {}
   const hasErrors = Object.keys(errors).length > 0
   const mainName = isSkill ? "SKILL.md" : "CLAUDE.md"
+  const { track } = useAnalytics()
 
-  const handleDownload = (file: OutputFile) => downloadText(file.fileName, file.content)
+  const guideEventData = { format, projectType: config.projectType, language: config.language, outputLanguage: config.outputLanguage }
 
-  const handleDownloadAll = () => files.forEach((file) => handleDownload(file))
+  const handleDownload = (file: OutputFile) => {
+    downloadText(file.fileName, file.content)
+    track("guide-download", { ...guideEventData, files: 1 })
+  }
+
+  const handleDownloadAll = () => {
+    files.forEach((file) => downloadText(file.fileName, file.content))
+    track("guide-download", { ...guideEventData, files: files.length })
+  }
 
   const handleCopy = useAction({
     action: () => navigator.clipboard.writeText(files[0].content),
-    toastMessages: { pending: "Copiando...", success: `${mainName} copiado`, error: "Não foi possível copiar" }
+    toastMessages: { pending: "Copiando...", success: `${mainName} copiado`, error: "Não foi possível copiar" },
+    callback: () => track("guide-copy", guideEventData)
   })
 
   const installText = isFullstack

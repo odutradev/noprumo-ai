@@ -5,6 +5,7 @@ import { brandBackgrounds, brandPalettes, brandRatios, brandTiles, kindsWithFixe
 import { artworkFileName, buildArtwork, downloadArtwork, exportSpec, pixelDimensions, serializeArtwork } from "@utils/functions/brand"
 import BrandArtwork from "@components/brandArtwork"
 import BrandStage from "@components/brandStage"
+import useAnalytics from "@hooks/useAnalytics"
 import useAction from "@hooks/useAction"
 import styles from "./styles.module.css"
 
@@ -28,6 +29,7 @@ const DownloadCenter = () => {
   const [spec, setSpec] = useState<ArtworkSpec>(initialSpec)
   const [pngSize, setPngSize] = useState(defaultSizes.horizontal)
   const [rasterFormat, setRasterFormat] = useState<RasterFormat>("png")
+  const { track } = useAnalytics()
   const isTile = kindsWithTile.includes(spec.kind)
   const isFixedFrame = kindsWithFixedFrame.includes(spec.kind)
   const previewArtwork = useMemo(() => buildArtwork(exportSpec(spec, rasterFormat, pngSize)), [spec, rasterFormat, pngSize])
@@ -52,17 +54,20 @@ const DownloadCenter = () => {
 
   const handleSvg = useAction({
     action: () => downloadArtwork(spec, "svg", pngSize),
-    toastMessages: { pending: "Gerando SVG...", success: "SVG baixado", error: "Não foi possível gerar o SVG" }
+    toastMessages: { pending: "Gerando SVG...", success: "SVG baixado", error: "Não foi possível gerar o SVG" },
+    callback: () => track("brand-download", { kind: spec.kind, format: "svg", size: pngSize, source: "center" })
   })
 
   const handleRaster = useAction({
     action: () => downloadArtwork(spec, rasterFormat, pngSize),
-    toastMessages: { pending: `Gerando ${rasterFormat.toUpperCase()}...`, success: `${rasterFormat.toUpperCase()} baixado`, error: "Não foi possível gerar a imagem" }
+    toastMessages: { pending: `Gerando ${rasterFormat.toUpperCase()}...`, success: `${rasterFormat.toUpperCase()} baixado`, error: "Não foi possível gerar a imagem" },
+    callback: () => track("brand-download", { kind: spec.kind, format: rasterFormat, size: pngSize, source: "center" })
   })
 
   const handleCopy = useAction({
     action: () => navigator.clipboard.writeText(serializeArtwork(buildArtwork(exportSpec(spec, "svg", pngSize)))),
-    toastMessages: { pending: "Copiando...", success: "Código SVG copiado", error: "Não foi possível copiar" }
+    toastMessages: { pending: "Copiando...", success: "Código SVG copiado", error: "Não foi possível copiar" },
+    callback: () => track("brand-copy", { kind: spec.kind })
   })
 
   return (
