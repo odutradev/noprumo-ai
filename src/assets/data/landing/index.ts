@@ -1,4 +1,4 @@
-import type { LandingStep, LandingWallRow } from "@utils/types/landing"
+import type { LandingStat, LandingStep, LandingWallRow } from "@utils/types/landing"
 
 export const toolPath = "/gerador"
 
@@ -39,4 +39,16 @@ export const guideStages = ["Projeto", "Stack", "Arquitetura", "Nomenclatura", "
 export const wallModes = [
   { value: "crooked", label: "Sem guia" },
   { value: "aligned", label: "Com noprumo" }
+]
+
+export const wallAnchor = 0.3
+
+export const alignedThreshold = 0.6
+
+export const wallTargets = { crooked: 0.02, aligned: 0.86 }
+
+export const comboStats: LandingStat[] = [
+  { value: 32400, label: "Backends em Go", description: "Framework, banco, arquitetura, erros, validação, logs e testes" },
+  { value: 3024, label: "Backends em JavaScript", description: "Framework, ORM, validação, arquitetura e organização" },
+  { value: 1728, label: "Frontends em JavaScript", description: "Framework, estado, requisições, formulários e estilo" }
 ]

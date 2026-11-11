@@ -1,0 +1,95 @@
+.stats {
+  --fill: 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--enchase-space-2xl);
+  align-items: end;
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-sm);
+}
+
+.totalValue {
+  font-size: clamp(var(--enchase-font-size-5xl), 11vw, calc(var(--enchase-font-size-5xl) * 2.6));
+  font-weight: 650;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--enchase-color-primary) calc(var(--fill) * 100%), var(--enchase-color-text-secondary));
+}
+
+.totalLabel {
+  max-inline-size: 22rem;
+  font-size: var(--enchase-font-size-lg);
+  color: var(--enchase-color-text-secondary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-lg);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-xs);
+  padding-block-end: var(--enchase-space-md);
+  border-block-end: var(--enchase-border-width) solid var(--enchase-color-border-light);
+}
+
+.itemHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--enchase-space-md);
+}
+
+.itemLabel {
+  font-weight: var(--enchase-font-weight-medium);
+}
+
+.itemValue {
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.itemValue[data-success] {
+  color: var(--enchase-color-success);
+}
+
+.bar {
+  display: block;
+  block-size: 0.375rem;
+  border-radius: var(--enchase-radius-full);
+  background: var(--enchase-color-surface-container);
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--enchase-color-primary);
+  transform: scaleX(calc(var(--share) * var(--fill)));
+  transform-origin: 0 50%;
+}
+
+.itemDescription {
+  font-size: var(--enchase-font-size-sm);
+  color: var(--enchase-color-text-secondary);
+}
+
+@media (max-width: 900px) {
+  .stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
