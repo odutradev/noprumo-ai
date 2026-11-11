@@ -1,6 +1,10 @@
-.navbar [data-slot="container"] {
-  max-inline-size: 1600px;
-  padding-inline: var(--enchase-space-lg);
+.navbar [data-slot="container"],
+.shell {
+  box-sizing: border-box;
+  inline-size: 80%;
+  max-inline-size: none;
+  margin-inline: auto;
+  padding-inline: 0;
 }
 
 .logo {
@@ -22,9 +26,7 @@
   grid-template-areas: "steps content preview";
   gap: calc(var(--enchase-space-xl) * 1.25);
   align-items: start;
-  max-inline-size: 1600px;
-  margin-inline: auto;
-  padding: var(--enchase-space-lg) var(--enchase-space-lg) 0;
+  padding-block-start: var(--enchase-space-lg);
 }
 
 .shell[data-result] {
@@ -114,7 +116,9 @@
 }
 
 @media (max-width: 960px) {
-  .navbar [data-slot="container"] {
+  .navbar [data-slot="container"],
+  .shell {
+    inline-size: 100%;
     padding-inline: var(--enchase-space-md);
   }
 
@@ -123,7 +127,6 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "steps" "content";
     gap: var(--enchase-space-lg);
-    padding-inline: var(--enchase-space-md);
   }
 
   .steps {
