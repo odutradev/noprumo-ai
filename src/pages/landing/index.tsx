@@ -60,7 +60,7 @@ const LandingPage = () => {
                 </span>
               ))}
             </h1>
-            <p className={styles.heroLead}>O noprumo transforma os padrões do seu time em um guia que agentes de IA, como o Claude Code, leem e seguem. Defina uma vez: a IA constrói do seu jeito.</p>
+            <p className={styles.heroLead}>O noprumo transforma os seus padrões, ou os do seu time, em um guia que agentes de IA, como o Claude Code, leem e seguem. Defina uma vez: a IA constrói do seu jeito.</p>
             <div className={styles.heroActions}>
               <CtaLink href={toolPath} size="lg">
                 Criar meu guia grátis

@@ -1,7 +1,7 @@
 {
   "name": "noprumo",
   "short_name": "noprumo",
-  "description": "Transforma os padrões do seu time em instruções que agentes de IA seguem",
+  "description": "Transforma os seus padrões, ou os do seu time, em instruções que agentes de IA seguem",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0F1012",
