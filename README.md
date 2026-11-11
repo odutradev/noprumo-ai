@@ -1,52 +1,79 @@
-# noprumo
+<p align="center">
+  <a href="https://noprumo.odutra.com">
+    <img src=".github/banner.svg" alt="noprumo · Sua IA no prumo." width="100%" />
+  </a>
+</p>
 
-**Sua IA no prumo.**
+<p align="center">
+  <a href="https://noprumo.odutra.com"><img src="https://img.shields.io/badge/site-noprumo.odutra.com-FF8A4C?style=flat-square&labelColor=0F1012" alt="Site" /></a>
+  <a href="https://github.com/odutradev/noprumo-ai/stargazers"><img src="https://img.shields.io/github/stars/odutradev/noprumo-ai?style=flat-square&color=FF8A4C&labelColor=0F1012" alt="Estrelas no GitHub" /></a>
+  <img src="https://img.shields.io/github/package-json/v/odutradev/noprumo-ai?style=flat-square&color=FF8A4C&labelColor=0F1012&label=vers%C3%A3o" alt="Versão" />
+  <img src="https://img.shields.io/badge/pre%C3%A7o-gratuito-4CC38A?style=flat-square&labelColor=0F1012" alt="Gratuito" />
+</p>
 
-Frontend do **noprumo**, que transforma os padrões do seu time em instruções que agentes de IA seguem. A pessoa escolhe o tipo de projeto (backend, frontend ou fullstack), a stack, a arquitetura, a nomenclatura, as convenções de código, commits, Docker e publicação, vê o resultado ao vivo e baixa um `SKILL.md` ou `CLAUDE.md` pronto para instalar.
+<p align="center">
+  <strong>Transforme os seus padrões, ou os do seu time, em um guia que agentes de IA leem e seguem.</strong><br />
+  Defina uma vez: a IA constrói do seu jeito.
+</p>
 
-Construído com React + Vite + TypeScript.
+<p align="center">
+  <a href="https://noprumo.odutra.com/gerador"><strong>Criar meu guia →</strong></a>
+</p>
 
-## Stack
+---
 
-- React 19 + React Router 7
-- Vite 8
-- TypeScript
-- [enchase](https://www.npmjs.com/package/enchase) (design system: componentes, tema claro/escuro e toasts)
-- Zustand (estado global)
-- Zod (validação de formulários)
-- ESLint (regras de código da skill do projeto)
+## O problema
 
-## Estrutura
+Agentes de IA, como o Claude Code, escrevem código rápido. Mas, sem um padrão escrito, cada sessão inventa o seu: arquivo na pasta errada, outro jeito de nomear, commit fora do formato, arquitetura ignorada. E você passa o dia corrigindo.
 
-O projeto segue o guia `.claude/CLAUDE.md` (pastas por tipo).
+## A solução
 
-```
-src/
-  assets/
-    config/       configurações gerais da aplicação
-    data/         catálogos de opções, vocabulário e presets do gerador
-  components/     um componente por pasta (index.tsx, styles.ts, types.ts)
-  hooks/          hooks customizados (useAction, useCustomField)
-  pages/          páginas (generator, notFound), cada uma com seus metadados
-  providers/      providers do enchase (tema, locale pt-BR, navegação, toasts)
-  routes/         tabela de rotas
-  stores/         stores do Zustand (estado do gerador, salvo no navegador)
-  styles/         tema do enchase (`theme.ts`)
-  utils/
-    functions/    geração do SKILL.md, do código de exemplo, logger e helpers
-    types/        tipos do domínio
-    validations/  schemas do Zod
-```
+O **noprumo** é um gerador de guias de padrões. Você responde poucas etapas sobre o projeto e baixa um `CLAUDE.md` ou uma skill (`SKILL.md`) pronta para instalar. O agente lê o guia e passa a construir seguindo as suas regras: estrutura de pastas, nomenclatura, princípios de código, commits, deploy e publicação.
 
-Aliases de import, um por pasta raiz: `@assets/`, `@components/`, `@hooks/`, `@pages/`, `@providers`, `@routes/`, `@stores/`, `@styles/`, `@utils/`.
+- **Gratuito e sem cadastro.** Tudo roda no navegador, e as suas escolhas ficam salvas só nele.
+- **Prévia ao vivo.** A cada escolha, você vê o código de exemplo, a árvore de pastas e o arquivo final.
+- **Pronto para colar.** O guia sai com seções numeradas, exemplos de certo e errado, código de referência e checklist de entrega.
 
-## Design
+## Como funciona
 
-O tema fica em `src/styles/theme.ts` (`brand`, `shape`, `style`...). A documentação completa da lib vem no pacote, em `node_modules/enchase/API.md`, e também está no [Storybook](https://enchase.othiagosilva.com.br/docs/).
+1. **Responda.** Tipo de projeto, stack, arquitetura, nomenclatura, convenções, commits, deploy e publicação. As opções têm um campo livre para escrever regras próprias.
+2. **Veja ao vivo.** A prévia lateral mostra o código de exemplo, as pastas e o guia do jeito que a IA vai ler.
+3. **Baixe e instale.** Um `CLAUDE.md` na raiz do projeto, ou uma skill em `.claude/skills/<nome>/SKILL.md`. No fullstack, sai um guia para a raiz e um para cada app.
+4. **Construa no prumo.** O agente segue o padrão, e você volta a revisar o que importa.
+
+## O que dá para configurar
+
+| Etapa | O que você define |
+| :--- | :--- |
+| **Projeto** | Backend, frontend ou fullstack (monorepo com API e frontend). |
+| **Stack** | Linguagem, framework, banco, validação, testes e bibliotecas. |
+| **Arquitetura** | Domínios + Actions, Camadas, Clean, Hexagonal, Modular, DDD, Pastas por tipo, Feature-Sliced e outras. |
+| **Nomenclatura** | Idioma dos identificadores e o padrão de cada elemento: arquivos, pastas, funções, tipos, constantes, rotas, tabelas e códigos de erro. |
+| **Convenções** | Declaração de funções, exports, aliases, ordem dos imports, ponto e vírgula, aspas, comentários e princípios obrigatórios, com exemplos de certo e errado. |
+| **Commits** | Formato (Conventional Commits ou livre), idioma, granularidade, escopo, coautoria de IA, branches e o resumo `{hash} {mensagem}` ao terminar. |
+| **Deploy** | Dockerfile, `.dockerignore`, `docker-compose` e nginx. |
+| **Publicação** | Fluxo de versão, build e push com o [project-publisher](https://www.npmjs.com/package/project-publisher). |
+| **Resultado** | Formato (`CLAUDE.md` ou skill), idioma do guia e download. |
+
+### Stacks suportadas
+
+| Tipo | Linguagens | Destaques |
+| :--- | :--- | :--- |
+| **Backend** | TypeScript, JavaScript e Go | Express, Fastify, NestJS, Hono · Prisma, Drizzle, TypeORM, Mongoose · net/http, chi, Gin, Echo, Fiber · pgx, sqlc, GORM |
+| **Frontend** | TypeScript e JavaScript | React + Vite, Next.js, Vue · Zustand, Redux, Jotai, Context · Axios, Fetch, TanStack Query · CSS Modules, Tailwind, Sass, Styled Components |
+| **Fullstack** | TypeScript, JavaScript e Go na API | Monorepo com workspaces, guia raiz e um guia por app |
+
+### Guia em inglês, resposta em português
+
+O idioma recomendado para o guia é o inglês, porque os modelos seguem instruções em inglês com mais precisão. O guia em inglês já pede que o agente converse com você sempre em português. Se preferir, o guia também sai inteiro em português.
 
 ## Rodando localmente
 
+Requisitos: Node.js 22 ou mais recente.
+
 ```bash
+git clone https://github.com/odutradev/noprumo-ai.git
+cd noprumo-ai
 npm install
 cp .env.example .env
 npm run dev
@@ -54,18 +81,85 @@ npm run dev
 
 O servidor sobe em `http://localhost:8080`.
 
-## Scripts
+### Scripts
 
-- `npm run dev` — servidor de desenvolvimento
-- `npm run build` — build de produção em `build/`
-- `npm run preview` — pré-visualiza o build
-- `npm run typecheck` — checagem de tipos
-- `npm run lint` — ESLint com as regras da skill (aspas duplas, sem ponto e vírgula, sem comentários, sem `let`/`for`/`while`, sem `any`, sem `console`, imports em 3 blocos)
-- `npm run lint:fix` — corrige o que for automático
+| Comando | O que faz |
+| :--- | :--- |
+| `npm run dev` | Servidor de desenvolvimento com Vite. |
+| `npm run build` | Build de produção em `build/`. |
+| `npm run preview` | Pré-visualiza o build. |
+| `npm run typecheck` | Checagem de tipos do TypeScript. |
+| `npm run lint` | ESLint com as regras do projeto. |
+| `npm run lint:fix` | Corrige o que o ESLint resolve sozinho. |
 
-## Docker
+### Docker
+
+A imagem faz o build com Node e serve os arquivos estáticos com nginx.
 
 ```bash
 docker build -t noprumo .
-docker run -p 80:80 noprumo
+docker run -p 8080:80 noprumo
 ```
+
+## Stack do projeto
+
+- [React 19](https://react.dev) e [React Router 7](https://reactrouter.com)
+- [Vite](https://vite.dev) e TypeScript em modo strict
+- [enchase](https://www.npmjs.com/package/enchase): componentes, tema claro e escuro, toasts e ícones
+- [Zustand](https://zustand.docs.pmnd.rs) com persistência no navegador
+- [Zod](https://zod.dev) para validação
+- CSS Modules com os tokens do tema (`var(--enchase-*)`)
+- Geist e Geist Mono como fontes
+
+## Estrutura
+
+O projeto segue o próprio guia, em [`.claude/CLAUDE.md`](.claude/CLAUDE.md), gerado pelo noprumo.
+
+```text
+src/
+├── assets/
+│   ├── config/       nome, título, versão e links da aplicação
+│   └── data/         opções, vocabulário, presets e textos do gerador
+├── components/       um componente por pasta: index.tsx, styles.module.css e types.ts
+├── hooks/            hooks customizados, como useAction e useScrollProgress
+├── pages/            uma pasta por página, cada uma com seus metadados
+├── providers/        providers do enchase: tema, locale pt-BR, navegação e toasts
+├── routes/           tabela de rotas
+├── stores/           estado do gerador, salvo no navegador
+├── styles/           tema do enchase e estilos globais
+└── utils/
+    ├── functions/    geração dos guias, do código de exemplo e utilitários
+    ├── types/        tipos do domínio
+    └── validations/  schemas do Zod
+```
+
+Cada pasta raiz de `src` tem um alias de import: `@assets/`, `@components/`, `@hooks/`, `@pages/`, `@providers`, `@routes/`, `@stores/`, `@styles/` e `@utils/`.
+
+### Padrões de código
+
+- Sem ponto e vírgula, com aspas duplas e zero comentários.
+- Sem `let`, `for`, `while` e `any`.
+- Imports em 3 blocos (externos, internos e `import type`), do maior para o menor.
+- Commits em inglês no formato Conventional Commits, sem escopo.
+
+O `npm run lint` garante a maior parte dessas regras.
+
+## Publicação
+
+A versão, o build e o push são feitos com o [project-publisher](https://www.npmjs.com/package/project-publisher):
+
+```bash
+npx project-publisher --bump-package --build --push
+```
+
+O comando sobe o patch do `package.json`, roda o build e faz o commit `chore: bump version to X` com push para a `master`.
+
+## Apoie o projeto
+
+O noprumo é gratuito e não tem custo nenhum para quem usa. Se ele te ajudou, [deixe uma estrela no GitHub](https://github.com/odutradev/noprumo-ai): é o jeito mais simples de apoiar e fazer o projeto chegar a mais gente.
+
+---
+
+<p align="center">
+  Feito com ♥ por <a href="https://odutra.com">odutradev</a>
+</p>
