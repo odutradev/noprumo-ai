@@ -1,19 +1,20 @@
 import { apiLayerOptions, asyncActionsOptions, componentDeclarationOptions, componentStructureOptions, dataFetchingOptions, e2eOptions, formValidationOptions, frontendFrameworkOptions, stateOptions, stylingOptions, uiLibraryOptions } from "@assets/data/generator/frontendOptions"
+import { code, deployChecklistItem, extraPrinciples, gitSection, principlesSection, publishChecklistItem, rootGuidePointer, samplesSection, selectedPrinciples } from "@utils/functions/generator/markdownHelpers"
 import { commentsOptions, exportOptions, importAliasOptions, importOrderOptions, languageOptions, quoteOptions, semicolonOptions, testSuffixOptions, testingOptions } from "@assets/data/generator/options"
 import { booleanPrefixOptions, fileOrganizationOptions, frontendNamingGroups, handlerPrefixOptions, identifierLanguageOptions, typePrefixOptions } from "@assets/data/generator/naming"
-import { code, extraPrinciples, gitSection, principlesSection, samplesSection, selectedPrinciples } from "@utils/functions/generator/markdownHelpers"
 import { architectureBlock, namingRow } from "@utils/functions/generator/skillMarkdown"
 import { createMdContext, sentence } from "@utils/functions/generator/mdContext"
 import { buildTree, renderTree } from "@utils/functions/generator/architecture"
 import { publishingSection } from "@utils/functions/generator/publishing"
 import { getFrontendLayout } from "@utils/functions/generator/frontend"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
+import { deploySection } from "@utils/functions/generator/deploy"
 import { createNamer } from "@utils/functions/generator/namer"
 
 import type { GeneratorConfig } from "@utils/types/generator"
 
-export const buildFrontendMarkdown = (config: GeneratorConfig): string => {
-  const ctx = createMdContext(config)
+export const buildFrontendMarkdown = (config: GeneratorConfig, isWorkspaceApp = false): string => {
+  const ctx = createMdContext(config, isWorkspaceApp)
   const { byLanguage, tr, field } = ctx
   const { naming, conventions, frontend } = config
   const n = createNamer(naming)
@@ -79,7 +80,8 @@ export const buildFrontendMarkdown = (config: GeneratorConfig): string => {
     byLanguage(`Imports seguem "${imports.label}".`, `Imports follow "${imports.label}".`),
     ...principles.map((principle) => byLanguage(`Princípio "${principle.label}" aplicado.`, `Principle "${tr(principle.label)}" applied.`)),
     ...extraPrinciples(config),
-    config.publishing.isEnabled && config.publishing.prompt === "everyTask" ? byLanguage("Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.", "Publish question asked as the last action, if the task changed files.") : ""
+    deployChecklistItem(ctx),
+    publishChecklistItem(ctx)
   ].filter(Boolean)
 
   const formsBlock =
@@ -169,17 +171,21 @@ ${testLines.join("\n")}
 
 ## 11. ${byLanguage("Commits e Git", "Commits and Git")}
 
-${gitSection(ctx)}
+${ctx.isWorkspaceApp ? rootGuidePointer(ctx) : gitSection(ctx)}
 
-## 12. ${byLanguage("Publicação", "Publishing")}
+## 12. ${byLanguage("Docker e deploy", "Docker and deploy")}
 
-${publishingSection(ctx)}
+${ctx.isWorkspaceApp ? rootGuidePointer(ctx) : deploySection(ctx)}
 
-## 13. ${byLanguage("Exemplo de referência", "Reference example")}
+## 13. ${byLanguage("Publicação", "Publishing")}
+
+${ctx.isWorkspaceApp ? rootGuidePointer(ctx) : publishingSection(ctx)}
+
+## 14. ${byLanguage("Exemplo de referência", "Reference example")}
 
 ${samplesSection(ctx)}
 
-## 14. ${byLanguage("Checklist antes de entregar", "Checklist before delivering")}
+## 15. ${byLanguage("Checklist antes de entregar", "Checklist before delivering")}
 
 ${checklist.map((item) => `- [ ] ${item}`).join("\n")}
 `.replace(/\n{3,}/g, "\n\n")

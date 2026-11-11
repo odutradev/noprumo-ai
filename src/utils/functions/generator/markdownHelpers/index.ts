@@ -79,6 +79,14 @@ export const gitSection = (ctx: MdContext) => {
   return `${rules.join("\n")}${example}${branchExample}`
 }
 
+export const rootGuidePointer = (ctx: MdContext) => ctx.byLanguage("Definido no guia do monorepo, na raiz do repositório. Siga as regras de lá.", "Defined in the monorepo guide at the repository root. Follow the rules there.")
+
+export const publishChecklistItem = (ctx: MdContext) =>
+  !ctx.isWorkspaceApp && ctx.config.publishing.isEnabled && ctx.config.publishing.prompt === "everyTask" ? ctx.byLanguage("Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.", "Publish question asked as the last action, if the task changed files.") : ""
+
+export const deployChecklistItem = (ctx: MdContext) =>
+  !ctx.isWorkspaceApp && ctx.config.deploy.hasCompose ? ctx.byLanguage("Variável de ambiente nova entrou no `.env.example` e no `docker-compose.yml`.", "New environment variables were added to `.env.example` and `docker-compose.yml`.") : ""
+
 export const hasCustomChoices = (config: GeneratorConfig) => Object.values(config.custom).some((text) => text.trim())
 
 export const samplesSection = (ctx: MdContext) => {

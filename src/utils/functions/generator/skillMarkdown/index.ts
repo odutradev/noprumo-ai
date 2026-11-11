@@ -1,11 +1,12 @@
 import { apiDocsOptions, architectureInfo, commentsOptions, databaseOptions, errorHandlingOptions, exportOptions, frameworkOptions, functionStyleOptions, importAliasOptions, importOrderOptions, languageOptions, paradigmOptions, projectTypeOptions, quoteOptions, routeStyleOptions, semicolonOptions, testLocationOptions, testSuffixOptions, testingOptions, validationOptions } from "@assets/data/generator/options"
+import { code, deployChecklistItem, extraPrinciples, gitSection, principlesSection, publishChecklistItem, rootGuidePointer, samplesSection, selectedPrinciples, slugify } from "@utils/functions/generator/markdownHelpers"
 import { booleanPrefixOptions, fileOrganizationOptions, identifierLanguageOptions, namingGroups, tableNumberOptions, typePrefixOptions } from "@assets/data/generator/naming"
-import { code, extraPrinciples, gitSection, principlesSection, samplesSection, selectedPrinciples, slugify } from "@utils/functions/generator/markdownHelpers"
 import { buildTree, getArchitectureLayout, renderTree } from "@utils/functions/generator/architecture"
 import { buildFrontendMarkdown } from "@utils/functions/generator/frontendMarkdown"
 import { createMdContext, sentence } from "@utils/functions/generator/mdContext"
 import { publishingSection } from "@utils/functions/generator/publishing"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
+import { deploySection } from "@utils/functions/generator/deploy"
 import { createNamer } from "@utils/functions/generator/namer"
 
 import type { GeneratorConfig } from "@utils/types/generator"
@@ -41,10 +42,10 @@ name: ${slugify(config.skillName)}
 description: ${createMdContext(config).tr(config.skillDescription.trim()).replace(/\n/g, " ")}
 ---`
 
-export const buildGuideMarkdown = (config: GeneratorConfig): string => {
-  if (config.projectType === "frontend") return buildFrontendMarkdown(config)
+export const buildGuideMarkdown = (config: GeneratorConfig, isWorkspaceApp = false): string => {
+  if (config.projectType === "frontend") return buildFrontendMarkdown(config, isWorkspaceApp)
 
-  const ctx = createMdContext(config)
+  const ctx = createMdContext(config, isWorkspaceApp)
   const { byLanguage, tr, field } = ctx
   const { naming, conventions } = config
   const n = createNamer(naming)
@@ -100,7 +101,8 @@ export const buildGuideMarkdown = (config: GeneratorConfig): string => {
     hasNoTests ? "" : byLanguage("Código novo tem testes no local e com o sufixo definidos.", "New code has tests in the defined location and with the defined suffix."),
     ...principles.map((principle) => byLanguage(`Princípio "${principle.label}" aplicado.`, `Principle "${tr(principle.label)}" applied.`)),
     ...extraPrinciples(config),
-    config.publishing.isEnabled && config.publishing.prompt === "everyTask" ? byLanguage("Pergunta de publicação feita como última ação, se a tarefa alterou arquivos.", "Publish question asked as the last action, if the task changed files.") : ""
+    deployChecklistItem(ctx),
+    publishChecklistItem(ctx)
   ].filter(Boolean)
 
   return `# ${byLanguage("Guia de padrões do projeto", "Project standards guide")}
@@ -183,17 +185,21 @@ ${testSection}
 
 ## 7. ${byLanguage("Commits e Git", "Commits and Git")}
 
-${gitSection(ctx)}
+${ctx.isWorkspaceApp ? rootGuidePointer(ctx) : gitSection(ctx)}
 
-## 8. ${byLanguage("Publicação", "Publishing")}
+## 8. ${byLanguage("Docker e deploy", "Docker and deploy")}
 
-${publishingSection(ctx)}
+${ctx.isWorkspaceApp ? rootGuidePointer(ctx) : deploySection(ctx)}
 
-## 9. ${byLanguage("Exemplo de referência", "Reference example")}
+## 9. ${byLanguage("Publicação", "Publishing")}
+
+${ctx.isWorkspaceApp ? rootGuidePointer(ctx) : publishingSection(ctx)}
+
+## 10. ${byLanguage("Exemplo de referência", "Reference example")}
 
 ${samplesSection(ctx)}
 
-## 10. ${byLanguage("Checklist antes de entregar", "Checklist before delivering")}
+## 11. ${byLanguage("Checklist antes de entregar", "Checklist before delivering")}
 
 ${checklist.map((item) => `- [ ] ${item}`).join("\n")}
 `.replace(/\n{3,}/g, "\n\n")

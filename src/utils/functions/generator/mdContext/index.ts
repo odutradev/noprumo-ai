@@ -3,7 +3,7 @@ import { en } from "@assets/data/generator/i18n/en"
 import type { GeneratorConfig } from "@utils/types/generator"
 import type { MdContext } from "@utils/types/markdown"
 
-export const createMdContext = (config: GeneratorConfig): MdContext => {
+export const createMdContext = (config: GeneratorConfig, isWorkspaceApp = false): MdContext => {
   const isEn = config.outputLanguage === "en"
   const tr = (text: string) => (isEn ? (en[text] ?? text) : text)
   const customText = (key: string) => {
@@ -14,6 +14,7 @@ export const createMdContext = (config: GeneratorConfig): MdContext => {
   return {
     config,
     isEn,
+    isWorkspaceApp,
     byLanguage: (pt, english) => (isEn ? english : pt),
     tr,
     customText,

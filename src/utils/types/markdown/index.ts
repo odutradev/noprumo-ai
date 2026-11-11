@@ -17,6 +17,7 @@ export interface ResolvedField {
 export interface MdContext {
   config: GeneratorConfig
   isEn: boolean
+  isWorkspaceApp: boolean
   byLanguage: (pt: string, english: string) => string
   tr: (text: string) => string
   customText: (key: string) => string | undefined
