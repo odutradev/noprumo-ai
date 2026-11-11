@@ -1,0 +1,164 @@
+:global(html[data-plumb-cursor]),
+:global(html[data-plumb-cursor] *) {
+  cursor: none !important;
+}
+
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+}
+
+.cursor {
+  position: absolute;
+  inset: 0 auto auto 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+.cursor[data-visible] {
+  opacity: 1;
+}
+
+.anchor {
+  position: absolute;
+  inset: -3.5px auto auto -3.5px;
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: var(--enchase-radius-full);
+  background: var(--enchase-color-text-primary);
+  box-shadow: 0 0 0 2px var(--enchase-color-surface);
+  transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.ring {
+  position: absolute;
+  inset: -1.25rem auto auto -1.25rem;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  box-sizing: border-box;
+  border: 1.5px solid var(--enchase-color-primary);
+  border-radius: var(--enchase-radius-full);
+  background: color-mix(in srgb, var(--enchase-color-primary) 10%, transparent);
+  opacity: 0;
+  transform: scale(0.3);
+  transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.pendulum {
+  --length: 22px;
+  --stretch: 0px;
+
+  position: absolute;
+  inset: 0 auto auto -1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  inline-size: 2rem;
+  transform-origin: 50% 0;
+}
+
+.line {
+  flex: none;
+  inline-size: 1.5px;
+  block-size: calc(var(--length) + var(--stretch));
+  background: var(--enchase-color-text-primary);
+  transition: block-size 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.bob {
+  flex: none;
+  inline-size: 0.875rem;
+  margin-block-start: -1.5px;
+  fill: var(--enchase-color-primary);
+  filter: drop-shadow(0 2px 3px color-mix(in srgb, var(--enchase-color-primary) 40%, transparent));
+  transform-origin: 50% 0;
+  transition: transform 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.cursor[data-hover] .ring {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.cursor[data-hover] .anchor {
+  transform: scale(0.7);
+}
+
+.cursor[data-hover] .line {
+  block-size: 9px;
+}
+
+.cursor[data-hover] .bob {
+  transform: scale(0.8);
+}
+
+.cursor[data-pressed] .ring {
+  transform: scale(0.82);
+}
+
+.cursor[data-pressed] .line {
+  block-size: calc(var(--length) + 10px);
+}
+
+.cursor[data-pressed] .bob {
+  transform: scale(1.15, 0.85);
+}
+
+.ripple {
+  position: absolute;
+  inset: 0 auto auto 0;
+}
+
+.rippleRing {
+  position: absolute;
+  inset: -1.5rem auto auto -1.5rem;
+  inline-size: 3rem;
+  block-size: 3rem;
+  box-sizing: border-box;
+  border: 1.5px solid var(--enchase-color-primary);
+  border-radius: var(--enchase-radius-full);
+  animation: rippleRing 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.rippleLevel {
+  position: absolute;
+  inset: -0.75px auto auto -3rem;
+  inline-size: 6rem;
+  block-size: 1.5px;
+  background: linear-gradient(to right, transparent, var(--enchase-color-primary), transparent);
+  animation: rippleLevel 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes rippleRing {
+  from {
+    opacity: 0.9;
+    transform: scale(0.2);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+@keyframes rippleLevel {
+  from {
+    opacity: 1;
+    transform: scaleX(0.1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scaleX(1.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rippleRing,
+  .rippleLevel {
+    animation-duration: 0.01s;
+  }
+}
