@@ -4,6 +4,8 @@ import path from "path"
 
 const folders = ["assets", "components", "hooks", "pages", "providers", "routes", "stores", "styles", "utils"]
 
+const fromPackages = (names: string[]) => new RegExp(`node_modules[/\\\\](${names.join("|")})[/\\\\]`)
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -18,6 +20,18 @@ export default defineConfig({
     port: 8080
   },
   build: {
-    outDir: "build"
+    outDir: "build",
+    cssCodeSplit: true,
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            { name: "react", test: fromPackages(["react", "react-dom", "scheduler", "react-router"]), priority: 30 },
+            { name: "enchase", test: fromPackages(["enchase"]), priority: 20 },
+            { name: "vendor", test: fromPackages([".+?"]), priority: 10 }
+          ]
+        }
+      }
+    }
   }
 })
