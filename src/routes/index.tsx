@@ -10,7 +10,7 @@ import type { PageRoute } from "@utils/types/page"
 const routes: PageRoute[] = [
   { path: "/", page: lazy(() => import("@pages/landing")) },
   { path: toolPath, page: lazy(() => import("@pages/generator")) },
-  { path: "/id", page: lazy(() => import("@pages/brand")) },
+  { path: "/brand", page: lazy(() => import("@pages/brand")) },
   { path: "*", page: lazy(() => import("@pages/notFound")) }
 ]
 

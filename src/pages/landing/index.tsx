@@ -65,7 +65,7 @@ const LandingPage = () => {
               <CtaLink href={toolPath} size="lg">
                 Criar meu guia grátis
               </CtaLink>
-              <ButtonLink href="#como-funciona" size="lg" variant="ghost">
+              <ButtonLink href="#how-it-works" size="lg" variant="ghost">
                 Como funciona
               </ButtonLink>
             </div>
@@ -88,7 +88,7 @@ const LandingPage = () => {
           </AlignWall>
         </section>
 
-        <section id="como-funciona" className={styles.section} aria-labelledby="how-title">
+        <section id="how-it-works" className={styles.section} aria-labelledby="how-title">
           <Reveal className={styles.sectionHeader}>
             <span className={styles.eyebrow}>Como funciona</span>
             <h2 id="how-title" className={styles.sectionTitle}>

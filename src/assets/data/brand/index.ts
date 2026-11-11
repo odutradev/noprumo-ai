@@ -288,14 +288,14 @@ export const misuseExamples: MisuseExample[] = [
 ]
 
 export const brandSections = [
-  { id: "conceito", label: "Conceito" },
-  { id: "simbolo", label: "Símbolo" },
-  { id: "logotipo", label: "Logotipo" },
-  { id: "cores", label: "Cores" },
-  { id: "tipografia", label: "Tipografia" },
-  { id: "icone", label: "Ícone" },
-  { id: "familia", label: "Família" },
-  { id: "usos", label: "Usos" },
+  { id: "concept", label: "Conceito" },
+  { id: "symbol", label: "Símbolo" },
+  { id: "logo", label: "Logotipo" },
+  { id: "colors", label: "Cores" },
+  { id: "typography", label: "Tipografia" },
+  { id: "icon", label: "Ícone" },
+  { id: "family", label: "Família" },
+  { id: "usage", label: "Usos" },
   { id: "downloads", label: "Downloads" }
 ]
 

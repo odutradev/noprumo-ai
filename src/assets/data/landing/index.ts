@@ -1,6 +1,6 @@
 import type { LandingStep, LandingWallRow } from "@utils/types/landing"
 
-export const toolPath = "/gerador"
+export const toolPath = "/generator"
 
 export const portfolioUrl = "https://odutra.com"
 

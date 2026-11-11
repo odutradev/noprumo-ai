@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="https://noprumo.odutra.com/gerador"><strong>Criar meu guia →</strong></a>
+  <a href="https://noprumo.odutra.com/generator"><strong>Criar meu guia →</strong></a>
 </p>
 
 ---

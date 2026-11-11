@@ -111,7 +111,7 @@ const BrandPage = () => {
           </ul>
         </nav>
 
-        <BrandSection id="conceito" number="01" title="O conceito" description="Prumo é o fio de prumo: um peso pendurado num fio, a ferramenta do pedreiro que mostra se uma parede está perfeitamente vertical. Estar no prumo é estar alinhado, correto, nos eixos.">
+        <BrandSection id="concept" number="01" title="O conceito" description="Prumo é o fio de prumo: um peso pendurado num fio, a ferramenta do pedreiro que mostra se uma parede está perfeitamente vertical. Estar no prumo é estar alinhado, correto, nos eixos.">
           <div className={styles.conceptGrid}>
             <div className={styles.conceptText}>
               <p>
@@ -133,7 +133,7 @@ const BrandPage = () => {
           </div>
         </BrandSection>
 
-        <BrandSection id="simbolo" number="02" title="O símbolo" description="Três formas num grid de 48 × 48: a ancoragem, o fio e o peso. O fio é o cursor de texto e o eixo de um diff, a vertical que o dev olha o dia inteiro.">
+        <BrandSection id="symbol" number="02" title="O símbolo" description="Três formas num grid de 48 × 48: a ancoragem, o fio e o peso. O fio é o cursor de texto e o eixo de um diff, a vertical que o dev olha o dia inteiro.">
           <SymbolAnatomy />
           <div className={styles.opticalGrid}>
             <div className={styles.cardBlock}>
@@ -160,7 +160,7 @@ const BrandPage = () => {
           </div>
         </BrandSection>
 
-        <BrandSection id="logotipo" number="03" title="O logotipo e as versões" description="Geist em minúsculas, com tracking de −3,5%: no em 300 e cinza, prumo em 650. As versões abaixo são as únicas oficiais, em fundo claro e escuro.">
+        <BrandSection id="logo" number="03" title="O logotipo e as versões" description="Geist em minúsculas, com tracking de −3,5%: no em 300 e cinza, prumo em 650. As versões abaixo são as únicas oficiais, em fundo claro e escuro.">
           <div className={styles.showcase}>
             {showcase.map((item) => (
               <article key={item.id} className={styles.showcaseItem}>
@@ -179,7 +179,7 @@ const BrandPage = () => {
           </div>
         </BrandSection>
 
-        <BrandSection id="cores" number="04" title="Cores e tokens" description="Uma cor quente que guia, uma fria de apoio e grafite levemente quente. O laranja é escasso: marca, ação principal e foco. Clique em qualquer cor para copiar o HEX.">
+        <BrandSection id="colors" number="04" title="Cores e tokens" description="Uma cor quente que guia, uma fria de apoio e grafite levemente quente. O laranja é escasso: marca, ação principal e foco. Clique em qualquer cor para copiar o HEX.">
           <div className={styles.keyColors}>
             {keyColors.map((color) => (
               <ColorSwatch key={color.hex} hex={color.hex} name={color.name} meta={color.token} description={color.usage} />
@@ -255,7 +255,7 @@ const BrandPage = () => {
           </div>
         </BrandSection>
 
-        <BrandSection id="tipografia" number="05" title="Tipografia" description="Duas famílias irmãs do Google Fonts. A mesma geometria nas duas faz o código e a interface parecerem uma coisa só.">
+        <BrandSection id="typography" number="05" title="Tipografia" description="Duas famílias irmãs do Google Fonts. A mesma geometria nas duas faz o código e a interface parecerem uma coisa só.">
           <div className={styles.twoColumns}>
             {typeFamilies.map((family) => (
               <article key={family.name} className={styles.cardBlock} data-mono={family.isMono || undefined}>
@@ -310,7 +310,7 @@ const BrandPage = () => {
           </div>
         </BrandSection>
 
-        <BrandSection id="icone" number="06" title="Ícone do app e favicon" description="O símbolo dentro de um bloco com cantos de 22,5%. Três desenhos para três faixas de tamanho: em 16 px tudo cai no grid de pixels.">
+        <BrandSection id="icon" number="06" title="Ícone do app e favicon" description="O símbolo dentro de um bloco com cantos de 22,5%. Três desenhos para três faixas de tamanho: em 16 px tudo cai no grid de pixels.">
           <div className={styles.tiles}>
             {tiles.map((tile) => (
               <article key={tile.id} className={styles.tileItem}>
@@ -364,7 +364,7 @@ const BrandPage = () => {
           </div>
         </BrandSection>
 
-        <BrandSection id="familia" number="07" title="Arquitetura de marca" description="Uma casa, vários cômodos. Todo produto usa o mesmo símbolo e a mesma cor; o nome do produto entra depois de uma barra, como um caminho de pasta.">
+        <BrandSection id="family" number="07" title="Arquitetura de marca" description="Uma casa, vários cômodos. Todo produto usa o mesmo símbolo e a mesma cor; o nome do produto entra depois de uma barra, como um caminho de pasta.">
           <ul className={styles.products}>
             {brandProducts.map((product) => (
               <li key={product.slug} className={styles.product} data-live={product.isLive || undefined}>
@@ -391,7 +391,7 @@ const BrandPage = () => {
           </div>
         </BrandSection>
 
-        <BrandSection id="usos" number="08" title="Usos corretos e incorretos" description="Regras curtas para a marca chegar inteira em qualquer lugar: área de proteção, tamanho mínimo, fundos e escrita.">
+        <BrandSection id="usage" number="08" title="Usos corretos e incorretos" description="Regras curtas para a marca chegar inteira em qualquer lugar: área de proteção, tamanho mínimo, fundos e escrita.">
           <div className={styles.twoColumns}>
             <ul className={styles.rules}>
               {usageRules.map((rule) => (
