@@ -8,6 +8,7 @@ import { commitGranularityOptions } from "@assets/data/generator/commitOptions"
 import { selectedPrinciples } from "@utils/functions/generator/markdownHelpers"
 import { selectedGoPrinciples } from "@utils/functions/generator/goMarkdown"
 import { caseStyleLabels } from "@utils/functions/generator/naming"
+import FullstackPartBanner from "@components/fullstackPartBanner"
 import useGeneratorStore, { getSteps } from "@stores/generator"
 import GoConventionsStep from "@components/goConventionsStep"
 import ArchitectureStep from "@components/architectureStep"
@@ -57,6 +58,9 @@ const GeneratorPage = () => {
   const step = useGeneratorStore((state) => state.step)
   const format = useGeneratorStore((state) => state.format)
   const setStep = useGeneratorStore((state) => state.setStep)
+  const editingPart = useGeneratorStore((state) => state.editingPart)
+  const workspace = useGeneratorStore((state) => state.configs.fullstack.workspace)
+  const finishEditingApp = useGeneratorStore((state) => state.finishEditingApp)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const isFirstRender = useRef(true)
 
@@ -84,7 +88,8 @@ const GeneratorPage = () => {
     result: { label: "Resultado", hint: `${format === "skill" ? "SKILL.md" : "CLAUDE.md"}${config.projectType === "fullstack" ? " + 2 guias" : ""}` }
   }
 
-  const stepIds = getSteps(config)
+  const stepIds = getSteps(config, editingPart)
+  const partFolder = editingPart === "backend" ? workspace.backendFolder || "api" : workspace.frontendFolder || "frontend"
   const steps = stepIds.map((id) => stepInfo[id])
   const currentId = stepIds[step] ?? "project"
   const CurrentStep = (isGoProject ? goStepComponents[currentId] : undefined) ?? stepComponents[currentId]
@@ -112,6 +117,7 @@ const GeneratorPage = () => {
         </aside>
 
         <main className={styles.content} aria-label={steps[step].label}>
+          {editingPart && <FullstackPartBanner part={editingPart} folder={partFolder} onFinish={finishEditingApp} />}
           <div className={styles.stepBody}>
             <CurrentStep />
           </div>
@@ -123,6 +129,12 @@ const GeneratorPage = () => {
               {!isResult && (
                 <Button variant="ghost" className={styles.previewButton} onClick={() => setIsPreviewOpen(true)}>
                   Prévia
+                </Button>
+              )}
+              {isLast && editingPart && (
+                <Button onClick={finishEditingApp}>
+                  <span className={styles.nextFull}>Concluir e voltar ao fullstack</span>
+                  <span className={styles.nextShort}>Concluir</span>
                 </Button>
               )}
               {!isLast && (

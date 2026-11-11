@@ -37,7 +37,7 @@ const WorkspaceStep = () => {
           <p className={styles.appSummary}>
             {labelOf(frameworkOptions, backend.framework)} · {architectureInfo[backend.architecture].label}
           </p>
-          <Button variant="outline" size="sm" onClick={() => editApp("backend", 1)}>
+          <Button variant="outline" size="sm" onClick={() => editApp("backend")}>
             Editar padrões do backend
           </Button>
         </div>
@@ -46,14 +46,14 @@ const WorkspaceStep = () => {
           <p className={styles.appSummary}>
             {labelOf(frontendFrameworkOptions, frontend.frontend.framework)} · {architectureInfo[frontend.architecture].label}
           </p>
-          <Button variant="outline" size="sm" onClick={() => editApp("frontend", 1)}>
+          <Button variant="outline" size="sm" onClick={() => editApp("frontend")}>
             Editar padrões do frontend
           </Button>
         </div>
       </div>
 
       <Alert variant="info" title="Um guia por pasta">
-        O resultado traz o guia da raiz e um guia para cada app, montados com as escolhas de Backend e Frontend. Depois de editar um deles, volte para Fullstack na primeira etapa.
+        O resultado traz o guia da raiz e um guia para cada app, montados com as escolhas de Backend e Frontend. Ao concluir a edição de um deles, você volta direto para cá.
       </Alert>
     </Flex>
   )
