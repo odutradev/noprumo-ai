@@ -1,0 +1,166 @@
+.wall {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-md);
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.wall[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--enchase-space-md);
+}
+
+.status {
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-error);
+  transition: color 0.4s ease;
+}
+
+.wall[data-aligned] .status {
+  color: var(--enchase-color-success);
+}
+
+.stage {
+  position: relative;
+  padding: var(--enchase-space-xl) var(--enchase-space-xl) var(--enchase-space-xl) calc(var(--enchase-space-xl) * 2);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-xl);
+  background-color: var(--enchase-color-surface);
+  background-image: linear-gradient(to right, var(--enchase-color-border-light) var(--enchase-border-width), transparent var(--enchase-border-width));
+  background-size: 2rem 100%;
+  overflow: hidden;
+}
+
+.plumbLine {
+  position: absolute;
+  inset-block: 0 var(--enchase-space-lg);
+  inset-inline-start: var(--enchase-space-xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  inline-size: 2px;
+  background: var(--enchase-color-primary);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  transition: transform 0.8s cubic-bezier(0.65, 0, 0.2, 1);
+}
+
+.plumbBob {
+  flex: none;
+  inline-size: 1.25rem;
+  margin-block-end: -1.25rem;
+  fill: var(--enchase-color-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease 0.6s;
+}
+
+.wall[data-aligned] .plumbLine {
+  transform: scaleY(1);
+}
+
+.wall[data-aligned] .plumbBob {
+  opacity: 1;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
+  gap: var(--enchase-space-md);
+  align-items: center;
+  transform-origin: 0 50%;
+  transition: transform 0.7s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+.rowLabel {
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-xs);
+  color: var(--enchase-color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowBar {
+  display: block;
+  block-size: 0.75rem;
+  border-radius: var(--enchase-radius-full);
+  background: var(--enchase-color-error);
+  opacity: 0.55;
+  transition: background-color 0.5s ease, opacity 0.5s ease;
+}
+
+.wall[data-aligned] .rowBar {
+  background: var(--enchase-color-text-primary);
+  opacity: 0.85;
+}
+
+.wall[data-aligned] .row:nth-child(3n) .rowBar {
+  background: var(--enchase-color-primary);
+}
+
+.notes {
+  position: absolute;
+  inset-block-start: var(--enchase-space-md);
+  inset-inline-end: var(--enchase-space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--enchase-space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.note {
+  padding: var(--enchase-space-xs) var(--enchase-space-sm);
+  border-radius: var(--enchase-radius-full);
+  background: var(--enchase-color-error-container);
+  color: var(--enchase-color-on-error-container);
+  font-size: var(--enchase-font-size-xs);
+  font-weight: var(--enchase-font-weight-medium);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.wall[data-aligned] .note {
+  opacity: 0;
+  transform: translateX(1rem);
+}
+
+@media (max-width: 700px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--enchase-space-xs);
+  }
+
+  .notes {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wall,
+  .row,
+  .plumbLine {
+    transition: none;
+  }
+}

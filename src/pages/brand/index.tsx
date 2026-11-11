@@ -12,6 +12,7 @@ import BrandSection from "@components/brandSection"
 import ColorSwatch from "@components/colorSwatch"
 import MisuseCard from "@components/misuseCard"
 import BrandStage from "@components/brandStage"
+import { toolPath } from "@assets/data/landing"
 import BrandLogo from "@components/brandLogo"
 import styles from "./styles.module.css"
 import appConfig from "@assets/config"
@@ -54,7 +55,7 @@ const BrandPage = () => {
         sections={[]}
         logo={<BrandLogo label={appConfig.name} className={styles.logo} />}
         actions={
-          <ButtonLink href="/" size="sm">
+          <ButtonLink href={toolPath} size="sm">
             Abrir o gerador
           </ButtonLink>
         }

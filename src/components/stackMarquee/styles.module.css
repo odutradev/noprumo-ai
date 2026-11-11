@@ -1,0 +1,68 @@
+.marquee {
+  display: flex;
+  flex-direction: column;
+  gap: var(--enchase-space-md);
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+.row {
+  display: flex;
+}
+
+.track {
+  display: flex;
+  flex: none;
+  gap: var(--enchase-space-md);
+  padding-inline-end: var(--enchase-space-md);
+  animation: slide 40s linear infinite;
+}
+
+.row[data-reverse] .track {
+  animation-direction: reverse;
+}
+
+.marquee:hover .track {
+  animation-play-state: paused;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--enchase-space-sm);
+  padding: var(--enchase-space-sm) var(--enchase-space-lg);
+  border: var(--enchase-border-width) solid var(--enchase-color-border);
+  border-radius: var(--enchase-radius-full);
+  background: var(--enchase-color-surface);
+  font-family: var(--enchase-font-mono);
+  font-size: var(--enchase-font-size-sm);
+  white-space: nowrap;
+}
+
+.dot {
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  border-radius: var(--enchase-radius-full);
+  background: var(--enchase-color-primary);
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    flex-wrap: wrap;
+    animation: none;
+  }
+
+  .marquee {
+    mask-image: none;
+  }
+}
